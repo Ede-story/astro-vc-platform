@@ -13,8 +13,8 @@
    - Документация (STRATEGY.md, ARCHITECTURE.md, README.md)
 
 2. ✅ **GitHub репозиторий создан**
-   - URL: https://github.com/edestory/astro-vc-platform
-   - Приватный репозиторий
+   - URL: https://github.com/Ede-story/astro-vc-platform
+   - Публичный репозиторий
    - Initial commit выполнен
 
 3. ✅ **VS Code Workspace настроен**
