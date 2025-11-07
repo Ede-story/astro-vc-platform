@@ -8,7 +8,7 @@ pydantic==2.5.0
 pydantic-settings==2.1.0
 
 # Astrology & AI
-# vedastro==1.0.0  # TODO: Add when available on PyPI
+vedastro==1.23.19  # VedAstro Python wrapper (requires Python 3.9-3.12)
 llama-cpp-python==0.2.20
 sentence-transformers==2.2.2
 
@@ -20,6 +20,10 @@ opensearch-py==2.4.2
 psycopg2-binary==2.9.9
 sqlalchemy==2.0.23
 alembic==1.12.1
+
+# Redis & Caching
+redis==5.0.1
+hiredis==2.3.2  # C parser for faster Redis performance
 
 # Environment & Config
 python-dotenv==1.0.0

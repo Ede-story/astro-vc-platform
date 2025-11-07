@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: astro-vc-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=True
+      - DATABASE_URL=postgresql://astrovc:astrovc123@postgres:5432/astrovc
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - VEDASTRO_API_KEY=FreeAPIUser
+    volumes:
+      - ./backend:/app
+      - ./logs:/app/logs
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    networks:
+      - astro-vc-network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: astro-vc-postgres
+    environment:
+      POSTGRES_USER: astrovc
+      POSTGRES_PASSWORD: astrovc123
+      POSTGRES_DB: astrovc
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - astro-vc-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: astro-vc-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - astro-vc-network
+
+  # Redis Commander (GUI for Redis)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: astro-vc-redis-commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - astro-vc-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  astro-vc-network:
+    driver: bridge
