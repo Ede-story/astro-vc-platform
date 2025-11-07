@@ -218,7 +218,7 @@ astro-vc-platform/
 ## 🔗 Полезные ссылки
 
 ### Проект
-- **GitHub**: https://github.com/edestory/astro-vc-platform
+- **GitHub**: https://github.com/Ede-story/astro-vc-platform
 - **Local Backend**: http://localhost:8000
 - **Local Frontend**: http://localhost:3000
 - **API Docs**: http://localhost:8000/docs

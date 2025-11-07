@@ -65,7 +65,7 @@
 ### 1. Клонирование репозитория
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/astro-vc-platform.git
+git clone https://github.com/Ede-story/astro-vc-platform.git
 cd astro-vc-platform
 ```
 
