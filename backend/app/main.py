@@ -73,18 +73,35 @@ async def health_check():
     """
     Health check endpoint
     """
+    from app.services.vedastro_engine import VEDASTRO_AVAILABLE, get_vedastro_engine
+
+    vedastro_ready = VEDASTRO_AVAILABLE
+    redis_ready = False
+
+    if vedastro_ready:
+        try:
+            engine = get_vedastro_engine()
+            redis_ready = engine.redis_available
+        except:
+            pass
+
     return {
         "status": "healthy",
         "version": "0.1.0",
-        "models_loaded": False,  # TODO: Check actual model status
-        "vedastro_ready": False,
-        "llm_ready": False
+        "vedastro_ready": vedastro_ready,
+        "redis_ready": redis_ready,
+        "llm_ready": False  # TODO: Check AstroSage-LLaMA
     }
 
 
-# TODO: Import and include routers
-# from app.api.routes import rating, rectification, matching
-# app.include_router(rating.router, prefix="/api/v1", tags=["rating"])
+# Import routers
+from app.api.routes import rating_router
+
+# Include routers
+app.include_router(rating_router)
+
+# TODO: Add more routers when implemented
+# from app.api.routes import rectification, matching
 # app.include_router(rectification.router, prefix="/api/v1", tags=["rectification"])
 # app.include_router(matching.router, prefix="/api/v1", tags=["matching"])
 

@@ -83,21 +83,25 @@ FastAPI backend for Astro-VC Platform with VedAstro integration.
 backend/
 ├── app/
 │   ├── __init__.py
-│   ├── main.py                 # FastAPI application
-│   ├── api/                    # API routes
+│   ├── main.py                      # FastAPI application
+│   ├── api/                         # API routes
 │   │   ├── __init__.py
 │   │   └── routes/
-│   │       └── astrology.py    # VedAstro endpoints
-│   ├── core/                   # Core configuration
+│   │       ├── __init__.py
+│   │       └── rating.py            # ✅ Rating endpoint (IMPLEMENTED)
+│   ├── core/                        # Core configuration
 │   │   ├── __init__.py
-│   │   ├── config.py          # Settings management
-│   │   └── dependencies.py    # FastAPI dependencies
-│   ├── models/                 # Pydantic models
+│   │   ├── config.py               # Settings management
+│   │   └── dependencies.py         # FastAPI dependencies
+│   ├── models/                      # Pydantic models
 │   │   ├── __init__.py
-│   │   ├── birth_data.py
-│   │   └── rating.py
-│   ├── services/               # Business logic
+│   │   ├── birth_data.py           # ✅ Birth data input model
+│   │   ├── birth_chart.py          # ✅ Birth chart response (NEW)
+│   │   └── rating.py               # ✅ Rating response model
+│   ├── services/                    # Business logic
 │   │   ├── __init__.py
+│   │   ├── vedastro_engine.py      # ✅ VedAstro wrapper (NEW)
+│   │   └── scoring.py              # ✅ AI scoring system (NEW)
 │   │   ├── vedastro_engine.py  # VedAstro integration
 │   │   ├── cache.py           # Redis caching
 │   │   └── llm_engine.py      # LLM integration
@@ -161,41 +165,110 @@ alembic upgrade head
 alembic downgrade -1
 ```
 
-## 📖 API Endpoints
+## 📖 API Endpoints (Phase 2 - IMPLEMENTED)
 
 ### Health Check
 ```http
 GET /health
 ```
 
-### Birth Chart Calculation
-```http
-POST /api/v1/birth-chart
-Content-Type: application/json
-
+**Response:**
+```json
 {
-  "name": "John Doe",
-  "date": "1990-01-15",
-  "time": "14:30:00",
-  "latitude": 40.7128,
-  "longitude": -74.0060,
-  "timezone": -5.0,
+  "status": "healthy",
+  "version": "0.1.0",
+  "vedastro_ready": true,
+  "redis_ready": true,
+  "llm_ready": false
+}
+```
+
+---
+
+### ✅ Rating API (Potential Scoring)
+
+**Endpoint:** `POST /api/v1/rating`
+
+**Description:** Оценка потенциала основателя стартапа на основе натальной карты (1-10 баллов)
+
+**Request Body:**
+```json
+{
+  "name": "Steve Jobs",
+  "date": "1955-02-24",
+  "time": "19:15:00",
+  "latitude": 37.77,
+  "longitude": -122.42,
+  "timezone": -8.0,
   "gender": "Male"
 }
 ```
 
-### Compatibility Check
-```http
-POST /api/v1/compatibility
-Content-Type: application/json
-
+**Response:**
+```json
 {
-  "person1": { /* birth data */ },
-  "person2": { /* birth data */ }
+  "success": true,
+  "score": 8,
+  "score_max": 10,
+  "explanation": "Potential Score: 8.5/10\n\nTop Strengths:\n  • Sun (Leadership): 8.0/10 - Sun in Pisces, House 10 - authority & power\n  • 10th House (Career): 7.5/10 - 10th house in Aquarius - professional success\n  • Jupiter Placement: 7.0/10 - Jupiter in Cancer, House 2 - expansion & wealth\n\nRecommendations:\n  Excellent potential. High probability of success.",
+  "person_name": "Steve Jobs",
+  "chart_data": {
+    "person_name": "Steve Jobs",
+    "birth_datetime": "1955-02-24T19:15:00",
+    "planets": {
+      "Sun": {
+        "name": "Sun",
+        "longitude": 335.8,
+        "zodiac_sign": "Pisces",
+        "house": 10,
+        "shadbala": 420.5,
+        "is_retrograde": false
+      },
+      "Moon": { /* ... */ }
+    },
+    "houses": { /* ... */ },
+    "ascendant": "Gemini",
+    "current_dasa": {
+      "planet": "Jupiter",
+      "start_date": "2020-01-01",
+      "end_date": "2036-01-01",
+      "level": "Maha"
+    }
+  },
+  "error": null
 }
 ```
 
-Full API documentation: http://localhost:8000/docs
+**Curl Example:**
+```bash
+curl -X POST http://localhost:8000/api/v1/rating \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Test User",
+    "date": "1990-08-15",
+    "time": "14:30:00",
+    "latitude": 55.75,
+    "longitude": 37.62,
+    "timezone": 3.0,
+    "gender": "Male"
+  }'
+```
+
+**Scoring Criteria (30 total):**
+- **Денежный потенциал (30%):** 2nd house, 11th house, Jupiter, Mercury, Venus
+- **Лидерство (25%):** Sun, 10th house, Mars, Ascendant lord
+- **Удача и своевременность (20%):** 9th house, Current Dasa, Jupiter/Saturn transits
+- **Инновации (15%):** 5th house, Rahu/Ketu axis
+- **Стрессоустойчивость (10%):** Moon strength, Saturn maturity
+
+---
+
+### API Info
+```http
+GET /api/v1/
+```
+
+**Full interactive documentation:** http://localhost:8000/docs (Swagger UI)
 
 ## 🌐 Environment Variables
 
