@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import datetime
 import json
+from datetime import date, time
 from zoneinfo import ZoneInfo
 from geopy.geocoders import Nominatim
 from timezonefinder import TimezoneFinder
@@ -15,6 +16,32 @@ from db_utils import (
 
 st.set_page_config(page_title="StarMeet Astro UI", layout="wide")
 
+
+# --- JSON SERIALIZER FOR DATES ---
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default"""
+    if isinstance(obj, (date, datetime.datetime)):
+        return obj.isoformat()
+    if isinstance(obj, time):
+        return obj.isoformat()
+    raise TypeError(f"Type {type(obj)} not serializable")
+
+
+def serialize_profile_data(data: dict) -> dict:
+    """Convert all date/time objects to strings for JSON storage"""
+    result = {}
+    for key, value in data.items():
+        if isinstance(value, (date, datetime.datetime)):
+            result[key] = value.isoformat()
+        elif isinstance(value, time):
+            result[key] = value.isoformat()
+        elif isinstance(value, dict):
+            result[key] = serialize_profile_data(value)
+        else:
+            result[key] = value
+    return result
+
+
 # --- DATABASE INITIALIZATION (runs once at startup) ---
 @st.cache_resource
 def setup_database():
@@ -24,6 +51,7 @@ def setup_database():
         return success, None
     except Exception as e:
         return False, str(e)
+
 
 db_ok, db_error = setup_database()
 
@@ -139,18 +167,61 @@ with st.sidebar:
                 timezone_offset=offset
             )
 
+            # Store in session state
             st.session_state['chart'] = chart
             st.session_state['calculated'] = True
             st.session_state['current_profile'] = {
                 'name': name,
                 'gender': gender,
-                'date': date_input,
-                'time': time_input,
+                'date': date_input.isoformat(),  # Store as string
+                'time': time_input.isoformat(),  # Store as string
                 'city': city,
                 'lat': lat,
                 'lon': lon,
                 'tz': tz_str
             }
+
+            # Pre-calculate D1 data for caching
+            d1_data = []
+            if hasattr(chart, 'd1_chart') and hasattr(chart.d1_chart, 'planets'):
+                for p in chart.d1_chart.planets:
+                    d1_data.append({
+                        "Планета": str(p.celestial_body),
+                        "Знак": str(p.sign),
+                        "Градус": f"{p.sign_degrees:.2f}°",
+                        "Накшатра": str(p.nakshatra),
+                        "Дом": p.house
+                    })
+            st.session_state['d1_data'] = d1_data
+
+            # Pre-calculate houses data
+            houses_data = []
+            if hasattr(chart, 'd1_chart') and hasattr(chart.d1_chart, 'houses'):
+                for h in chart.d1_chart.houses:
+                    deg = getattr(h, 'sign_degrees', None)
+                    houses_data.append({
+                        "Дом": h.number,
+                        "Знак": str(h.sign),
+                        "Градус": f"{deg:.2f}°" if deg is not None else "—",
+                        "Управитель": str(getattr(h, 'lord', '—'))
+                    })
+            st.session_state['houses_data'] = houses_data
+
+            # Pre-calculate D9 data
+            d9_data = []
+            if hasattr(chart, 'divisional_charts') and 'd9' in chart.divisional_charts:
+                d9 = chart.divisional_charts['d9']
+                for house in d9.houses:
+                    for occupant in house.occupants:
+                        d9_data.append({
+                            "Планета": str(occupant.celestial_body),
+                            "Знак (D9)": str(occupant.sign),
+                            "Дом (D9)": house.number,
+                            "Дом (D1)": getattr(occupant, 'd1_house_placement', '—')
+                        })
+            st.session_state['d9_data'] = d9_data
+
+            st.success("✅ Расчет выполнен!")
 
         except Exception as e:
             st.error(f"Ошибка расчета: {e}")
@@ -160,27 +231,15 @@ with st.sidebar:
     # Handle Save
     if save_btn and name and db_ok:
         try:
-            # Prepare chart data for storage
+            # Prepare chart data for storage (serialize dates)
             chart_data = None
             if st.session_state.get('chart'):
-                chart = st.session_state['chart']
-                # Extract key data for JSON storage
+                profile_input = st.session_state.get('current_profile', {})
                 chart_data = {
                     'calculated_at': datetime.datetime.now().isoformat(),
-                    'input': st.session_state.get('current_profile', {})
+                    'input': serialize_profile_data(profile_input),
+                    'd1_planets': st.session_state.get('d1_data', [])
                 }
-                # Add planet positions if available
-                if hasattr(chart, 'd1_chart') and hasattr(chart.d1_chart, 'planets'):
-                    chart_data['d1_planets'] = [
-                        {
-                            'planet': str(p.celestial_body),
-                            'sign': str(p.sign),
-                            'degrees': p.sign_degrees,
-                            'nakshatra': str(p.nakshatra),
-                            'house': p.house
-                        }
-                        for p in chart.d1_chart.planets
-                    ]
 
             profile_id = save_profile(
                 display_name=name,
@@ -198,10 +257,11 @@ with st.sidebar:
 
         except Exception as e:
             st.error(f"Ошибка сохранения: {e}")
+            import traceback
+            st.code(traceback.format_exc())
 
 # --- MAIN DISPLAY ---
 if st.session_state.get('calculated'):
-    chart = st.session_state['chart']
     profile = st.session_state.get('current_profile', {})
 
     # Profile header
@@ -212,78 +272,80 @@ if st.session_state.get('calculated'):
             f"{profile.get('city')} ({profile.get('lat', 0):.2f}, {profile.get('lon', 0):.2f})"
         )
 
-    tab1, tab2, tab3 = st.tabs(["🌙 D1 (Раши)", "💎 D9 (Навамша)", "📋 Сводка"])
+    # Get cached data from session state
+    d1_data = st.session_state.get('d1_data', [])
+    houses_data = st.session_state.get('houses_data', [])
+    d9_data = st.session_state.get('d9_data', [])
+
+    # Show Ascendant prominently
+    if houses_data:
+        asc = houses_data[0]  # House 1 = Ascendant
+        st.info(f"⬆️ **Лагна (Асцендент):** {asc['Знак']} {asc['Градус']}")
+
+    tab1, tab2, tab3, tab4 = st.tabs(["🌙 Планеты (D1)", "🏠 Дома (Бхавы)", "💎 Навамша (D9)", "📋 Сводка"])
 
     with tab1:
-        st.subheader("Карта Раши (D1)")
+        st.subheader("Планеты в знаках (Раши)")
 
-        # D1 Planets
-        d1_data = []
-        if hasattr(chart, 'd1_chart') and hasattr(chart.d1_chart, 'planets'):
-            for p in chart.d1_chart.planets:
-                d1_data.append({
-                    "Планета": str(p.celestial_body),
-                    "Знак": str(p.sign),
-                    "Градус": f"{p.sign_degrees:.2f}°",
-                    "Накшатра": str(p.nakshatra),
-                    "Дом": p.house
-                })
-            st.dataframe(pd.DataFrame(d1_data), use_container_width=True)
+        if d1_data:
+            df = pd.DataFrame(d1_data)
+            st.dataframe(df, use_container_width=True, hide_index=True)
+
+            # Highlight Ketu
+            ketu_row = next((p for p in d1_data if 'Ketu' in p['Планета']), None)
+            if ketu_row:
+                st.success(f"🔮 **Кету:** {ketu_row['Знак']} ({ketu_row['Градус']}) — Дом {ketu_row['Дом']}")
         else:
-            st.error("Данные планет D1 не найдены")
-
-        # D1 Houses
-        st.subheader("Бхава Чалита (Дома)")
-        h_data = []
-        if hasattr(chart, 'd1_chart') and hasattr(chart.d1_chart, 'houses'):
-            for h in chart.d1_chart.houses:
-                h_data.append({
-                    "Дом": getattr(h, 'number', '?'),
-                    "Знак": getattr(h, 'sign', '?'),
-                    "Градус": f"{getattr(h, 'sign_degrees', 0.0):.2f}°"
-                })
-            st.dataframe(pd.DataFrame(h_data), use_container_width=True)
+            st.warning("Данные планет не найдены")
 
     with tab2:
+        st.subheader("Бхавы (Дома)")
+
+        if houses_data:
+            df = pd.DataFrame(houses_data)
+            st.dataframe(df, use_container_width=True, hide_index=True)
+        else:
+            st.warning("Данные домов не найдены")
+
+    with tab3:
         st.subheader("Карта Навамша (D9)")
 
-        d9_data = []
-        if hasattr(chart, 'divisional_charts') and 'd9' in chart.divisional_charts:
-            d9 = chart.divisional_charts['d9']
-            for house in d9.houses:
-                for occupant in house.occupants:
-                    d9_data.append({
-                        "Планета": str(occupant.celestial_body),
-                        "Знак": str(occupant.sign),
-                        "Дом (D9)": house.number,
-                        "Дом (D1)": occupant.d1_house_placement
-                    })
-            st.dataframe(pd.DataFrame(d9_data), use_container_width=True)
+        if d9_data:
+            df = pd.DataFrame(d9_data)
+            st.dataframe(df, use_container_width=True, hide_index=True)
         else:
             st.warning("D9 карта недоступна")
 
-    with tab3:
+    with tab4:
         st.subheader("📋 Краткая сводка")
 
         if d1_data:
             # Find key planets
-            sun_data = next((p for p in d1_data if 'Sun' in p['Планета'] or 'Сурья' in p['Планета']), None)
-            moon_data = next((p for p in d1_data if 'Moon' in p['Планета'] or 'Чандра' in p['Планета']), None)
-            asc_data = next((p for p in d1_data if 'Asc' in p['Планета'] or 'Лагна' in p['Планета']), None)
+            sun_data = next((p for p in d1_data if 'Sun' in p['Планета']), None)
+            moon_data = next((p for p in d1_data if 'Moon' in p['Планета']), None)
+            mars_data = next((p for p in d1_data if 'Mars' in p['Планета']), None)
+            ketu_data = next((p for p in d1_data if 'Ketu' in p['Планета']), None)
+            rahu_data = next((p for p in d1_data if 'Rahu' in p['Планета']), None)
 
             col1, col2, col3 = st.columns(3)
 
             with col1:
+                if houses_data:
+                    st.metric("⬆️ Лагна", houses_data[0]['Знак'])
                 if sun_data:
                     st.metric("☀️ Солнце", sun_data['Знак'], f"Дом {sun_data['Дом']}")
 
             with col2:
                 if moon_data:
                     st.metric("🌙 Луна", moon_data['Знак'], f"Дом {moon_data['Дом']}")
+                if mars_data:
+                    st.metric("♂️ Марс", mars_data['Знак'], f"Дом {mars_data['Дом']}")
 
             with col3:
-                if asc_data:
-                    st.metric("⬆️ Асцендент", asc_data['Знак'], asc_data['Градус'])
+                if rahu_data:
+                    st.metric("☊ Раху", rahu_data['Знак'], f"Дом {rahu_data['Дом']}")
+                if ketu_data:
+                    st.metric("☋ Кету", ketu_data['Знак'], f"Дом {ketu_data['Дом']}")
 
 else:
     st.info("👈 Введите данные рождения и нажмите 'Рассчитать'")
@@ -299,3 +361,5 @@ else:
                 pass
         else:
             st.error(f"❌ База данных недоступна: {db_error}")
+
+        st.info("📐 Астро-движок: jyotishganit (Python, Sidereal/Lahiri)")
