@@ -5,3 +5,5 @@ python-dateutil
 geopy
 timezonefinder
 pyswisseph
+psycopg2-binary
+sqlalchemy

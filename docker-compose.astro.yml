@@ -5,7 +5,7 @@ services:
     build:
       context: ./vedastro-ui
       dockerfile: Dockerfile
-    image: starmeet/astro-ui:v1.1.0
+    image: starmeet/astro-ui:v1.2.0
     container_name: vedastro-ui
     restart: unless-stopped
     ports:
@@ -14,6 +14,12 @@ services:
       - astro-network
     volumes:
       - ./vedastro-ui:/app
+    environment:
+      - DB_HOST=mastodon-db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=mastodon_secure_password
+      - DB_NAME=astro_db
     command: streamlit run astro_test_ui.py --server.baseUrlPath=/astro/
 
 networks:
