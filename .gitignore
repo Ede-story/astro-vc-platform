@@ -3,6 +3,16 @@
 .env.*
 *.env
 !.env.example
+!.env.*.sample
+
+# Mastodon secrets (CRITICAL - never commit)
+mastodon/.env.production
+mastodon/.env.development
+mastodon/.env.test
+mastodon/.env.vagrant
+
+# Mastodon user uploads (can be large)
+mastodon/public/system/
 
 # Large data files
 *.tar.gz

@@ -102,7 +102,59 @@ We are moving from "Isolated Apps" to "Integrated Ecosystem".
 
 ---
 
-## 6. PROJECT STRUCTURE
+## 6. GIT WORKFLOW & SAFETY (CRITICAL)
+
+**Repository:** `https://github.com/Ede-story/astro-vc-platform`
+**Structure:** Mono-repo (includes Mastodon source code)
+
+### A. AUTO-COMMIT RULE
+After completing any significant task, you **MUST** execute:
+```bash
+cd /Users/vadimarhipov/StarMeet-platform
+git add .
+git commit -m "Task: <short description of completed work>"
+git push
+```
+* **Trigger:** Every completed TODO item, bug fix, feature, or config change.
+* **Format:** Commit messages start with `Task:`, `Fix:`, `Feat:`, or `Docs:`.
+
+### B. REPOSITORY CONTENTS
+| Folder | Contents | Tracked |
+|--------|----------|---------|
+| `mastodon/` | Full Mastodon v4.2 source (Ruby) | ✅ Yes |
+| `vedastro-ui/` | Streamlit Astro App (Python) | ✅ Yes |
+| `nginx/` | Reverse proxy configs | ✅ Yes |
+| `_ARCHIVE*/` | Legacy files | ❌ Ignored |
+
+### C. SECRET SAFETY (BEFORE EVERY COMMIT)
+**NEVER commit these files:**
+* `.env.production` — Contains DB passwords, secrets
+* `.env.*` — Any environment files
+* `mastodon/public/system/` — User uploads
+* `*.tar.gz` — Large archives
+* `hip_main.dat` — Star catalog (53MB)
+
+**Verification command:**
+```bash
+git status --porcelain | grep -E "\.env|system/|\.tar\.gz"
+# If output is NOT empty -> DO NOT COMMIT, fix .gitignore first
+```
+
+### D. .GITIGNORE CHECKLIST
+The `.gitignore` file MUST contain:
+```
+.env*
+*.env
+mastodon/.env.production
+mastodon/public/system/
+*.tar.gz
+*.dat
+_ARCHIVE*/
+```
+
+---
+
+## 7. PROJECT STRUCTURE
 
 **Server Path:** `/home/vadimarhipov`
 
@@ -117,7 +169,7 @@ We are moving from "Isolated Apps" to "Integrated Ecosystem".
 
 ---
 
-## 7. COMMAND CHEATSHEET
+## 8. COMMAND CHEATSHEET
 
 ```bash
 # SSH Connect
@@ -141,13 +193,13 @@ df -h
 
 ---
 
-## 8. KNOWN ISSUES
+## 9. KNOWN ISSUES
 
 * **Mastodon unhealthy:** `mastodon-web` and `mastodon-streaming` report unhealthy but respond (502/200 intermittent).
 
 ---
 
-## 9. CLEANUP LOG
+## 10. CLEANUP LOG
 
 **2025-11-25: Project Sanitation (Phase 1 - edestory-platform)**
 - Deleted: VedAstro C#/.NET repos (vedastro-github, vedastro-opensource, vedastro-integration, vedastro-web) — ~5.5GB
