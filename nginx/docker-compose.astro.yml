@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  astro-ui:
+    build:
+      context: ./vedastro-ui
+      dockerfile: Dockerfile
+    image: starmeet/astro-ui:v1.1.0
+    container_name: vedastro-ui
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    networks:
+      - astro-network
+    volumes:
+      - ./vedastro-ui:/app
+    command: streamlit run astro_test_ui.py --server.baseUrlPath=/astro/
+
+networks:
+  astro-network:
+    external: true
