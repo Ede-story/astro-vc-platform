@@ -139,8 +139,8 @@ services:
   # FastAPI Backend - Astro Calculations API
   starmeet-api:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     image: starmeet/api:latest
     container_name: starmeet-api
     restart: unless-stopped
@@ -172,7 +172,7 @@ services:
     container_name: starmeet-wizard
     restart: unless-stopped
     environment:
-      - NEXT_PUBLIC_API_URL=https://star-meet.com/api
+      - NEXT_PUBLIC_API_URL=https://star-meet.com/star-api
     ports:
       - "3001:3001"
     networks:
