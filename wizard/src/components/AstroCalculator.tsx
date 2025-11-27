@@ -319,6 +319,43 @@ export default function AstroCalculator() {
     return planet.degrees;
   };
 
+  // Helper to get planet sign from varga_data (handles both old and new format)
+  const getVargaPlanetSign = (vargaPlanet: string | { sign: string; degrees: number }): string => {
+    if (typeof vargaPlanet === 'object' && vargaPlanet !== null) {
+      return vargaPlanet.sign;
+    }
+    return vargaPlanet;
+  };
+
+  // Get planet house for selected varga
+  const getPlanetVargaHouse = (planet: CalculateResponse['planets'][0]): number => {
+    if (selectedVarga === 'D1') {
+      return planet.house;
+    }
+
+    const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
+                   'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
+
+    // Use varga_data if available
+    if (result?.varga_data && result.varga_data.code === selectedVarga) {
+      const vargaAsc = result.varga_data.ascendant;
+      const vargaPlanet = result.varga_data.planets[planet.name];
+      if (!vargaPlanet) return planet.house;
+
+      const planetSign = getVargaPlanetSign(vargaPlanet);
+      const ascIdx = signs.indexOf(vargaAsc);
+      const planetSignIdx = signs.indexOf(planetSign);
+
+      if (ascIdx === -1 || planetSignIdx === -1) return planet.house;
+
+      // House = (planetSignIndex - ascendantIndex + 12) % 12 + 1
+      return ((planetSignIdx - ascIdx + 12) % 12) + 1;
+    }
+
+    // Fallback to D1 house
+    return planet.house;
+  };
+
   // Get planets in a specific house for the selected varga
   const getPlanetsInHouse = (houseNum: number): string[] => {
     if (!result) return [];
@@ -329,24 +366,22 @@ export default function AstroCalculator() {
         .map(p => PLANET_NAMES[p.name] || p.name);
     }
 
+    const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
+                   'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
+
     // Use varga_data if available and matches selected varga
     if (result.varga_data && result.varga_data.code === selectedVarga) {
       const vargaAsc = result.varga_data.ascendant;
-      const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
-                     'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
       const ascIdx = signs.indexOf(vargaAsc);
       if (ascIdx === -1) return [];
       const houseSign = signs[(ascIdx + houseNum - 1) % 12];
 
       return Object.entries(result.varga_data.planets)
-        .filter(([, sign]) => sign === houseSign)
+        .filter(([, vargaPlanet]) => getVargaPlanetSign(vargaPlanet) === houseSign)
         .map(([planet]) => PLANET_NAMES[planet] || planet);
     }
 
     // Fallback: use pre-calculated varga_signs
-    const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
-                   'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
-    // Get ascendant for this varga from first planet's varga_signs
     const firstPlanet = result.planets[0];
     if (!firstPlanet?.varga_signs) return [];
     const vargaKey = selectedVarga as keyof typeof firstPlanet.varga_signs;
@@ -434,6 +469,8 @@ export default function AstroCalculator() {
                 setResult(null);
                 setActiveProfileId(null);
                 setIsFormCollapsed(false);
+                setCitySuggestions([]);
+                setShowCitySuggestions(false);
               }}
               className="btn-secondary whitespace-nowrap"
             >
@@ -764,7 +801,7 @@ export default function AstroCalculator() {
                               </td>
                             )}
                             {isColumnVisible(planetColumns, 'house') && (
-                              <td>{planet.house}</td>
+                              <td>{getPlanetVargaHouse(planet)}</td>
                             )}
                             {isColumnVisible(planetColumns, 'sign_lord') && (
                               <td className="text-gray-500">
