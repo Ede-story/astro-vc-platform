@@ -429,7 +429,7 @@ export default function AstroCalculator() {
                             )}
                             {isColumnVisible(planetColumns, 'sign_lord') && (
                               <td className="text-gray-500">
-                                {PLANET_NAMES[planet.sign_lord] || planet.sign_lord || PLANET_NAMES[SIGN_LORDS[vargaSign]] || '-'}
+                                {PLANET_NAMES[SIGN_LORDS[vargaSign]] || SIGN_LORDS[vargaSign] || '-'}
                               </td>
                             )}
                             {isColumnVisible(planetColumns, 'nakshatra_lord') && (
@@ -521,7 +521,7 @@ export default function AstroCalculator() {
                             )}
                             {isColumnVisible(houseColumns, 'lord') && (
                               <td className="text-gray-500">
-                                {PLANET_NAMES[houseData?.lord || SIGN_LORDS[sign]] || '-'}
+                                {PLANET_NAMES[SIGN_LORDS[sign]] || SIGN_LORDS[sign] || '-'}
                               </td>
                             )}
                             {isColumnVisible(houseColumns, 'aspects_received') && (
