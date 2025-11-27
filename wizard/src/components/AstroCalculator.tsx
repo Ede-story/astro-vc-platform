@@ -1,7 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { fetchCalculation } from '@/lib/api';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import { ru } from 'date-fns/locale';
+import 'react-datepicker/dist/react-datepicker.css';
 import {
   CalculateResponse,
   InputData,
@@ -17,6 +20,9 @@ import TableColumnSelector, {
   DEFAULT_PLANET_COLUMNS,
   DEFAULT_HOUSE_COLUMNS
 } from './TableColumnSelector';
+
+// Register Russian locale for date picker
+registerLocale('ru', ru);
 
 // Default input with RAMAN ayanamsa
 const DEFAULT_INPUT: InputData = {
@@ -51,6 +57,76 @@ export default function AstroCalculator() {
   const [savedProfiles, setSavedProfiles] = useState<SavedProfile[]>([]);
   const [activeProfileId, setActiveProfileId] = useState<string | null>(null);
   const [profilesLoading, setProfilesLoading] = useState(false);
+
+  // City search state
+  const [citySuggestions, setCitySuggestions] = useState<Array<{
+    display_name: string;
+    lat: string;
+    lon: string;
+  }>>([]);
+  const [citySearchLoading, setCitySearchLoading] = useState(false);
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false);
+  const cityInputRef = useRef<HTMLDivElement>(null);
+
+  // Close city suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (cityInputRef.current && !cityInputRef.current.contains(event.target as Node)) {
+        setShowCitySuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Search city coordinates using Nominatim API
+  const searchCity = async (query: string) => {
+    if (query.length < 2) {
+      setCitySuggestions([]);
+      return;
+    }
+
+    setCitySearchLoading(true);
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&accept-language=ru`,
+        { headers: { 'User-Agent': 'StarMeet/1.0' } }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setCitySuggestions(data);
+        setShowCitySuggestions(data.length > 0);
+      }
+    } catch (err) {
+      console.error('City search failed:', err);
+    } finally {
+      setCitySearchLoading(false);
+    }
+  };
+
+  // Debounced city search
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (input.city && input.city.length >= 2) {
+        searchCity(input.city);
+      }
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [input.city]);
+
+  // Select city from suggestions
+  const selectCity = (suggestion: { display_name: string; lat: string; lon: string }) => {
+    // Extract just city name (first part before comma)
+    const cityName = suggestion.display_name.split(',')[0].trim();
+    setInput({
+      ...input,
+      city: cityName,
+      lat: parseFloat(suggestion.lat),
+      lon: parseFloat(suggestion.lon),
+    });
+    setShowCitySuggestions(false);
+    setCitySuggestions([]);
+  };
 
   // Load profiles on mount
   useEffect(() => {
@@ -281,54 +357,49 @@ export default function AstroCalculator() {
           <p className="text-gray-500 text-sm mt-1">Ведический астрологический калькулятор</p>
         </header>
 
-        {/* Saved Profiles List */}
-        {savedProfiles.length > 0 && (
-          <div className="card mb-6">
-            <h2 className="text-base font-medium text-gray-900 mb-3">Сохранённые профили</h2>
-            <div className="flex flex-wrap gap-2">
-              {savedProfiles.map((profile: SavedProfile) => (
-                <div
-                  key={profile.id}
-                  className={`group flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors
-                    ${activeProfileId === profile.id
-                      ? 'bg-gray-900 border-gray-900 text-white'
-                      : 'bg-white border-gray-200 hover:border-gray-300 text-gray-700'}`}
-                  onClick={() => loadProfile(profile.id)}
-                >
-                  <span className="text-sm font-medium">{profile.name || 'Без имени'}</span>
-                  <button
-                    onClick={(e: React.MouseEvent) => {
-                      e.stopPropagation();
-                      deleteProfile(profile.id);
-                    }}
-                    className={`opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded
-                      ${activeProfileId === profile.id ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
-                    title="Удалить"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              ))}
-              <button
-                onClick={() => {
-                  setInput({ ...DEFAULT_INPUT, name: '' });
-                  setResult(null);
-                  setActiveProfileId(null);
-                  setIsFormCollapsed(false);
+        {/* Saved Profiles Dropdown */}
+        <div className="card mb-6">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 flex-1">
+              <label className="text-sm font-medium text-gray-700 whitespace-nowrap">Профиль:</label>
+              <select
+                className="input-field flex-1"
+                value={activeProfileId || ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '') {
+                    // "Новый" selected
+                    setInput({ ...DEFAULT_INPUT, name: '' });
+                    setResult(null);
+                    setActiveProfileId(null);
+                    setIsFormCollapsed(false);
+                  } else {
+                    loadProfile(value);
+                  }
                 }}
-                className="flex items-center gap-1 px-3 py-2 rounded-lg border border-dashed border-gray-300
-                           text-gray-500 hover:border-gray-400 hover:text-gray-700 transition-colors"
+              >
+                <option value="">+ Новый профиль</option>
+                {savedProfiles.filter((p: SavedProfile) => p.name && p.name.trim() !== '').map((profile: SavedProfile) => (
+                  <option key={profile.id} value={profile.id}>
+                    {profile.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {activeProfileId && (
+              <button
+                onClick={() => deleteProfile(activeProfileId)}
+                className="text-sm text-red-500 hover:text-red-700 flex items-center gap-1"
+                title="Удалить профиль"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
-                <span className="text-sm">Новый</span>
+                Удалить
               </button>
-            </div>
+            )}
           </div>
-        )}
+        </div>
 
         {/* Collapsed Form Summary */}
         {isFormCollapsed && result && (
@@ -380,12 +451,29 @@ export default function AstroCalculator() {
               </div>
 
               <div>
-                <label className="input-label">Дата</label>
-                <input
-                  type="date"
-                  className="input-field"
-                  value={input.date}
-                  onChange={(e) => setInput({ ...input, date: e.target.value })}
+                <label className="input-label">Дата рождения</label>
+                <DatePicker
+                  selected={input.date ? new Date(input.date) : null}
+                  onChange={(date: Date | null) => {
+                    if (date) {
+                      const year = date.getFullYear();
+                      const month = String(date.getMonth() + 1).padStart(2, '0');
+                      const day = String(date.getDate()).padStart(2, '0');
+                      setInput({ ...input, date: `${year}-${month}-${day}` });
+                    }
+                  }}
+                  dateFormat="dd.MM.yyyy"
+                  locale="ru"
+                  showYearDropdown
+                  showMonthDropdown
+                  dropdownMode="select"
+                  yearDropdownItemNumber={100}
+                  scrollableYearDropdown
+                  maxDate={new Date()}
+                  minDate={new Date(1900, 0, 1)}
+                  placeholderText="Выберите дату"
+                  className="input-field w-full"
+                  wrapperClassName="w-full"
                 />
               </div>
 
@@ -399,14 +487,38 @@ export default function AstroCalculator() {
                 />
               </div>
 
-              <div>
+              <div className="relative" ref={cityInputRef}>
                 <label className="input-label">Город</label>
                 <input
                   type="text"
                   className="input-field"
                   value={input.city}
+                  placeholder="Начните вводить город..."
                   onChange={(e) => setInput({ ...input, city: e.target.value })}
+                  onFocus={() => citySuggestions.length > 0 && setShowCitySuggestions(true)}
                 />
+                {citySearchLoading && (
+                  <div className="absolute right-3 top-8 text-gray-400">
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </div>
+                )}
+                {showCitySuggestions && citySuggestions.length > 0 && (
+                  <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    {citySuggestions.map((suggestion, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 border-b border-gray-100 last:border-0"
+                        onClick={() => selectCity(suggestion)}
+                      >
+                        {suggestion.display_name}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div>

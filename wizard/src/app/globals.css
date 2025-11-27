@@ -78,3 +78,60 @@ body {
 .data-table tbody tr:last-child td {
   @apply border-b-0;
 }
+
+/* DatePicker Customization */
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker {
+  @apply border border-gray-200 rounded-lg shadow-lg font-sans;
+}
+
+.react-datepicker__header {
+  @apply bg-gray-50 border-b border-gray-200;
+}
+
+.react-datepicker__current-month {
+  @apply text-gray-900 font-medium;
+}
+
+.react-datepicker__day-name {
+  @apply text-gray-500 text-sm;
+}
+
+.react-datepicker__day {
+  @apply text-gray-700 hover:bg-gray-100 rounded;
+}
+
+.react-datepicker__day--selected {
+  @apply bg-gray-900 text-white hover:bg-gray-800;
+}
+
+.react-datepicker__day--keyboard-selected {
+  @apply bg-gray-200;
+}
+
+.react-datepicker__month-dropdown,
+.react-datepicker__year-dropdown {
+  @apply bg-white border border-gray-200 rounded shadow-lg;
+}
+
+.react-datepicker__month-option,
+.react-datepicker__year-option {
+  @apply py-1 px-2 hover:bg-gray-100;
+}
+
+.react-datepicker__month-option--selected,
+.react-datepicker__year-option--selected {
+  @apply bg-gray-900 text-white;
+}
+
+.react-datepicker__navigation {
+  @apply top-2;
+}
+
+.react-datepicker__year-read-view--down-arrow,
+.react-datepicker__month-read-view--down-arrow {
+  @apply border-gray-500;
+}
