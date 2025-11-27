@@ -38,6 +38,14 @@ export interface Planet {
   nakshatra_pada: number;
   abs_longitude: number;
   varga_signs: VargaSigns;
+  // Extended data
+  sign_lord: string;
+  nakshatra_lord: string;
+  houses_owned: number[];
+  dignity: string;
+  conjunctions: string[];
+  aspects_giving: number[];
+  aspects_receiving: string[];
 }
 
 export interface House {
@@ -45,7 +53,20 @@ export interface House {
   sign: string;
   degrees: number;
   abs_longitude: number;
+  lord: string;
+  occupants: string[];
+  aspects_received: string[];
 }
+
+// Dignity translations
+export const DIGNITY_NAMES: Record<string, string> = {
+  'Exalted': 'Экзальтация',
+  'Debilitated': 'Падение',
+  'Own': 'Свой знак',
+  'Friend': 'Дружба',
+  'Neutral': 'Нейтральный',
+  'Enemy': 'Вражда',
+};
 
 export interface Ascendant {
   sign: string;

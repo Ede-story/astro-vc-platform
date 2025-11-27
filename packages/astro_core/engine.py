@@ -77,6 +77,92 @@ AYANAMSA_IDS = {
 VARGA_CODES = ['D1', 'D2', 'D3', 'D4', 'D7', 'D9', 'D10', 'D12',
                'D16', 'D20', 'D24', 'D27', 'D30', 'D40', 'D45', 'D60']
 
+# Sign Lords (Rulers)
+SIGN_LORDS = {
+    'Aries': 'Mars', 'Taurus': 'Venus', 'Gemini': 'Mercury', 'Cancer': 'Moon',
+    'Leo': 'Sun', 'Virgo': 'Mercury', 'Libra': 'Venus', 'Scorpio': 'Mars',
+    'Sagittarius': 'Jupiter', 'Capricorn': 'Saturn', 'Aquarius': 'Saturn', 'Pisces': 'Jupiter'
+}
+
+# Nakshatra Lords (Vimshottari Dasha order)
+NAKSHATRA_LORDS = {
+    'Ashwini': 'Ketu', 'Bharani': 'Venus', 'Krittika': 'Sun',
+    'Rohini': 'Moon', 'Mrigashira': 'Mars', 'Ardra': 'Rahu',
+    'Punarvasu': 'Jupiter', 'Pushya': 'Saturn', 'Ashlesha': 'Mercury',
+    'Magha': 'Ketu', 'Purva Phalguni': 'Venus', 'Uttara Phalguni': 'Sun',
+    'Hasta': 'Moon', 'Chitra': 'Mars', 'Swati': 'Rahu',
+    'Vishakha': 'Jupiter', 'Anuradha': 'Saturn', 'Jyeshtha': 'Mercury',
+    'Mula': 'Ketu', 'Purva Ashadha': 'Venus', 'Uttara Ashadha': 'Sun',
+    'Shravana': 'Moon', 'Dhanishta': 'Mars', 'Shatabhisha': 'Rahu',
+    'Purva Bhadrapada': 'Jupiter', 'Uttara Bhadrapada': 'Saturn', 'Revati': 'Mercury'
+}
+
+# Planet Exaltation Signs
+EXALTATION_SIGNS = {
+    'Sun': 'Aries', 'Moon': 'Taurus', 'Mars': 'Capricorn', 'Mercury': 'Virgo',
+    'Jupiter': 'Cancer', 'Venus': 'Pisces', 'Saturn': 'Libra',
+    'Rahu': 'Taurus', 'Ketu': 'Scorpio'
+}
+
+# Planet Debilitation Signs
+DEBILITATION_SIGNS = {
+    'Sun': 'Libra', 'Moon': 'Scorpio', 'Mars': 'Cancer', 'Mercury': 'Pisces',
+    'Jupiter': 'Capricorn', 'Venus': 'Virgo', 'Saturn': 'Aries',
+    'Rahu': 'Scorpio', 'Ketu': 'Taurus'
+}
+
+# Own Signs (Moolatrikona + Own)
+OWN_SIGNS = {
+    'Sun': ['Leo'],
+    'Moon': ['Cancer'],
+    'Mars': ['Aries', 'Scorpio'],
+    'Mercury': ['Gemini', 'Virgo'],
+    'Jupiter': ['Sagittarius', 'Pisces'],
+    'Venus': ['Taurus', 'Libra'],
+    'Saturn': ['Capricorn', 'Aquarius'],
+    'Rahu': ['Aquarius'],
+    'Ketu': ['Scorpio']
+}
+
+# Natural Friendships
+NATURAL_FRIENDS = {
+    'Sun': ['Moon', 'Mars', 'Jupiter'],
+    'Moon': ['Sun', 'Mercury'],
+    'Mars': ['Sun', 'Moon', 'Jupiter'],
+    'Mercury': ['Sun', 'Venus'],
+    'Jupiter': ['Sun', 'Moon', 'Mars'],
+    'Venus': ['Mercury', 'Saturn'],
+    'Saturn': ['Mercury', 'Venus'],
+    'Rahu': ['Mercury', 'Venus', 'Saturn'],
+    'Ketu': ['Mars', 'Venus', 'Saturn']
+}
+
+# Natural Enemies
+NATURAL_ENEMIES = {
+    'Sun': ['Venus', 'Saturn'],
+    'Moon': [],
+    'Mars': ['Mercury'],
+    'Mercury': ['Moon'],
+    'Jupiter': ['Mercury', 'Venus'],
+    'Venus': ['Sun', 'Moon'],
+    'Saturn': ['Sun', 'Moon', 'Mars'],
+    'Rahu': ['Sun', 'Moon', 'Mars'],
+    'Ketu': ['Sun', 'Moon']
+}
+
+# Graha Drishti (Planetary Aspects) - which houses from own position
+PLANETARY_ASPECTS = {
+    'Sun': [7],       # 7th aspect
+    'Moon': [7],      # 7th aspect
+    'Mars': [4, 7, 8],  # 4th, 7th, 8th aspects
+    'Mercury': [7],   # 7th aspect
+    'Jupiter': [5, 7, 9],  # 5th, 7th, 9th aspects
+    'Venus': [7],     # 7th aspect
+    'Saturn': [3, 7, 10],  # 3rd, 7th, 10th aspects
+    'Rahu': [5, 7, 9],  # Same as Jupiter
+    'Ketu': [5, 7, 9]   # Same as Jupiter
+}
+
 
 # =============================================================================
 # DATA CLASSES
@@ -96,6 +182,15 @@ class PlanetPosition:
     # Varga signs (populated by calculate_all_vargas)
     varga_signs: Dict[str, str] = field(default_factory=dict)
 
+    # Extended data (Lords, Dignity, Aspects)
+    sign_lord: str = ""          # Lord of the sign this planet occupies
+    nakshatra_lord: str = ""     # Lord of the nakshatra
+    houses_owned: List[int] = field(default_factory=list)  # Houses this planet rules
+    dignity: str = ""            # Exalted/Debilitated/Own/Friend/Neutral/Enemy
+    conjunctions: List[str] = field(default_factory=list)  # Planets in same sign
+    aspects_giving: List[int] = field(default_factory=list)  # Houses this planet aspects
+    aspects_receiving: List[str] = field(default_factory=list)  # Planets aspecting this one
+
 
 @dataclass
 class HousePosition:
@@ -104,6 +199,11 @@ class HousePosition:
     abs_longitude: float         # CORRECTED absolute longitude (0-360)
     sign: str                    # Sign name
     sign_degrees: float          # Degrees within sign (0-30)
+
+    # Extended data
+    lord: str = ""               # Planet ruling this house's sign
+    occupants: List[str] = field(default_factory=list)  # Planets in this house
+    aspects_received: List[str] = field(default_factory=list)  # Planets aspecting this house
 
 
 @dataclass
@@ -127,6 +227,84 @@ class ChartData:
     # Ascendant info
     ascendant_sign: str
     ascendant_degrees: float
+
+
+# =============================================================================
+# HELPER FUNCTIONS FOR EXTENDED DATA
+# =============================================================================
+
+def get_planet_dignity(planet_name: str, sign: str) -> str:
+    """
+    Calculate the dignity of a planet in a given sign.
+
+    Returns: 'Exalted', 'Debilitated', 'Own', 'Friend', 'Neutral', or 'Enemy'
+    """
+    if planet_name not in EXALTATION_SIGNS:
+        return 'Neutral'
+
+    # Check exaltation
+    if EXALTATION_SIGNS.get(planet_name) == sign:
+        return 'Exalted'
+
+    # Check debilitation
+    if DEBILITATION_SIGNS.get(planet_name) == sign:
+        return 'Debilitated'
+
+    # Check own sign
+    if sign in OWN_SIGNS.get(planet_name, []):
+        return 'Own'
+
+    # Check friendship with sign lord
+    sign_lord = SIGN_LORDS.get(sign, '')
+    if sign_lord == planet_name:
+        return 'Own'
+
+    if sign_lord in NATURAL_FRIENDS.get(planet_name, []):
+        return 'Friend'
+
+    if sign_lord in NATURAL_ENEMIES.get(planet_name, []):
+        return 'Enemy'
+
+    return 'Neutral'
+
+
+def get_houses_owned(planet_name: str, house_signs: Dict[int, str]) -> List[int]:
+    """
+    Find which houses a planet owns (rules) based on house signs.
+
+    Args:
+        planet_name: Name of the planet
+        house_signs: Dict mapping house number to sign
+
+    Returns:
+        List of house numbers this planet rules
+    """
+    owned = []
+    for house_num, sign in house_signs.items():
+        if SIGN_LORDS.get(sign) == planet_name:
+            owned.append(house_num)
+    return sorted(owned)
+
+
+def get_aspects_giving(planet_name: str, planet_house: int) -> List[int]:
+    """
+    Calculate which houses a planet aspects from its position.
+
+    Args:
+        planet_name: Name of the planet
+        planet_house: House number where planet is placed (1-12)
+
+    Returns:
+        List of house numbers the planet aspects
+    """
+    aspect_offsets = PLANETARY_ASPECTS.get(planet_name, [7])
+    aspected_houses = []
+
+    for offset in aspect_offsets:
+        target_house = ((planet_house - 1 + offset) % 12) + 1
+        aspected_houses.append(target_house)
+
+    return sorted(aspected_houses)
 
 
 # =============================================================================
@@ -443,8 +621,48 @@ class AstroCore:
         else:
             ayanamsa_delta = 0.0
 
-        # Step 3: Process planets - apply delta and calculate vargas
+        # Step 3: Process houses FIRST (we need house signs for planet lordships)
+        houses = []
+        house_signs: Dict[int, str] = {}
+        ascendant_sign = "Aries"
+        ascendant_degrees = 0.0
+
+        if hasattr(raw_chart, 'd1_chart') and hasattr(raw_chart.d1_chart, 'houses'):
+            for i, h in enumerate(raw_chart.d1_chart.houses):
+                raw_sign = str(h.sign)
+                raw_degrees = float(getattr(h, 'sign_degrees', 0) or 0)
+
+                # Calculate RAW absolute longitude
+                raw_sign_idx = SIGNS.index(raw_sign) if raw_sign in SIGNS else 0
+                raw_abs_longitude = raw_sign_idx * 30 + raw_degrees
+
+                # Apply Raman delta
+                corrected_longitude = normalize_longitude(raw_abs_longitude + ayanamsa_delta)
+
+                # Convert back to sign + degrees
+                corrected_sign, corrected_degrees = longitude_to_sign_degrees(corrected_longitude)
+
+                house_num = i + 1
+                house_signs[house_num] = corrected_sign
+
+                house = HousePosition(
+                    house_number=house_num,
+                    abs_longitude=corrected_longitude,
+                    sign=corrected_sign,
+                    sign_degrees=corrected_degrees,
+                    lord=SIGN_LORDS.get(corrected_sign, '')
+                )
+                houses.append(house)
+
+                # Store ascendant info (House 1)
+                if i == 0:
+                    ascendant_sign = corrected_sign
+                    ascendant_degrees = corrected_degrees
+
+        # Step 4: Process planets - apply delta and calculate vargas
         planets = []
+        planet_signs: Dict[str, str] = {}  # For conjunction calculation
+        planet_houses: Dict[str, int] = {}  # For aspect calculation
 
         if hasattr(raw_chart, 'd1_chart') and hasattr(raw_chart.d1_chart, 'planets'):
             for p in raw_chart.d1_chart.planets:
@@ -468,53 +686,55 @@ class AstroCore:
                 # Calculate ALL Varga signs from CORRECTED longitude
                 varga_signs = calculate_all_vargas(corrected_longitude)
 
-                # Create planet position object
+                planet_name = str(p.celestial_body)
+                planet_signs[planet_name] = corrected_sign
+                planet_houses[planet_name] = p.house
+
+                # Create planet position object with extended data
                 planet = PlanetPosition(
-                    name=str(p.celestial_body),
+                    name=planet_name,
                     abs_longitude=corrected_longitude,
                     sign=corrected_sign,
                     sign_degrees=corrected_degrees,
                     nakshatra=nakshatra,
                     nakshatra_pada=pada,
                     house=p.house,
-                    varga_signs=varga_signs
+                    varga_signs=varga_signs,
+                    sign_lord=SIGN_LORDS.get(corrected_sign, ''),
+                    nakshatra_lord=NAKSHATRA_LORDS.get(nakshatra, ''),
+                    houses_owned=get_houses_owned(planet_name, house_signs),
+                    dignity=get_planet_dignity(planet_name, corrected_sign),
+                    aspects_giving=get_aspects_giving(planet_name, p.house)
                 )
                 planets.append(planet)
 
-        # Step 4: Process houses - apply delta
-        houses = []
-        ascendant_sign = "Aries"
-        ascendant_degrees = 0.0
+        # Step 5: Calculate conjunctions and aspects received (need all planets first)
+        for planet in planets:
+            # Conjunctions - planets in the same sign
+            planet.conjunctions = [
+                p_name for p_name, p_sign in planet_signs.items()
+                if p_sign == planet.sign and p_name != planet.name
+            ]
 
-        if hasattr(raw_chart, 'd1_chart') and hasattr(raw_chart.d1_chart, 'houses'):
-            for i, h in enumerate(raw_chart.d1_chart.houses):
-                raw_sign = str(h.sign)
-                raw_degrees = float(getattr(h, 'sign_degrees', 0) or 0)
+            # Aspects receiving - which planets aspect this planet's house
+            for other_planet in planets:
+                if other_planet.name != planet.name:
+                    if planet.house in other_planet.aspects_giving:
+                        planet.aspects_receiving.append(other_planet.name)
 
-                # Calculate RAW absolute longitude
-                raw_sign_idx = SIGNS.index(raw_sign) if raw_sign in SIGNS else 0
-                raw_abs_longitude = raw_sign_idx * 30 + raw_degrees
+        # Step 6: Update houses with occupants and aspects
+        for house in houses:
+            # Occupants - planets in this house
+            house.occupants = [
+                p.name for p in planets if p.house == house.house_number
+            ]
 
-                # Apply Raman delta
-                corrected_longitude = normalize_longitude(raw_abs_longitude + ayanamsa_delta)
+            # Aspects received - planets aspecting this house
+            house.aspects_received = [
+                p.name for p in planets if house.house_number in p.aspects_giving
+            ]
 
-                # Convert back to sign + degrees
-                corrected_sign, corrected_degrees = longitude_to_sign_degrees(corrected_longitude)
-
-                house = HousePosition(
-                    house_number=i + 1,
-                    abs_longitude=corrected_longitude,
-                    sign=corrected_sign,
-                    sign_degrees=corrected_degrees
-                )
-                houses.append(house)
-
-                # Store ascendant info (House 1)
-                if i == 0:
-                    ascendant_sign = corrected_sign
-                    ascendant_degrees = corrected_degrees
-
-        # Step 5: Create and return ChartData
+        # Step 7: Create and return ChartData
         return ChartData(
             birth_datetime=birth_datetime,
             latitude=latitude,

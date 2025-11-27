@@ -46,7 +46,7 @@ class CalculateRequest(BaseModel):
 
 
 class PlanetData(BaseModel):
-    """Planet position data."""
+    """Planet position data with extended astrological details."""
     name: str
     sign: str
     degrees: float
@@ -56,6 +56,26 @@ class PlanetData(BaseModel):
     abs_longitude: float
     varga_signs: Dict[str, str] = {}
 
+    # Extended data
+    sign_lord: str = ""
+    nakshatra_lord: str = ""
+    houses_owned: List[int] = []
+    dignity: str = ""
+    conjunctions: List[str] = []
+    aspects_giving: List[int] = []
+    aspects_receiving: List[str] = []
+
+
+class HouseData(BaseModel):
+    """House data with extended details."""
+    house: int
+    sign: str
+    degrees: float
+    abs_longitude: float
+    lord: str = ""
+    occupants: List[str] = []
+    aspects_received: List[str] = []
+
 
 class CalculateResponse(BaseModel):
     """Response model for chart calculation."""
@@ -64,7 +84,7 @@ class CalculateResponse(BaseModel):
     ayanamsa_delta: float
     ascendant: Dict[str, Any]
     planets: List[PlanetData]
-    houses: List[Dict[str, Any]]
+    houses: List[HouseData]
     requested_varga: Optional[str] = None
     varga_data: Optional[Dict[str, Any]] = None
 
@@ -138,7 +158,7 @@ async def calculate_chart(request: CalculateRequest):
             ayanamsa=ayanamsa
         )
 
-        # Build response
+        # Build response with extended data
         planets_data = []
         for p in chart.planets:
             planet_data = PlanetData(
@@ -149,18 +169,30 @@ async def calculate_chart(request: CalculateRequest):
                 nakshatra=p.nakshatra,
                 nakshatra_pada=p.nakshatra_pada,
                 abs_longitude=round(p.abs_longitude, 4),
-                varga_signs=p.varga_signs
+                varga_signs=p.varga_signs,
+                # Extended data
+                sign_lord=p.sign_lord,
+                nakshatra_lord=p.nakshatra_lord,
+                houses_owned=p.houses_owned,
+                dignity=p.dignity,
+                conjunctions=p.conjunctions,
+                aspects_giving=p.aspects_giving,
+                aspects_receiving=p.aspects_receiving
             )
             planets_data.append(planet_data)
 
         houses_data = []
         for h in chart.houses:
-            houses_data.append({
-                "house": h.house_number,
-                "sign": h.sign,
-                "degrees": round(h.sign_degrees, 2),
-                "abs_longitude": round(h.abs_longitude, 4)
-            })
+            house_data = HouseData(
+                house=h.house_number,
+                sign=h.sign,
+                degrees=round(h.sign_degrees, 2),
+                abs_longitude=round(h.abs_longitude, 4),
+                lord=h.lord,
+                occupants=h.occupants,
+                aspects_received=h.aspects_received
+            )
+            houses_data.append(house_data)
 
         # If specific varga requested, extract that data
         varga_data = None
