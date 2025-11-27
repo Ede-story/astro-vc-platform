@@ -39,6 +39,9 @@ COPY packages/ /app/packages/
 # Copy application code
 COPY backend/app/ /app/app/
 
+# Create data directory for profiles
+RUN mkdir -p /app/data/profiles
+
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
