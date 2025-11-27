@@ -12,7 +12,7 @@ import traceback
 # Import the Golden Math engine
 import sys
 sys.path.insert(0, '/app/packages')
-from astro_core.engine import AstroCore, calculate_all_vargas, get_varga_sign, SIGNS
+from astro_core.engine import AstroCore, calculate_all_vargas, get_varga_sign, get_varga_sign_and_degrees, SIGNS
 
 router = APIRouter()
 
@@ -194,17 +194,25 @@ async def calculate_chart(request: CalculateRequest):
             )
             houses_data.append(house_data)
 
-        # If specific varga requested, extract that data
+        # If specific varga requested, extract that data with degrees
         varga_data = None
         if request.varga:
             varga_code = request.varga.upper()
+            asc_sign, asc_deg = get_varga_sign_and_degrees(
+                chart.houses[0].abs_longitude, varga_code
+            ) if chart.houses else (None, 0.0)
             varga_data = {
                 "code": varga_code,
-                "ascendant": get_varga_sign(chart.houses[0].abs_longitude, varga_code) if chart.houses else None,
+                "ascendant": asc_sign,
+                "ascendant_degrees": round(asc_deg, 2),
                 "planets": {}
             }
             for p in chart.planets:
-                varga_data["planets"][p.name] = p.varga_signs.get(varga_code, "Unknown")
+                sign, degrees = get_varga_sign_and_degrees(p.abs_longitude, varga_code)
+                varga_data["planets"][p.name] = {
+                    "sign": sign,
+                    "degrees": round(degrees, 2)
+                }
 
         return CalculateResponse(
             success=True,

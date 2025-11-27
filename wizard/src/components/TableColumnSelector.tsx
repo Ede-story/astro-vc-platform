@@ -103,7 +103,8 @@ export default function TableColumnSelector({ columns, onChange }: TableColumnSe
 // Default planet columns configuration
 export const DEFAULT_PLANET_COLUMNS: ColumnConfig[] = [
   { id: 'name', label: 'Планета', enabled: true, fixed: true },
-  { id: 'sign', label: 'Знак и градус', enabled: true },
+  { id: 'sign', label: 'Знак', enabled: true },
+  { id: 'degrees', label: 'Градусы', enabled: true },
   { id: 'nakshatra', label: 'Накшатра', enabled: true },
   { id: 'house', label: 'Дом', enabled: true },
   { id: 'sign_lord', label: 'Управитель знака', enabled: true },

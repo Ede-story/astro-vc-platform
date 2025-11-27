@@ -56,7 +56,6 @@ export default function AstroCalculator() {
   // Saved profiles state
   const [savedProfiles, setSavedProfiles] = useState<SavedProfile[]>([]);
   const [activeProfileId, setActiveProfileId] = useState<string | null>(null);
-  const [profilesLoading, setProfilesLoading] = useState(false);
 
   // City search state
   const [citySuggestions, setCitySuggestions] = useState<Array<{
@@ -83,19 +82,28 @@ export default function AstroCalculator() {
   const searchCity = async (query: string) => {
     if (query.length < 2) {
       setCitySuggestions([]);
+      setShowCitySuggestions(false);
       return;
     }
 
     setCitySearchLoading(true);
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&accept-language=ru`,
-        { headers: { 'User-Agent': 'StarMeet/1.0' } }
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&accept-language=ru&addressdetails=1&featuretype=city`,
+        {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          }
+        }
       );
       if (response.ok) {
         const data = await response.json();
+        console.log('City search results:', data);
         setCitySuggestions(data);
         setShowCitySuggestions(data.length > 0);
+      } else {
+        console.error('City search failed with status:', response.status);
       }
     } catch (err) {
       console.error('City search failed:', err);
@@ -114,15 +122,26 @@ export default function AstroCalculator() {
     return () => clearTimeout(timeoutId);
   }, [input.city]);
 
+  // Calculate timezone from longitude (approximate)
+  const getTimezoneFromLongitude = (lon: number): number => {
+    // Simple approximation: 15 degrees = 1 hour
+    // Round to nearest 0.5
+    const tz = Math.round((lon / 15) * 2) / 2;
+    return Math.max(-12, Math.min(12, tz));
+  };
+
   // Select city from suggestions
   const selectCity = (suggestion: { display_name: string; lat: string; lon: string }) => {
     // Extract just city name (first part before comma)
     const cityName = suggestion.display_name.split(',')[0].trim();
+    const lon = parseFloat(suggestion.lon);
+    const timezone = getTimezoneFromLongitude(lon);
     setInput({
       ...input,
       city: cityName,
       lat: parseFloat(suggestion.lat),
-      lon: parseFloat(suggestion.lon),
+      lon: lon,
+      timezone: timezone,
     });
     setShowCitySuggestions(false);
     setCitySuggestions([]);
@@ -134,7 +153,6 @@ export default function AstroCalculator() {
   }, []);
 
   const loadProfiles = async () => {
-    setProfilesLoading(true);
     try {
       const response = await fetch(`${API_URL}/v1/profiles`);
       if (response.ok) {
@@ -143,8 +161,6 @@ export default function AstroCalculator() {
       }
     } catch (err) {
       console.error('Failed to load profiles:', err);
-    } finally {
-      setProfilesLoading(false);
     }
   };
 
@@ -272,10 +288,35 @@ export default function AstroCalculator() {
     if (selectedVarga === 'D1') {
       return planet.sign;
     }
-    if (result?.varga_data?.planets) {
-      return result.varga_data.planets[planet.name] || planet.sign;
+    // Use varga_data from API response (has the requested varga)
+    if (result?.varga_data?.planets && result.varga_data.code === selectedVarga) {
+      const vargaPlanet = result.varga_data.planets[planet.name];
+      // Handle both old format (string) and new format ({sign, degrees})
+      if (typeof vargaPlanet === 'object' && vargaPlanet !== null) {
+        return vargaPlanet.sign || planet.sign;
+      }
+      return vargaPlanet || planet.sign;
     }
-    return planet.varga_signs[selectedVarga as keyof typeof planet.varga_signs] || planet.sign;
+    // Fallback to pre-calculated varga_signs from planet data
+    const vargaSign = planet.varga_signs?.[selectedVarga as keyof typeof planet.varga_signs];
+    return vargaSign || planet.sign;
+  };
+
+  // Get planet degrees for selected varga
+  const getPlanetVargaDegrees = (planet: CalculateResponse['planets'][0]): number => {
+    if (selectedVarga === 'D1') {
+      return planet.degrees;
+    }
+    // Use varga_data from API response
+    if (result?.varga_data?.planets && result.varga_data.code === selectedVarga) {
+      const vargaPlanet = result.varga_data.planets[planet.name];
+      // Handle new format ({sign, degrees})
+      if (typeof vargaPlanet === 'object' && vargaPlanet !== null) {
+        return vargaPlanet.degrees ?? planet.degrees;
+      }
+    }
+    // Fallback to D1 degrees
+    return planet.degrees;
   };
 
   // Get planets in a specific house for the selected varga
@@ -288,7 +329,8 @@ export default function AstroCalculator() {
         .map(p => PLANET_NAMES[p.name] || p.name);
     }
 
-    if (result.varga_data) {
+    // Use varga_data if available and matches selected varga
+    if (result.varga_data && result.varga_data.code === selectedVarga) {
       const vargaAsc = result.varga_data.ascendant;
       const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
                      'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
@@ -301,7 +343,25 @@ export default function AstroCalculator() {
         .map(([planet]) => PLANET_NAMES[planet] || planet);
     }
 
-    return [];
+    // Fallback: use pre-calculated varga_signs
+    const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
+                   'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
+    // Get ascendant for this varga from first planet's varga_signs
+    const firstPlanet = result.planets[0];
+    if (!firstPlanet?.varga_signs) return [];
+    const vargaKey = selectedVarga as keyof typeof firstPlanet.varga_signs;
+    const ascSign = firstPlanet.varga_signs[vargaKey];
+    if (!ascSign) return [];
+    const ascIdx = signs.indexOf(ascSign);
+    if (ascIdx === -1) return [];
+    const houseSign = signs[(ascIdx + houseNum - 1) % 12];
+
+    return result.planets
+      .filter(p => {
+        const pVargaKey = selectedVarga as keyof typeof p.varga_signs;
+        return p.varga_signs?.[pVargaKey] === houseSign;
+      })
+      .map(p => PLANET_NAMES[p.name] || p.name);
   };
 
   // Get house sign for selected varga
@@ -313,16 +373,24 @@ export default function AstroCalculator() {
       return house?.sign || '';
     }
 
-    if (result.varga_data) {
+    const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
+                   'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
+
+    // Use varga_data if available and matches selected varga
+    if (result.varga_data && result.varga_data.code === selectedVarga) {
       const vargaAsc = result.varga_data.ascendant;
-      const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
-                     'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
       const ascIdx = signs.indexOf(vargaAsc);
       if (ascIdx === -1) return '';
       return signs[(ascIdx + houseNum - 1) % 12];
     }
 
-    return '';
+    // Fallback: calculate from first house's abs_longitude using D1 ascendant shifted
+    // This is an approximation - ideally backend should provide varga ascendant
+    const firstHouse = result.houses[0];
+    if (!firstHouse) return '';
+    const d1AscIdx = signs.indexOf(firstHouse.sign);
+    if (d1AscIdx === -1) return '';
+    return signs[(d1AscIdx + houseNum - 1) % 12];
   };
 
   // Get current ascendant based on selected varga
@@ -357,45 +425,48 @@ export default function AstroCalculator() {
           <p className="text-gray-500 text-sm mt-1">Ведический астрологический калькулятор</p>
         </header>
 
-        {/* Saved Profiles Dropdown */}
+        {/* Saved Profiles Row */}
         <div className="card mb-6">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 flex-1">
-              <label className="text-sm font-medium text-gray-700 whitespace-nowrap">Профиль:</label>
-              <select
-                className="input-field flex-1"
-                value={activeProfileId || ''}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value === '') {
-                    // "Новый" selected
-                    setInput({ ...DEFAULT_INPUT, name: '' });
-                    setResult(null);
-                    setActiveProfileId(null);
-                    setIsFormCollapsed(false);
-                  } else {
-                    loadProfile(value);
-                  }
-                }}
-              >
-                <option value="">+ Новый профиль</option>
-                {savedProfiles.filter((p: SavedProfile) => p.name && p.name.trim() !== '').map((profile: SavedProfile) => (
-                  <option key={profile.id} value={profile.id}>
-                    {profile.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                setInput({ name: '', date: '', time: '', city: '', lat: 0, lon: 0, timezone: 3, ayanamsa: 'raman' });
+                setResult(null);
+                setActiveProfileId(null);
+                setIsFormCollapsed(false);
+              }}
+              className="btn-secondary whitespace-nowrap"
+            >
+              + Новый профиль
+            </button>
+
+            <select
+              className="input-field w-48"
+              value={activeProfileId || ''}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value) {
+                  loadProfile(value);
+                }
+              }}
+            >
+              <option value="">Выберите профиль</option>
+              {savedProfiles.filter((p: SavedProfile) => p.name && p.name.trim() !== '').map((profile: SavedProfile) => (
+                <option key={profile.id} value={profile.id}>
+                  {profile.name}
+                </option>
+              ))}
+            </select>
+
             {activeProfileId && (
               <button
                 onClick={() => deleteProfile(activeProfileId)}
-                className="text-sm text-red-500 hover:text-red-700 flex items-center gap-1"
+                className="p-1.5 text-gray-400 hover:text-gray-500 transition-colors"
                 title="Удалить профиль"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
-                Удалить
               </button>
             )}
           </div>
@@ -506,12 +577,12 @@ export default function AstroCalculator() {
                   </div>
                 )}
                 {showCitySuggestions && citySuggestions.length > 0 && (
-                  <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                  <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-xl max-h-48 overflow-y-auto">
                     {citySuggestions.map((suggestion, index) => (
                       <button
                         key={index}
                         type="button"
-                        className="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 border-b border-gray-100 last:border-0"
+                        className="w-full px-3 py-2 text-left text-sm text-gray-800 hover:bg-gray-100 border-b border-gray-200 last:border-0"
                         onClick={() => selectCity(suggestion)}
                       >
                         {suggestion.display_name}
@@ -571,7 +642,7 @@ export default function AstroCalculator() {
                 <button
                   onClick={handleCalculate}
                   disabled={loading}
-                  className="btn-primary flex-1 disabled:opacity-50"
+                  className="bg-gray-700 text-white font-medium py-2.5 px-5 rounded-md hover:bg-gray-600 transition-colors duration-150 text-sm flex-1 disabled:opacity-50"
                 >
                   {loading ? 'Расчет...' : 'Рассчитать'}
                 </button>
@@ -648,6 +719,7 @@ export default function AstroCalculator() {
                       <tr>
                         {isColumnVisible(planetColumns, 'name') && <th>Планета</th>}
                         {isColumnVisible(planetColumns, 'sign') && <th>Знак</th>}
+                        {isColumnVisible(planetColumns, 'degrees') && <th>Градусы</th>}
                         {isColumnVisible(planetColumns, 'nakshatra') && <th>Накшатра</th>}
                         {isColumnVisible(planetColumns, 'house') && <th>Дом</th>}
                         {isColumnVisible(planetColumns, 'sign_lord') && <th>Упр. знака</th>}
@@ -662,6 +734,7 @@ export default function AstroCalculator() {
                     <tbody>
                       {result.planets.map((planet) => {
                         const vargaSign = getPlanetVargaSign(planet);
+                        const vargaDegrees = getPlanetVargaDegrees(planet);
                         return (
                           <tr key={planet.name}>
                             {isColumnVisible(planetColumns, 'name') && (
@@ -672,19 +745,22 @@ export default function AstroCalculator() {
                             {isColumnVisible(planetColumns, 'sign') && (
                               <td>
                                 {SIGN_NAMES[vargaSign] || vargaSign}
-                                {selectedVarga === 'D1' && (
-                                  <span className="text-gray-400 ml-1 text-xs">
-                                    {planet.degrees.toFixed(1)}°
-                                  </span>
-                                )}
+                              </td>
+                            )}
+                            {isColumnVisible(planetColumns, 'degrees') && (
+                              <td className="text-gray-600">
+                                {vargaDegrees.toFixed(2)}°
                               </td>
                             )}
                             {isColumnVisible(planetColumns, 'nakshatra') && (
-                              <td className="text-gray-600">
+                              <td className={selectedVarga === 'D1' ? 'text-gray-600' : 'text-gray-400'}>
                                 {planet.nakshatra}
                                 <span className="text-gray-400 ml-1">
                                   ({planet.nakshatra_pada})
                                 </span>
+                                {selectedVarga !== 'D1' && (
+                                  <span className="text-gray-300 ml-1 text-xs">(D1)</span>
+                                )}
                               </td>
                             )}
                             {isColumnVisible(planetColumns, 'house') && (

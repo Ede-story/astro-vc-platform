@@ -536,6 +536,99 @@ def get_varga_sign(abs_longitude: float, varga_code: str) -> str:
         return sign_name
 
 
+def get_varga_sign_and_degrees(abs_longitude: float, varga_code: str) -> Tuple[str, float]:
+    """
+    Calculate the sign AND degrees for a given Varga chart.
+
+    The library functions return a tuple: (part_number, sign, degrees_in_part)
+    For varga degrees, we calculate where the planet is within its varga sign.
+
+    Args:
+        abs_longitude: CORRECTED absolute longitude (0-360)
+        varga_code: Varga chart code (D1, D2, D3, ..., D60)
+
+    Returns:
+        Tuple of (sign_name, degrees_in_varga_sign)
+    """
+    if abs_longitude is None:
+        return ("Aries", 0.0)
+
+    abs_longitude = normalize_longitude(float(abs_longitude))
+    sign_name, degrees_in_sign = longitude_to_sign_degrees(abs_longitude)
+
+    varga_upper = varga_code.upper()
+
+    try:
+        if varga_upper == 'D1':
+            return (sign_name, degrees_in_sign)
+
+        elif varga_upper == 'D2':
+            part, result_sign, deg = hora_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D3':
+            part, result_sign, deg = drekkana_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D4':
+            part, result_sign, deg = chaturtamsa_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D7':
+            part, result_sign, deg = saptamsa_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D9':
+            part, result_sign, deg = navamsa_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D10':
+            part, result_sign, deg = dasamsa_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D12':
+            part, result_sign, deg = dwadasamsa_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D16':
+            part, result_sign, deg = shodasamsa_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D20':
+            part, result_sign, deg = vimsamsa_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D24':
+            part, result_sign, deg = chaturvimsamsa_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D27':
+            part, result_sign, deg = sapta_vimsamsa_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D30':
+            part, result_sign, deg = trimsamsa_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D40':
+            part, result_sign, deg = khavedamsa_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D45':
+            part, result_sign, deg = akshavedamsa_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D60':
+            part, result_sign, deg = shashtiamsa_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        else:
+            return (sign_name, degrees_in_sign)
+
+    except Exception as e:
+        return (sign_name, degrees_in_sign)
+
+
 def calculate_all_vargas(abs_longitude: float) -> Dict[str, str]:
     """
     Calculate all Varga signs for a given absolute longitude.
@@ -549,6 +642,23 @@ def calculate_all_vargas(abs_longitude: float) -> Dict[str, str]:
     vargas = {}
     for varga_code in VARGA_CODES:
         vargas[varga_code] = get_varga_sign(abs_longitude, varga_code)
+    return vargas
+
+
+def calculate_all_vargas_with_degrees(abs_longitude: float) -> Dict[str, Dict[str, Any]]:
+    """
+    Calculate all Varga signs AND degrees for a given absolute longitude.
+
+    Args:
+        abs_longitude: CORRECTED absolute longitude (0-360)
+
+    Returns:
+        Dict mapping Varga code to {sign, degrees}
+    """
+    vargas = {}
+    for varga_code in VARGA_CODES:
+        sign, degrees = get_varga_sign_and_degrees(abs_longitude, varga_code)
+        vargas[varga_code] = {"sign": sign, "degrees": round(degrees, 4)}
     return vargas
 
 

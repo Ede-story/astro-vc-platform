@@ -74,10 +74,16 @@ export interface Ascendant {
   abs_longitude: number;
 }
 
+export interface VargaPlanetData {
+  sign: string;
+  degrees: number;
+}
+
 export interface VargaData {
   code: string;
   ascendant: string;
-  planets: Record<string, string>;
+  ascendant_degrees?: number;
+  planets: Record<string, string | VargaPlanetData>;  // Support both old and new format
 }
 
 export interface CalculateResponse {
