@@ -111,7 +111,7 @@ DEBILITATION_SIGNS = {
     'Rahu': 'Scorpio', 'Ketu': 'Taurus'
 }
 
-# Own Signs (Moolatrikona + Own)
+# Own Signs (Swakshetra)
 OWN_SIGNS = {
     'Sun': ['Leo'],
     'Moon': ['Cancer'],
@@ -122,6 +122,18 @@ OWN_SIGNS = {
     'Saturn': ['Capricorn', 'Aquarius'],
     'Rahu': ['Aquarius'],
     'Ketu': ['Scorpio']
+}
+
+# Moolatrikona Signs (with degree ranges)
+# Format: {planet: (sign, start_degree, end_degree)}
+MOOLATRIKONA = {
+    'Sun': ('Leo', 0, 20),           # Sun: Leo 0-20°
+    'Moon': ('Taurus', 3, 30),       # Moon: Taurus 3-30°
+    'Mars': ('Aries', 0, 12),        # Mars: Aries 0-12°
+    'Mercury': ('Virgo', 15, 20),    # Mercury: Virgo 15-20°
+    'Jupiter': ('Sagittarius', 0, 10), # Jupiter: Sagittarius 0-10°
+    'Venus': ('Libra', 0, 15),       # Venus: Libra 0-15°
+    'Saturn': ('Aquarius', 0, 20),   # Saturn: Aquarius 0-20°
 }
 
 # Natural Friendships
@@ -233,11 +245,23 @@ class ChartData:
 # HELPER FUNCTIONS FOR EXTENDED DATA
 # =============================================================================
 
-def get_planet_dignity(planet_name: str, sign: str) -> str:
+def get_planet_dignity(planet_name: str, sign: str, degrees: float = None) -> str:
     """
     Calculate the dignity of a planet in a given sign.
 
-    Returns: 'Exalted', 'Debilitated', 'Own', 'Friend', 'Neutral', or 'Enemy'
+    Priority order (highest to lowest):
+    1. Exalted (Uccha)
+    2. Moolatrikona (if degrees within range)
+    3. Own (Swakshetra)
+    4. Debilitated (Neecha)
+    5. Friend/Neutral/Enemy (based on sign lord relationship)
+
+    Args:
+        planet_name: Name of the planet
+        sign: Sign name
+        degrees: Degrees within sign (0-30), needed for Moolatrikona check
+
+    Returns: 'Exalted', 'Moolatrikona', 'Own', 'Debilitated', 'Friend', 'Neutral', or 'Enemy'
     """
     if planet_name not in EXALTATION_SIGNS:
         return 'Neutral'
@@ -249,6 +273,12 @@ def get_planet_dignity(planet_name: str, sign: str) -> str:
     # Check debilitation
     if DEBILITATION_SIGNS.get(planet_name) == sign:
         return 'Debilitated'
+
+    # Check Moolatrikona (requires degrees)
+    if planet_name in MOOLATRIKONA and degrees is not None:
+        mt_sign, mt_start, mt_end = MOOLATRIKONA[planet_name]
+        if sign == mt_sign and mt_start <= degrees <= mt_end:
+            return 'Moolatrikona'
 
     # Check own sign
     if sign in OWN_SIGNS.get(planet_name, []):
@@ -813,7 +843,7 @@ class AstroCore:
                     sign_lord=SIGN_LORDS.get(corrected_sign, ''),
                     nakshatra_lord=NAKSHATRA_LORDS.get(nakshatra, ''),
                     houses_owned=get_houses_owned(planet_name, house_signs),
-                    dignity=get_planet_dignity(planet_name, corrected_sign),
+                    dignity=get_planet_dignity(planet_name, corrected_sign, corrected_degrees),
                     aspects_giving=get_aspects_giving(planet_name, p.house)
                 )
                 planets.append(planet)
@@ -948,6 +978,224 @@ def convert_planet_position(original_sign: str, original_degrees: float, delta: 
 def calculate_navamsha_sign(abs_longitude: float) -> str:
     """Legacy compatibility function for calculating navamsha sign."""
     return get_varga_sign(abs_longitude, 'D9')
+
+
+# =============================================================================
+# DIGITAL TWIN GENERATOR
+# =============================================================================
+
+def generate_digital_twin(
+    birth_datetime: datetime.datetime,
+    latitude: float,
+    longitude: float,
+    tz_offset_hours: float,
+    ayanamsa: str = 'Lahiri'
+) -> Dict[str, Any]:
+    """
+    Generate a complete "Digital Twin" - comprehensive astrological data
+    for ALL 16 Varga charts, optimized for AI/LLM analysis.
+
+    This function produces a rich JSON structure containing:
+    - For each of 16 Vargas (D1, D2, D3, D4, D7, D9, D10, D12, D16, D20, D24, D27, D30, D40, D45, D60):
+      - Ascendant data (sign, degrees)
+      - Complete planetary data (9 planets) with:
+        - sign_id, sign_name, absolute_degree, relative_degree
+        - house_occupied, houses_owned, nakshatra, nakshatra_lord, pada
+        - sign_lord, dignity_state, aspects_giving, aspects_receiving, conjunctions
+      - Complete house data (12 houses) with:
+        - sign, lord, occupants, aspects_received
+
+    Args:
+        birth_datetime: Birth date and time (local time)
+        latitude: Birth latitude
+        longitude: Birth longitude
+        tz_offset_hours: Timezone offset in hours
+        ayanamsa: Ayanamsa to use ('Lahiri', 'Raman', etc.)
+
+    Returns:
+        Dict with structure: {
+            "meta": {...},
+            "vargas": {
+                "D1": {"ascendant": {...}, "planets": [...], "houses": [...]},
+                "D9": {...},
+                ...
+            }
+        }
+    """
+    # Step 1: Calculate base D1 chart using AstroCore
+    core = AstroCore()
+    base_chart = core.calculate(
+        birth_datetime=birth_datetime,
+        latitude=latitude,
+        longitude=longitude,
+        tz_offset_hours=tz_offset_hours,
+        timezone_name=f"UTC{'+' if tz_offset_hours >= 0 else ''}{tz_offset_hours}",
+        ayanamsa=ayanamsa
+    )
+
+    # Build meta information
+    meta = {
+        "birth_datetime": birth_datetime.isoformat(),
+        "latitude": latitude,
+        "longitude": longitude,
+        "timezone_offset": tz_offset_hours,
+        "ayanamsa": ayanamsa,
+        "ayanamsa_delta": round(base_chart.ayanamsa_delta, 6),
+        "julian_day": base_chart.julian_day,
+        "generated_at": datetime.datetime.now().isoformat()
+    }
+
+    # Step 2: Generate data for all 16 Vargas
+    vargas_data = {}
+
+    for varga_code in VARGA_CODES:
+        varga_data = _generate_varga_chart(base_chart, varga_code)
+        vargas_data[varga_code] = varga_data
+
+    return {
+        "meta": meta,
+        "vargas": vargas_data
+    }
+
+
+def _generate_varga_chart(base_chart: ChartData, varga_code: str) -> Dict[str, Any]:
+    """
+    Generate complete chart data for a specific Varga.
+
+    Uses base D1 chart absolute longitudes and recalculates:
+    - Sign positions for this varga
+    - House assignments based on varga ascendant
+    - Dignities, aspects, conjunctions for this varga
+
+    Args:
+        base_chart: The calculated D1 ChartData
+        varga_code: Varga code (D1, D2, ..., D60)
+
+    Returns:
+        Dict with ascendant, planets, and houses data
+    """
+    # Get ascendant for this varga
+    asc_longitude = base_chart.houses[0].abs_longitude if base_chart.houses else 0
+    asc_sign, asc_degrees = get_varga_sign_and_degrees(asc_longitude, varga_code)
+    asc_sign_id = SIGNS.index(asc_sign) + 1 if asc_sign in SIGNS else 1
+
+    # Build house signs for this varga (12 houses starting from ascendant sign)
+    varga_house_signs: Dict[int, str] = {}
+    for house_num in range(1, 13):
+        # Each house is one sign forward from ascendant
+        house_sign_idx = (asc_sign_id - 1 + house_num - 1) % 12
+        varga_house_signs[house_num] = SIGNS[house_sign_idx]
+
+    # Process planets for this varga
+    planets_data = []
+    planet_in_varga_sign: Dict[str, str] = {}  # For conjunctions
+    planet_in_varga_house: Dict[str, int] = {}  # For aspects
+
+    for planet in base_chart.planets:
+        # Get varga sign and degrees
+        varga_sign, varga_degrees = get_varga_sign_and_degrees(
+            planet.abs_longitude, varga_code
+        )
+        varga_sign_id = SIGNS.index(varga_sign) + 1 if varga_sign in SIGNS else 1
+
+        # Calculate house occupied in this varga
+        # House = (planet_sign_id - ascendant_sign_id) % 12 + 1
+        house_occupied = ((varga_sign_id - asc_sign_id) % 12) + 1
+
+        # Calculate houses owned in this varga
+        houses_owned = get_houses_owned(planet.name, varga_house_signs)
+
+        # Get dignity for this varga position
+        dignity = get_planet_dignity(planet.name, varga_sign, varga_degrees)
+
+        # Get sign lord
+        sign_lord = SIGN_LORDS.get(varga_sign, '')
+
+        # Calculate aspects giving (based on house occupied in this varga)
+        aspects_giving = get_aspects_giving(planet.name, house_occupied)
+
+        # Store for conjunction/aspect calculations
+        planet_in_varga_sign[planet.name] = varga_sign
+        planet_in_varga_house[planet.name] = house_occupied
+
+        planet_data = {
+            "name": planet.name,
+            "sign_id": varga_sign_id,
+            "sign_name": varga_sign,
+            "absolute_degree": round(planet.abs_longitude, 4),
+            "relative_degree": round(varga_degrees, 2),
+            "house_occupied": house_occupied,
+            "houses_owned": houses_owned,
+            "nakshatra": planet.nakshatra,
+            "nakshatra_lord": planet.nakshatra_lord,
+            "nakshatra_pada": planet.nakshatra_pada,
+            "sign_lord": sign_lord,
+            "dignity_state": dignity,
+            "aspects_giving_to": aspects_giving,
+            "aspects_receiving_from": [],  # Will be filled after all planets processed
+            "conjunctions": [],  # Will be filled after all planets processed
+            "is_retrograde": False  # TODO: Add retrograde detection
+        }
+        planets_data.append(planet_data)
+
+    # Second pass: Calculate conjunctions and aspects received
+    for planet_data in planets_data:
+        planet_name = planet_data["name"]
+        planet_sign = planet_in_varga_sign[planet_name]
+        planet_house = planet_in_varga_house[planet_name]
+
+        # Conjunctions - planets in the same sign in this varga
+        planet_data["conjunctions"] = [
+            p_name for p_name, p_sign in planet_in_varga_sign.items()
+            if p_sign == planet_sign and p_name != planet_name
+        ]
+
+        # Aspects receiving - which planets aspect this planet's house
+        for other_name, other_house in planet_in_varga_house.items():
+            if other_name != planet_name:
+                other_aspects = get_aspects_giving(other_name, other_house)
+                if planet_house in other_aspects:
+                    planet_data["aspects_receiving_from"].append(other_name)
+
+    # Build houses data for this varga
+    houses_data = []
+    for house_num in range(1, 13):
+        house_sign = varga_house_signs[house_num]
+        house_sign_id = SIGNS.index(house_sign) + 1 if house_sign in SIGNS else 1
+        house_lord = SIGN_LORDS.get(house_sign, '')
+
+        # Get occupants (planets in this house in this varga)
+        occupants = [
+            p_name for p_name, p_house in planet_in_varga_house.items()
+            if p_house == house_num
+        ]
+
+        # Get aspects received (planets aspecting this house)
+        aspects_received = []
+        for p_name, p_house in planet_in_varga_house.items():
+            planet_aspects = get_aspects_giving(p_name, p_house)
+            if house_num in planet_aspects:
+                aspects_received.append(p_name)
+
+        house_data = {
+            "house_number": house_num,
+            "sign_id": house_sign_id,
+            "sign_name": house_sign,
+            "lord": house_lord,
+            "occupants": occupants,
+            "aspects_received": aspects_received
+        }
+        houses_data.append(house_data)
+
+    return {
+        "ascendant": {
+            "sign_id": asc_sign_id,
+            "sign_name": asc_sign,
+            "degrees": round(asc_degrees, 2)
+        },
+        "planets": planets_data,
+        "houses": houses_data
+    }
 
 
 # =============================================================================

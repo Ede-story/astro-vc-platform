@@ -12,7 +12,14 @@ import traceback
 # Import the Golden Math engine
 import sys
 sys.path.insert(0, '/app/packages')
-from astro_core.engine import AstroCore, calculate_all_vargas, get_varga_sign, get_varga_sign_and_degrees, SIGNS
+from astro_core.engine import (
+    AstroCore,
+    calculate_all_vargas,
+    get_varga_sign,
+    get_varga_sign_and_degrees,
+    SIGNS,
+    generate_digital_twin
+)
 
 router = APIRouter()
 
@@ -280,10 +287,13 @@ class SaveProfileResponse(BaseModel):
 @router.post("/save", response_model=SaveProfileResponse)
 async def save_profile(request: SaveProfileRequest):
     """
-    Save a calculated chart profile.
+    Save a calculated chart profile with FULL Digital Twin.
+
+    The Digital Twin contains comprehensive data for ALL 16 Varga charts,
+    including complete planetary and house data optimized for AI analysis.
 
     NOTE: This is a placeholder implementation that stores to a JSON file.
-    In production, this should save to PostgreSQL.
+    In production, this should save to PostgreSQL JSONB.
     """
     import json
     import uuid
@@ -297,12 +307,55 @@ async def save_profile(request: SaveProfileRequest):
         profiles_dir = Path("/app/data/profiles")
         profiles_dir.mkdir(parents=True, exist_ok=True)
 
-        # Prepare profile data
+        # Extract birth data from input
+        input_data = request.input_data
+        birth_date_str = input_data.get("date", "")
+        birth_time_str = input_data.get("time", "00:00")
+        latitude = float(input_data.get("lat", 0))
+        longitude = float(input_data.get("lon", 0))
+        timezone_offset = float(input_data.get("timezone", 0))
+        ayanamsa = input_data.get("ayanamsa", "lahiri")
+
+        # Map ayanamsa to engine format
+        ayanamsa_map = {
+            "lahiri": "Lahiri",
+            "raman": "Raman",
+            "true_chitrapaksha": "True_Chitrapaksha",
+        }
+        engine_ayanamsa = ayanamsa_map.get(ayanamsa.lower(), "Lahiri")
+
+        # Parse birth datetime
+        try:
+            birth_date = datetime.strptime(birth_date_str, "%Y-%m-%d")
+            time_parts = birth_time_str.split(":")
+            birth_datetime = birth_date.replace(
+                hour=int(time_parts[0]),
+                minute=int(time_parts[1]) if len(time_parts) > 1 else 0,
+                second=0
+            )
+        except ValueError as e:
+            return SaveProfileResponse(
+                success=False,
+                message=f"Invalid date/time format: {str(e)}",
+                profile_id=None
+            )
+
+        # Generate Digital Twin (comprehensive data for all 16 Vargas)
+        digital_twin = generate_digital_twin(
+            birth_datetime=birth_datetime,
+            latitude=latitude,
+            longitude=longitude,
+            tz_offset_hours=timezone_offset,
+            ayanamsa=engine_ayanamsa
+        )
+
+        # Prepare profile data with Digital Twin
         profile = {
             "id": profile_id,
             "created_at": datetime.now().isoformat(),
             "input": request.input_data,
-            "chart": request.chart_data,
+            "chart": request.chart_data,  # Keep original chart for backward compatibility
+            "digital_twin": digital_twin,  # NEW: Full Digital Twin with all Vargas
         }
 
         # Save to JSON file
@@ -312,7 +365,7 @@ async def save_profile(request: SaveProfileRequest):
 
         return SaveProfileResponse(
             success=True,
-            message="Profile saved successfully",
+            message="Profile saved with Digital Twin",
             profile_id=profile_id
         )
 
@@ -452,6 +505,69 @@ async def test_olya():
                 "PASSED": sun_data["D4_sign"] == "Scorpio" if sun_data else False
             }
         }
+    except Exception as e:
+        traceback.print_exc()
+        return {"error": str(e)}
+
+
+@router.get("/test-digital-twin")
+async def test_digital_twin():
+    """
+    Test Digital Twin generation with Olya's birth data.
+
+    Validates that the Digital Twin contains complete data for D10 (Dashamsha):
+    - dignity_state for all planets
+    - house_occupied for all planets
+    - absolute_degree and relative_degree
+    """
+    try:
+        # Generate Digital Twin with Olya's data
+        digital_twin = generate_digital_twin(
+            birth_datetime=datetime(1982, 5, 30, 9, 45, 0),
+            latitude=59.93,
+            longitude=30.33,
+            tz_offset_hours=3.0,
+            ayanamsa="Lahiri"
+        )
+
+        # Extract D10 data for validation
+        d10_data = digital_twin.get("vargas", {}).get("D10", {})
+        d10_planets = d10_data.get("planets", [])
+        d10_houses = d10_data.get("houses", [])
+
+        # Find Sun in D10
+        sun_d10 = None
+        for p in d10_planets:
+            if p.get("name") == "Sun":
+                sun_d10 = p
+                break
+
+        # Validation checks
+        validations = {
+            "has_meta": "meta" in digital_twin,
+            "has_all_16_vargas": len(digital_twin.get("vargas", {})) == 16,
+            "d10_has_9_planets": len(d10_planets) == 9,
+            "d10_has_12_houses": len(d10_houses) == 12,
+            "sun_has_dignity_state": sun_d10.get("dignity_state") is not None if sun_d10 else False,
+            "sun_has_house_occupied": sun_d10.get("house_occupied") is not None if sun_d10 else False,
+            "sun_has_absolute_degree": sun_d10.get("absolute_degree") is not None if sun_d10 else False,
+            "all_passed": True  # Will be updated below
+        }
+        validations["all_passed"] = all(v for k, v in validations.items() if k != "all_passed")
+
+        return {
+            "test": "Digital Twin - Olya (1982-05-30 09:45 St.Petersburg)",
+            "meta": digital_twin.get("meta", {}),
+            "vargas_count": len(digital_twin.get("vargas", {})),
+            "varga_codes": list(digital_twin.get("vargas", {}).keys()),
+            "d10_sample": {
+                "ascendant": d10_data.get("ascendant", {}),
+                "sun": sun_d10,
+                "house_1": d10_houses[0] if d10_houses else None,
+            },
+            "validations": validations
+        }
+
     except Exception as e:
         traceback.print_exc()
         return {"error": str(e)}
