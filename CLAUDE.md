@@ -36,6 +36,12 @@ You are responsible for Quality Assurance. Before marking a task as "Completed",
 * **REMOTE ONLY:** All commands run on GCP via SSH. Never run code on the local macOS terminal.
 * **DATA SAFETY:** The volume `vadimarhipov_postgres14` contains PRODUCTION DATA. **NEVER** delete it.
 
+### D. LANGUAGE PROTOCOL
+* **THINKING & PLANNING:** Use **English** for internal logic, code comments, and technical reasoning (maximum clarity).
+* **REPORTS & COMMUNICATION:** All responses to the user, status reports, and summaries must be in **RUSSIAN**.
+* **UI TEXT:** All user-facing text in the Streamlit app must be in **RUSSIAN**.
+* *Reason:* The Project Owner speaks Russian, but the codebase logic is in English.
+
 ---
 
 ## 3. TECHNICAL STACK (APPROVED)
