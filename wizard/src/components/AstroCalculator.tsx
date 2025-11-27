@@ -65,6 +65,7 @@ export default function AstroCalculator() {
   }>>([]);
   const [citySearchLoading, setCitySearchLoading] = useState(false);
   const [showCitySuggestions, setShowCitySuggestions] = useState(false);
+  const [isTypingCity, setIsTypingCity] = useState(false);
   const cityInputRef = useRef<HTMLDivElement>(null);
 
   // Close city suggestions when clicking outside
@@ -112,15 +113,17 @@ export default function AstroCalculator() {
     }
   };
 
-  // Debounced city search
+  // Debounced city search - only when user is actively typing
   useEffect(() => {
+    if (!isTypingCity) return;
+
     const timeoutId = setTimeout(() => {
       if (input.city && input.city.length >= 2) {
         searchCity(input.city);
       }
     }, 500);
     return () => clearTimeout(timeoutId);
-  }, [input.city]);
+  }, [input.city, isTypingCity]);
 
   // Calculate timezone from longitude (approximate)
   const getTimezoneFromLongitude = (lon: number): number => {
@@ -145,6 +148,7 @@ export default function AstroCalculator() {
     });
     setShowCitySuggestions(false);
     setCitySuggestions([]);
+    setIsTypingCity(false);
   };
 
   // Load profiles on mount
@@ -462,7 +466,7 @@ export default function AstroCalculator() {
 
         {/* Saved Profiles Row */}
         <div className="card mb-6">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => {
                 setInput({ name: '', date: '', time: '', city: '', lat: 0, lon: 0, timezone: 3, ayanamsa: 'raman' });
@@ -472,40 +476,52 @@ export default function AstroCalculator() {
                 setCitySuggestions([]);
                 setShowCitySuggestions(false);
               }}
-              className="btn-secondary whitespace-nowrap"
+              className="bg-white text-gray-700 font-medium py-2 px-4 rounded-md border border-gray-200
+                         hover:bg-gray-50 hover:border-gray-300 transition-colors duration-150 text-sm whitespace-nowrap"
             >
               + Новый профиль
             </button>
 
-            <select
-              className="input-field w-48"
-              value={activeProfileId || ''}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value) {
-                  loadProfile(value);
-                }
-              }}
-            >
-              <option value="">Выберите профиль</option>
-              {savedProfiles.filter((p: SavedProfile) => p.name && p.name.trim() !== '').map((profile: SavedProfile) => (
-                <option key={profile.id} value={profile.id}>
-                  {profile.name}
-                </option>
-              ))}
-            </select>
-
-            {activeProfileId && (
-              <button
-                onClick={() => deleteProfile(activeProfileId)}
-                className="p-1.5 text-gray-400 hover:text-gray-500 transition-colors"
-                title="Удалить профиль"
+            <div className="flex items-center gap-1 ml-1">
+              <select
+                className="bg-transparent border-0 text-gray-700 text-sm py-1 pr-6 focus:outline-none focus:ring-0 cursor-pointer"
+                value={activeProfileId || ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value) {
+                    loadProfile(value);
+                  }
+                }}
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                  backgroundPosition: 'right 0 center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '1.25em 1.25em',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none',
+                  appearance: 'none',
+                }}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            )}
+                <option value="">Выберите профиль</option>
+                {savedProfiles.filter((p: SavedProfile) => p.name && p.name.trim() !== '').map((profile: SavedProfile) => (
+                  <option key={profile.id} value={profile.id}>
+                    {profile.name}
+                  </option>
+                ))}
+              </select>
+
+              {activeProfileId && (
+                <button
+                  onClick={() => deleteProfile(activeProfileId)}
+                  className="p-1 text-gray-400 hover:text-gray-500 transition-colors"
+                  title="Удалить профиль"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -529,7 +545,12 @@ export default function AstroCalculator() {
                 </div>
               </div>
               <button
-                onClick={() => setIsFormCollapsed(false)}
+                onClick={() => {
+                  setIsFormCollapsed(false);
+                  setIsTypingCity(false);
+                  setCitySuggestions([]);
+                  setShowCitySuggestions(false);
+                }}
                 className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -602,8 +623,16 @@ export default function AstroCalculator() {
                   className="input-field"
                   value={input.city}
                   placeholder="Начните вводить город..."
-                  onChange={(e) => setInput({ ...input, city: e.target.value })}
-                  onFocus={() => citySuggestions.length > 0 && setShowCitySuggestions(true)}
+                  onChange={(e) => {
+                    setIsTypingCity(true);
+                    setInput({ ...input, city: e.target.value });
+                  }}
+                  onFocus={() => {
+                    // Only show suggestions if user was typing (not when clicking Edit)
+                    if (isTypingCity && citySuggestions.length > 0) {
+                      setShowCitySuggestions(true);
+                    }
+                  }}
                 />
                 {citySearchLoading && (
                   <div className="absolute right-3 top-8 text-gray-400">
