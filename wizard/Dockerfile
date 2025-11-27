@@ -5,8 +5,10 @@ FROM node:20-alpine AS deps
 WORKDIR /app
 
 # Copy package files
-COPY package.json package-lock.json* ./
-RUN npm ci --only=production
+COPY package.json ./
+
+# Install ALL dependencies (including devDependencies for build)
+RUN npm install
 
 # Build stage
 FROM node:20-alpine AS builder
@@ -17,6 +19,7 @@ COPY . .
 
 # Set basePath for /join route
 ENV NEXT_PUBLIC_BASE_PATH=/join
+ENV NEXT_PUBLIC_API_URL=https://star-meet.com/star-api
 
 # Build Next.js
 RUN npm run build

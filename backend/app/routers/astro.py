@@ -220,6 +220,71 @@ async def get_signs():
     return {"signs": SIGNS}
 
 
+# =============================================================================
+# SAVE PROFILE ENDPOINT
+# =============================================================================
+
+class SaveProfileRequest(BaseModel):
+    """Request to save a calculated chart profile."""
+    input_data: Dict[str, Any] = Field(..., description="Original input data (date, time, location)")
+    chart_data: Dict[str, Any] = Field(..., description="Calculated chart response")
+
+
+class SaveProfileResponse(BaseModel):
+    """Response after saving profile."""
+    success: bool
+    message: str
+    profile_id: Optional[str] = None
+
+
+@router.post("/save", response_model=SaveProfileResponse)
+async def save_profile(request: SaveProfileRequest):
+    """
+    Save a calculated chart profile.
+
+    NOTE: This is a placeholder implementation that stores to a JSON file.
+    In production, this should save to PostgreSQL.
+    """
+    import json
+    import uuid
+    from pathlib import Path
+
+    try:
+        # Generate unique profile ID
+        profile_id = str(uuid.uuid4())[:8]
+
+        # Create profiles directory if not exists
+        profiles_dir = Path("/app/data/profiles")
+        profiles_dir.mkdir(parents=True, exist_ok=True)
+
+        # Prepare profile data
+        profile = {
+            "id": profile_id,
+            "created_at": datetime.now().isoformat(),
+            "input": request.input_data,
+            "chart": request.chart_data,
+        }
+
+        # Save to JSON file
+        profile_path = profiles_dir / f"{profile_id}.json"
+        with open(profile_path, "w", encoding="utf-8") as f:
+            json.dump(profile, f, ensure_ascii=False, indent=2, default=str)
+
+        return SaveProfileResponse(
+            success=True,
+            message="Profile saved successfully",
+            profile_id=profile_id
+        )
+
+    except Exception as e:
+        traceback.print_exc()
+        return SaveProfileResponse(
+            success=False,
+            message=f"Failed to save profile: {str(e)}",
+            profile_id=None
+        )
+
+
 @router.get("/test-olya")
 async def test_olya():
     """

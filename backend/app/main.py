@@ -65,6 +65,7 @@ async def root():
         "docs": "/star-api/docs",
         "endpoints": {
             "calculate": "POST /star-api/v1/calculate",
+            "save": "POST /star-api/v1/save",
             "health": "GET /star-api/health",
         }
     }

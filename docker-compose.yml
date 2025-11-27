@@ -26,17 +26,23 @@ services:
       timeout: 10s
       retries: 5
 
-  # PgBouncer - Connection Pooling
+  # PgBouncer - Connection Pooling (using official image)
   pgbouncer:
-    image: edoburu/pgbouncer:1.21.0
+    image: pgbouncer/pgbouncer:latest
     container_name: pgbouncer
     restart: unless-stopped
     environment:
-      - DATABASE_URL=postgres://postgres:mastodon_secure_password@mastodon-db:5432/astro_db
-      - MAX_CLIENT_CONN=200
-      - DEFAULT_POOL_SIZE=20
-      - POOL_MODE=transaction
-      - AUTH_TYPE=plain
+      - DATABASES_HOST=mastodon-db
+      - DATABASES_PORT=5432
+      - DATABASES_USER=postgres
+      - DATABASES_PASSWORD=mastodon_secure_password
+      - DATABASES_DBNAME=astro_db
+      - PGBOUNCER_LISTEN_PORT=6432
+      - PGBOUNCER_MAX_CLIENT_CONN=200
+      - PGBOUNCER_DEFAULT_POOL_SIZE=20
+      - PGBOUNCER_POOL_MODE=transaction
+      - PGBOUNCER_AUTH_TYPE=trust
+      - PGBOUNCER_IGNORE_STARTUP_PARAMETERS=extra_float_digits
     ports:
       - "6432:6432"
     networks:
@@ -145,15 +151,17 @@ services:
     container_name: starmeet-api
     restart: unless-stopped
     environment:
-      - DATABASE_URL=postgresql://postgres:mastodon_secure_password@pgbouncer:6432/astro_db
+      - DATABASE_URL=postgresql://postgres:mastodon_secure_password@mastodon-db:5432/astro_db
       - REDIS_URL=redis://mastodon-redis:6379/1
       - DEBUG=false
     ports:
       - "8000:8000"
     networks:
       - astro-network
+    volumes:
+      - starmeet_profiles:/app/data/profiles
     depends_on:
-      pgbouncer:
+      mastodon-db:
         condition: service_healthy
       mastodon-redis:
         condition: service_healthy
@@ -232,3 +240,5 @@ volumes:
   mastodon_system:
     external: true
     name: vadimarhipov_public-system
+  # StarMeet volumes
+  starmeet_profiles:

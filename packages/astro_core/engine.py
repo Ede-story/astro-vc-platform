@@ -489,7 +489,7 @@ class AstroCore:
         if hasattr(raw_chart, 'd1_chart') and hasattr(raw_chart.d1_chart, 'houses'):
             for i, h in enumerate(raw_chart.d1_chart.houses):
                 raw_sign = str(h.sign)
-                raw_degrees = float(getattr(h, 'sign_degrees', 0))
+                raw_degrees = float(getattr(h, 'sign_degrees', 0) or 0)
 
                 # Calculate RAW absolute longitude
                 raw_sign_idx = SIGNS.index(raw_sign) if raw_sign in SIGNS else 0
