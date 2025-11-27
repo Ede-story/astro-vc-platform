@@ -5,6 +5,7 @@ import { fetchCalculation } from '@/lib/api';
 import {
   CalculateResponse,
   InputData,
+  SavedProfile,
   VARGA_LIST,
   SIGN_NAMES,
   PLANET_NAMES,
@@ -19,6 +20,7 @@ import TableColumnSelector, {
 
 // Default input with RAMAN ayanamsa
 const DEFAULT_INPUT: InputData = {
+  name: '',
   date: '1982-05-30',
   time: '09:45',
   city: 'Санкт-Петербург',
@@ -27,6 +29,8 @@ const DEFAULT_INPUT: InputData = {
   timezone: 3,
   ayanamsa: 'raman',
 };
+
+const API_URL = 'https://star-meet.com/star-api';
 
 export default function AstroCalculator() {
   const [input, setInput] = useState<InputData>(DEFAULT_INPUT);
@@ -42,6 +46,79 @@ export default function AstroCalculator() {
   // Column visibility state
   const [planetColumns, setPlanetColumns] = useState<ColumnConfig[]>(DEFAULT_PLANET_COLUMNS);
   const [houseColumns, setHouseColumns] = useState<ColumnConfig[]>(DEFAULT_HOUSE_COLUMNS);
+
+  // Saved profiles state
+  const [savedProfiles, setSavedProfiles] = useState<SavedProfile[]>([]);
+  const [activeProfileId, setActiveProfileId] = useState<string | null>(null);
+  const [profilesLoading, setProfilesLoading] = useState(false);
+
+  // Load profiles on mount
+  useEffect(() => {
+    loadProfiles();
+  }, []);
+
+  const loadProfiles = async () => {
+    setProfilesLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/v1/profiles`);
+      if (response.ok) {
+        const data = await response.json();
+        setSavedProfiles(data.profiles || []);
+      }
+    } catch (err) {
+      console.error('Failed to load profiles:', err);
+    } finally {
+      setProfilesLoading(false);
+    }
+  };
+
+  const loadProfile = async (profileId: string) => {
+    try {
+      const response = await fetch(`${API_URL}/v1/profiles/${profileId}`);
+      if (response.ok) {
+        const data = await response.json();
+        // Load input data from profile
+        if (data.input) {
+          setInput({
+            name: data.input.name || '',
+            date: data.input.date || DEFAULT_INPUT.date,
+            time: data.input.time || DEFAULT_INPUT.time,
+            city: data.input.city || DEFAULT_INPUT.city,
+            lat: data.input.lat || DEFAULT_INPUT.lat,
+            lon: data.input.lon || DEFAULT_INPUT.lon,
+            timezone: data.input.timezone || DEFAULT_INPUT.timezone,
+            ayanamsa: data.input.ayanamsa || DEFAULT_INPUT.ayanamsa,
+          });
+        }
+        // Load chart data if available
+        if (data.chart) {
+          setResult(data.chart);
+          setIsFormCollapsed(true);
+        }
+        setActiveProfileId(profileId);
+      }
+    } catch (err) {
+      console.error('Failed to load profile:', err);
+    }
+  };
+
+  const deleteProfile = async (profileId: string) => {
+    if (!confirm('Удалить этот профиль?')) return;
+
+    try {
+      const response = await fetch(`${API_URL}/v1/profiles/${profileId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        setSavedProfiles((prev: SavedProfile[]) => prev.filter((p: SavedProfile) => p.id !== profileId));
+        if (activeProfileId === profileId) {
+          setActiveProfileId(null);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to delete profile:', err);
+    }
+  };
 
   // Re-fetch when varga changes (to get updated varga_data)
   useEffect(() => {
@@ -77,10 +154,14 @@ export default function AstroCalculator() {
 
   const handleSave = async () => {
     if (!result) return;
+    if (!input.name.trim()) {
+      alert('Введите имя профиля');
+      return;
+    }
 
     setSaveStatus('saving');
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://star-meet.com/star-api'}/v1/save`, {
+      const response = await fetch(`${API_URL}/v1/save`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -90,7 +171,11 @@ export default function AstroCalculator() {
       });
 
       if (response.ok) {
+        const data = await response.json();
         setSaveStatus('saved');
+        setActiveProfileId(data.profile_id);
+        // Reload profiles list
+        await loadProfiles();
         setTimeout(() => setSaveStatus(null), 3000);
       } else {
         setSaveStatus('error');
@@ -196,12 +281,67 @@ export default function AstroCalculator() {
           <p className="text-gray-500 text-sm mt-1">Ведический астрологический калькулятор</p>
         </header>
 
+        {/* Saved Profiles List */}
+        {savedProfiles.length > 0 && (
+          <div className="card mb-6">
+            <h2 className="text-base font-medium text-gray-900 mb-3">Сохранённые профили</h2>
+            <div className="flex flex-wrap gap-2">
+              {savedProfiles.map((profile: SavedProfile) => (
+                <div
+                  key={profile.id}
+                  className={`group flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors
+                    ${activeProfileId === profile.id
+                      ? 'bg-gray-900 border-gray-900 text-white'
+                      : 'bg-white border-gray-200 hover:border-gray-300 text-gray-700'}`}
+                  onClick={() => loadProfile(profile.id)}
+                >
+                  <span className="text-sm font-medium">{profile.name || 'Без имени'}</span>
+                  <button
+                    onClick={(e: React.MouseEvent) => {
+                      e.stopPropagation();
+                      deleteProfile(profile.id);
+                    }}
+                    className={`opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded
+                      ${activeProfileId === profile.id ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+                    title="Удалить"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+              <button
+                onClick={() => {
+                  setInput({ ...DEFAULT_INPUT, name: '' });
+                  setResult(null);
+                  setActiveProfileId(null);
+                  setIsFormCollapsed(false);
+                }}
+                className="flex items-center gap-1 px-3 py-2 rounded-lg border border-dashed border-gray-300
+                           text-gray-500 hover:border-gray-400 hover:text-gray-700 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                <span className="text-sm">Новый</span>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Collapsed Form Summary */}
         {isFormCollapsed && result && (
           <div className="card mb-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="text-sm">
+                  {input.name && (
+                    <>
+                      <span className="font-semibold text-gray-900">{input.name}</span>
+                      <span className="text-gray-400 mx-2">|</span>
+                    </>
+                  )}
                   <span className="font-medium text-gray-900">{input.city}</span>
                   <span className="text-gray-400 mx-2">|</span>
                   <span className="text-gray-600">{formatDate(input.date)} {input.time}</span>
@@ -228,6 +368,17 @@ export default function AstroCalculator() {
             <h2 className="text-base font-medium text-gray-900 mb-4">Данные рождения</h2>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="md:col-span-2">
+                <label className="input-label">Имя профиля</label>
+                <input
+                  type="text"
+                  className="input-field"
+                  value={input.name}
+                  placeholder="Например: Олег"
+                  onChange={(e) => setInput({ ...input, name: e.target.value })}
+                />
+              </div>
+
               <div>
                 <label className="input-label">Дата</label>
                 <input

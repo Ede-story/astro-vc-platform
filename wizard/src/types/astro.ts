@@ -93,6 +93,7 @@ export interface CalculateResponse {
 
 // UI types
 export interface InputData {
+  name: string;      // Profile name
   date: string;
   time: string;
   city: string;
@@ -100,6 +101,14 @@ export interface InputData {
   lon: number;
   timezone: number;
   ayanamsa: string;
+}
+
+// Saved profile
+export interface SavedProfile {
+  id: string;
+  name: string;
+  created_at: string;
+  input: InputData;
 }
 
 // Varga list

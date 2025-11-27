@@ -317,6 +317,87 @@ async def save_profile(request: SaveProfileRequest):
         )
 
 
+@router.get("/profiles")
+async def list_profiles():
+    """
+    Get list of all saved profiles.
+    Returns only metadata (id, name, created_at, input data).
+    """
+    import json
+    from pathlib import Path
+
+    try:
+        profiles_dir = Path("/app/data/profiles")
+        if not profiles_dir.exists():
+            return {"profiles": []}
+
+        profiles = []
+        for profile_path in sorted(profiles_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True):
+            try:
+                with open(profile_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    profiles.append({
+                        "id": data.get("id"),
+                        "name": data.get("input", {}).get("name", "Без имени"),
+                        "created_at": data.get("created_at"),
+                        "input": data.get("input", {})
+                    })
+            except Exception:
+                continue
+
+        return {"profiles": profiles}
+
+    except Exception as e:
+        traceback.print_exc()
+        return {"profiles": [], "error": str(e)}
+
+
+@router.get("/profiles/{profile_id}")
+async def get_profile(profile_id: str):
+    """
+    Get a specific profile by ID.
+    Returns full profile data including chart.
+    """
+    import json
+    from pathlib import Path
+
+    try:
+        profile_path = Path(f"/app/data/profiles/{profile_id}.json")
+        if not profile_path.exists():
+            raise HTTPException(status_code=404, detail="Profile not found")
+
+        with open(profile_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        return data
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/profiles/{profile_id}")
+async def delete_profile(profile_id: str):
+    """Delete a saved profile."""
+    from pathlib import Path
+
+    try:
+        profile_path = Path(f"/app/data/profiles/{profile_id}.json")
+        if not profile_path.exists():
+            raise HTTPException(status_code=404, detail="Profile not found")
+
+        profile_path.unlink()
+        return {"success": True, "message": "Profile deleted"}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/test-olya")
 async def test_olya():
     """
