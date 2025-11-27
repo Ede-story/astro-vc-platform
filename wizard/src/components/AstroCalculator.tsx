@@ -526,8 +526,8 @@ export default function AstroCalculator() {
                             )}
                             {isColumnVisible(houseColumns, 'aspects_received') && (
                               <td className="text-gray-500 text-sm">
-                                {houseData?.aspects_received?.length > 0
-                                  ? houseData.aspects_received.map(p => PLANET_NAMES[p] || p).join(', ')
+                                {(houseData?.aspects_received?.length ?? 0) > 0
+                                  ? houseData!.aspects_received.map((p: string) => PLANET_NAMES[p] || p).join(', ')
                                   : '-'}
                               </td>
                             )}
