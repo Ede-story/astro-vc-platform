@@ -2,8 +2,9 @@ version: '3.8'
 
 services:
   # ========================================
-  # MASTODON - СОЦИАЛЬНАЯ ФЕДЕРАТИВНАЯ СЕТЬ
+  # DATABASE LAYER
   # ========================================
+
   mastodon-db:
     restart: unless-stopped
     image: postgres:14-alpine
@@ -16,6 +17,7 @@ services:
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
       - mastodon_postgres:/var/lib/postgresql/data
+      - ./init-astro-db.sql:/docker-entrypoint-initdb.d/init-astro-db.sql:ro
     networks:
       - astro-network
     healthcheck:
@@ -23,6 +25,30 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+
+  # PgBouncer - Connection Pooling
+  pgbouncer:
+    image: edoburu/pgbouncer:1.21.0
+    container_name: pgbouncer
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgres://postgres:mastodon_secure_password@mastodon-db:5432/astro_db
+      - MAX_CLIENT_CONN=200
+      - DEFAULT_POOL_SIZE=20
+      - POOL_MODE=transaction
+      - AUTH_TYPE=plain
+    ports:
+      - "6432:6432"
+    networks:
+      - astro-network
+    depends_on:
+      mastodon-db:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-h', 'localhost', '-p', '6432']
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   mastodon-redis:
     restart: unless-stopped
@@ -37,6 +63,10 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
+  # ========================================
+  # MASTODON - SOCIAL NETWORK
+  # ========================================
 
   mastodon-web:
     image: tootsuite/mastodon:v4.2.27
@@ -103,155 +133,62 @@ services:
       retries: 3
 
   # ========================================
-  # ОСТАЛЬНЫЕ СЕРВИСЫ ASTRO-VC-PLATFORM
+  # STARMEET ASTRO SERVICES (NEW STACK)
   # ========================================
 
-  # Neo4j - графовая база данных
-  neo4j:
-    image: neo4j:4.4-community
-    container_name: neo4j
-    ports:
-      - "7687:7687"
-      - "7474:7474"
-    volumes:
-      - neo4j_data:/data
+  # FastAPI Backend - Astro Calculations API
+  starmeet-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: starmeet/api:latest
+    container_name: starmeet-api
+    restart: unless-stopped
     environment:
-      - NEO4J_AUTH=none
-      - NEO4J_dbms_security_procedures_unrestricted=algo.*,apoc.*
-      - NEO4J_dbms_allow__format__migration=true
-      - NEO4J_dbms_allow__upgrade=true
-    networks:
-      - astro-network
-
-  # OpenSearch - поисковая система
-  opensearch:
-    image: opensearchproject/opensearch:2.8.0
-    container_name: opensearch
-    environment:
-      - cluster.name=astro-opensearch-cluster
-      - node.name=opensearch-node-1
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
-      - path.repo=/usr/share/opensearch/backup
-      - action.destructive_requires_name=false
-      - http.host=0.0.0.0
-      - transport.host=127.0.0.1
-      - "OPENSEARCH_INITIAL_ADMIN_PASSWORD=admin123!"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
-    volumes:
-      - opensearch_data:/usr/share/opensearch/data
-      - opensearch_logs:/usr/share/opensearch/logs
-    ports:
-      - "9200:9200"
-      - "9600:9600"
-    networks:
-      - astro-network
-    healthcheck:
-      test: ["CMD-SHELL", "curl -k -u admin:admin123! https://localhost:9200/_cluster/health | grep -v '\"status\":\"red\"'"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 40s
-
-  # OpenSearch Dashboards
-  opensearch-dashboards:
-    image: opensearchproject/opensearch-dashboards:2.8.0
-    container_name: opensearch-dashboards
-    environment:
-      - OPENSEARCH_HOSTS=https://opensearch:9200
-      - OPENSEARCH_USERNAME=admin
-      - OPENSEARCH_PASSWORD=admin123!
-    ports:
-      - "5601:5601"
-    networks:
-      - astro-network
-    depends_on:
-      opensearch:
-        condition: service_healthy
-
-  # Minio - S3 совместимое хранилище
-  minio:
-    image: quay.io/minio/minio:latest
-    container_name: minio
-    environment:
-      - MINIO_ROOT_USER=minio
-      - MINIO_ROOT_PASSWORD=12341234
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - minio_data:/data
-    command: server /data --console-address ":9001"
-    networks:
-      - astro-network
-
-  # Imagor - обработка изображений
-  imagor:
-    image: shumc/imagor:latest
-    container_name: imagor
-    environment:
-      - IMAGOR_SHIFT_ENABLED=true
-      - IMAGOR_UNSAFE=true
+      - DATABASE_URL=postgresql://postgres:mastodon_secure_password@pgbouncer:6432/astro_db
+      - REDIS_URL=redis://mastodon-redis:6379/1
+      - DEBUG=false
     ports:
       - "8000:8000"
     networks:
       - astro-network
-
-  # ========================================
-  # VEDASTRO SERVICES
-  # ========================================
-
-  vedastro-engine:
-    image: vedastro/api
-    container_name: vedastro-engine
-    restart: always
-    networks:
-      - astro-network
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
+      mastodon-redis:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/api/version"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:8000/health']
       interval: 30s
       timeout: 10s
       retries: 3
 
-  vedastro-api:
+  # Next.js Frontend - Onboarding Wizard
+  starmeet-wizard:
     build:
-      context: ./vedastro-integration
+      context: ./wizard
       dockerfile: Dockerfile
-    image: starmeet/vedastro-wrapper
-    container_name: vedastro-api
-    restart: always
-    networks:
-      - astro-network
-    ports:
-      - "3001:8000"
-    environment:
-      - VEDASTRO_API_URL=http://vedastro-engine/api
-    depends_on:
-      - vedastro-engine
-
-  vedastro-ui:
-    build: ./vedastro-ui
-    container_name: vedastro-ui
-    volumes:
-      - ./vedastro-ui:/app
-    # Важно: baseUrlPath должен совпадать с настройкой Nginx location /astro/
-    command: streamlit run astro_test_ui.py --server.port=8501 --server.address=0.0.0.0 --server.baseUrlPath=/astro
-    ports:
-      - "8501:8501"
-    networks:
-      - astro-network
-    depends_on:
-      - vedastro-api
+    image: starmeet/wizard:latest
+    container_name: starmeet-wizard
     restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_API_URL=https://star-meet.com/api
+    ports:
+      - "3001:3001"
+    networks:
+      - astro-network
+    depends_on:
+      - starmeet-api
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3001/join']
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # Nginx - Reverse Proxy с SSL
+  # ========================================
+  # NGINX GATEWAY
+  # ========================================
+
   nginx:
     image: nginx:alpine
     container_name: mastodon-nginx
@@ -270,12 +207,22 @@ services:
       - default
       - astro-network
 
+  # ========================================
+  # LEGACY SERVICES (DEPRECATED - DO NOT START)
+  # To remove completely after migration is verified
+  # ========================================
+
+  # vedastro-ui:
+  #   build: ./vedastro-ui
+  #   container_name: vedastro-ui
+  #   # DEPRECATED: Use starmeet-wizard instead
+
 networks:
   astro-network:
     external: true
 
 volumes:
-  # Mastodon volumes (RECOVERED DATA)
+  # Mastodon volumes (CRITICAL - NEVER DELETE)
   mastodon_postgres:
     external: true
     name: vadimarhipov_postgres14
@@ -285,13 +232,3 @@ volumes:
   mastodon_system:
     external: true
     name: vadimarhipov_public-system
-
-  # Existing volumes
-  neo4j_data:
-    driver: local
-  opensearch_data:
-    driver: local
-  opensearch_logs:
-    driver: local
-  minio_data:
-    driver: local
