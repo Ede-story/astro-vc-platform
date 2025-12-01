@@ -6,7 +6,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // StarMeet color palette
+        // StarMeet Brand Colors
+        brand: {
+          green: '#6B9B37',
+          'green-hover': '#5a8a2d',
+          graphite: '#2f3538',
+          'graphite-hover': '#3d4448',
+        },
+        // Legacy palette
         starmeet: {
           dark: '#0a0a1a',
           darker: '#050510',
@@ -16,6 +23,9 @@ module.exports = {
           'blue-light': '#3b82f6',
           gold: '#f59e0b',
         }
+      },
+      fontFamily: {
+        sans: ['var(--font-montserrat)', 'system-ui', 'sans-serif'],
       },
     },
   },

@@ -9,6 +9,15 @@ from typing import Optional, Dict, Any, List
 from datetime import datetime
 import traceback
 
+# Timezone detection
+try:
+    from timezonefinder import TimezoneFinder
+    import pytz
+    TZ_FINDER = TimezoneFinder()
+except ImportError:
+    TZ_FINDER = None
+    pytz = None
+
 # Import the Golden Math engine
 import sys
 sys.path.insert(0, '/app/packages')
@@ -18,7 +27,9 @@ from astro_core.engine import (
     get_varga_sign,
     get_varga_sign_and_degrees,
     SIGNS,
-    generate_digital_twin
+    generate_digital_twin,
+    generate_digital_twin_enhanced,
+    calculate_chara_karakas
 )
 
 router = APIRouter()
@@ -34,9 +45,8 @@ class CalculateRequest(BaseModel):
     time: str = Field(..., description="Birth time in HH:MM format")
     lat: float = Field(..., description="Latitude (-90 to 90)")
     lon: float = Field(..., description="Longitude (-180 to 180)")
-    timezone: float = Field(default=0.0, description="Timezone offset in hours (e.g., 3 for Moscow)")
-    ayanamsa: str = Field(default="lahiri", description="Ayanamsa: lahiri or raman")
-    varga: Optional[str] = Field(default=None, description="Specific varga to calculate (D1-D60)")
+    ayanamsa: str = Field(default="raman", description="Ayanamsa: raman or lahiri")
+    timezone_override: Optional[float] = Field(default=None, description="Expert override: force specific UTC offset")
 
     class Config:
         json_schema_extra = {
@@ -45,9 +55,7 @@ class CalculateRequest(BaseModel):
                 "time": "09:45",
                 "lat": 59.93,
                 "lon": 30.33,
-                "timezone": 3.0,
-                "ayanamsa": "lahiri",
-                "varga": "D4"
+                "ayanamsa": "raman"
             }
         }
 
@@ -84,16 +92,19 @@ class HouseData(BaseModel):
     aspects_received: List[str] = []
 
 
+class DetectedTimezone(BaseModel):
+    """Detected timezone information."""
+    timezone_name: str
+    utc_offset: float
+    is_dst: bool
+    source: str  # "auto" or "override"
+
+
 class CalculateResponse(BaseModel):
-    """Response model for chart calculation."""
+    """Response model for chart calculation - returns full Digital Twin."""
     success: bool
-    ayanamsa: str
-    ayanamsa_delta: float
-    ascendant: Dict[str, Any]
-    planets: List[PlanetData]
-    houses: List[HouseData]
-    requested_varga: Optional[str] = None
-    varga_data: Optional[Dict[str, Any]] = None
+    detected_timezone: DetectedTimezone
+    digital_twin: Dict[str, Any]  # Full 16-Varga Digital Twin
 
 
 class QuickVargaRequest(BaseModel):
@@ -109,17 +120,78 @@ class QuickVargaResponse(BaseModel):
     result_sign: str
 
 
+class TimezoneRequest(BaseModel):
+    """Request for timezone detection."""
+    lat: float = Field(..., description="Latitude")
+    lon: float = Field(..., description="Longitude")
+    date: str = Field(..., description="Date in YYYY-MM-DD format")
+    time: str = Field(default="12:00", description="Time in HH:MM format")
+
+
+class TimezoneResponse(BaseModel):
+    """Response with detected timezone."""
+    timezone_name: str
+    utc_offset: float
+    is_dst: bool
+    dst_offset: float
+
+
 # =============================================================================
 # ENDPOINTS
 # =============================================================================
 
+def _detect_timezone(lat: float, lon: float, date_str: str, time_str: str) -> tuple[str, float, bool]:
+    """
+    Detect historical timezone for given coordinates and datetime.
+    Returns: (timezone_name, utc_offset, is_dst)
+    """
+    if TZ_FINDER is None or pytz is None:
+        # Fallback to geographic calculation
+        tz_offset = round(lon / 15)
+        return ("UTC", float(tz_offset), False)
+
+    try:
+        # Find timezone name by coordinates
+        tz_name = TZ_FINDER.timezone_at(lat=lat, lng=lon)
+        if not tz_name:
+            tz_offset = round(lon / 15)
+            return ("UTC", float(tz_offset), False)
+
+        # Parse date and time
+        try:
+            naive_dt = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+        except ValueError:
+            naive_dt = datetime.strptime(date_str, "%Y-%m-%d")
+
+        # Get timezone object and localize the datetime
+        tz = pytz.timezone(tz_name)
+        local_dt = tz.localize(naive_dt, is_dst=None)
+
+        # Calculate UTC offset in hours
+        utc_offset = local_dt.utcoffset().total_seconds() / 3600
+
+        # Check if DST is in effect
+        dst = local_dt.dst()
+        is_dst = dst is not None and dst.total_seconds() > 0
+
+        return (tz_name, utc_offset, is_dst)
+
+    except Exception:
+        # Fallback to geographic calculation
+        tz_offset = round(lon / 15)
+        return ("UTC", float(tz_offset), False)
+
+
 @router.post("/calculate", response_model=CalculateResponse)
 async def calculate_chart(request: CalculateRequest):
     """
-    Calculate a Vedic birth chart.
+    Calculate a Vedic birth chart - returns FULL Digital Twin with all 16 Vargas.
 
-    This is the main calculation endpoint. It uses the jyotishganit library
-    with the "Golden Math" engine to calculate planetary positions and Varga charts.
+    **Backend Authority Pattern**: Timezone is auto-detected from coordinates and date.
+    Uses IANA timezone database for historical accuracy (e.g., USSR DST in 1982).
+
+    Frontend sends only: date, time, lat, lon, ayanamsa.
+    Backend auto-detects timezone and returns it in the response.
 
     Example request:
     ```json
@@ -128,8 +200,7 @@ async def calculate_chart(request: CalculateRequest):
         "time": "09:45",
         "lat": 59.93,
         "lon": 30.33,
-        "timezone": 3.0,
-        "ayanamsa": "lahiri"
+        "ayanamsa": "raman"
     }
     ```
     """
@@ -146,94 +217,49 @@ async def calculate_chart(request: CalculateRequest):
         except ValueError as e:
             raise HTTPException(status_code=400, detail=f"Invalid date/time format: {e}")
 
+        # AUTO-DETECT TIMEZONE (Backend Authority)
+        if request.timezone_override is not None:
+            # Expert mode: use provided override
+            tz_offset = request.timezone_override
+            tz_info = DetectedTimezone(
+                timezone_name="Manual Override",
+                utc_offset=tz_offset,
+                is_dst=False,
+                source="override"
+            )
+        else:
+            # Auto-detect from coordinates and date
+            tz_name, tz_offset, is_dst = _detect_timezone(
+                request.lat, request.lon, request.date, request.time
+            )
+            tz_info = DetectedTimezone(
+                timezone_name=tz_name,
+                utc_offset=tz_offset,
+                is_dst=is_dst,
+                source="auto"
+            )
+
         # Map ayanamsa
         ayanamsa_map = {
             "lahiri": "Lahiri",
             "raman": "Raman",
             "true_chitrapaksha": "True_Chitrapaksha",
         }
-        ayanamsa = ayanamsa_map.get(request.ayanamsa.lower(), "Lahiri")
+        ayanamsa = ayanamsa_map.get(request.ayanamsa.lower(), "Raman")
 
-        # Calculate chart using Golden Math engine
-        core = AstroCore()
-        chart = core.calculate(
+        # Generate FULL Digital Twin with all 20 Vargas + Dasha + Karakas
+        digital_twin = generate_digital_twin_enhanced(
             birth_datetime=birth_datetime,
             latitude=request.lat,
             longitude=request.lon,
-            tz_offset_hours=request.timezone,
-            timezone_name=f"UTC{'+' if request.timezone >= 0 else ''}{request.timezone}",
+            tz_offset_hours=tz_offset,
             ayanamsa=ayanamsa
         )
 
-        # Build response with extended data
-        planets_data = []
-        for p in chart.planets:
-            planet_data = PlanetData(
-                name=p.name,
-                sign=p.sign,
-                degrees=round(p.sign_degrees, 2),
-                house=p.house,
-                nakshatra=p.nakshatra,
-                nakshatra_pada=p.nakshatra_pada,
-                abs_longitude=round(p.abs_longitude, 4),
-                varga_signs=p.varga_signs,
-                # Extended data
-                sign_lord=p.sign_lord,
-                nakshatra_lord=p.nakshatra_lord,
-                houses_owned=p.houses_owned,
-                dignity=p.dignity,
-                conjunctions=p.conjunctions,
-                aspects_giving=p.aspects_giving,
-                aspects_receiving=p.aspects_receiving
-            )
-            planets_data.append(planet_data)
-
-        houses_data = []
-        for h in chart.houses:
-            house_data = HouseData(
-                house=h.house_number,
-                sign=h.sign,
-                degrees=round(h.sign_degrees, 2),
-                abs_longitude=round(h.abs_longitude, 4),
-                lord=h.lord,
-                occupants=h.occupants,
-                aspects_received=h.aspects_received
-            )
-            houses_data.append(house_data)
-
-        # If specific varga requested, extract that data with degrees
-        varga_data = None
-        if request.varga:
-            varga_code = request.varga.upper()
-            asc_sign, asc_deg = get_varga_sign_and_degrees(
-                chart.houses[0].abs_longitude, varga_code
-            ) if chart.houses else (None, 0.0)
-            varga_data = {
-                "code": varga_code,
-                "ascendant": asc_sign,
-                "ascendant_degrees": round(asc_deg, 2),
-                "planets": {}
-            }
-            for p in chart.planets:
-                sign, degrees = get_varga_sign_and_degrees(p.abs_longitude, varga_code)
-                varga_data["planets"][p.name] = {
-                    "sign": sign,
-                    "degrees": round(degrees, 2)
-                }
-
         return CalculateResponse(
             success=True,
-            ayanamsa=ayanamsa,
-            ayanamsa_delta=round(chart.ayanamsa_delta, 6),
-            ascendant={
-                "sign": chart.ascendant_sign,
-                "degrees": round(chart.ascendant_degrees, 2),
-                "abs_longitude": round(chart.houses[0].abs_longitude, 4) if chart.houses else 0
-            },
-            planets=planets_data,
-            houses=houses_data,
-            requested_varga=request.varga,
-            varga_data=varga_data
+            detected_timezone=tz_info,
+            digital_twin=digital_twin
         )
 
     except HTTPException:
@@ -265,6 +291,77 @@ async def quick_varga(request: QuickVargaRequest):
 async def get_signs():
     """Get list of zodiac signs."""
     return {"signs": SIGNS}
+
+
+@router.post("/timezone", response_model=TimezoneResponse)
+async def get_timezone(request: TimezoneRequest):
+    """
+    Get historical timezone offset for a specific location and date.
+
+    This endpoint uses the IANA timezone database to determine the correct
+    UTC offset for any date in history, including DST transitions.
+
+    Example: Saint Petersburg on May 30, 1982 was UTC+4 (summer time).
+    """
+    if TZ_FINDER is None or pytz is None:
+        # Fallback to geographic calculation if libraries not available
+        tz = round(request.lon / 15)
+        return TimezoneResponse(
+            timezone_name="UTC",
+            utc_offset=float(tz),
+            is_dst=False,
+            dst_offset=0.0
+        )
+
+    try:
+        # Find timezone name by coordinates
+        tz_name = TZ_FINDER.timezone_at(lat=request.lat, lng=request.lon)
+        if not tz_name:
+            # Fallback for ocean/unknown areas
+            tz = round(request.lon / 15)
+            return TimezoneResponse(
+                timezone_name="UTC",
+                utc_offset=float(tz),
+                is_dst=False,
+                dst_offset=0.0
+            )
+
+        # Parse date and time
+        dt_str = f"{request.date} {request.time}"
+        try:
+            naive_dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M")
+        except ValueError:
+            naive_dt = datetime.strptime(request.date, "%Y-%m-%d")
+
+        # Get timezone object and localize the datetime
+        tz = pytz.timezone(tz_name)
+        local_dt = tz.localize(naive_dt, is_dst=None)
+
+        # Calculate UTC offset in hours
+        utc_offset = local_dt.utcoffset().total_seconds() / 3600
+
+        # Check if DST is in effect
+        dst_offset = local_dt.dst()
+        is_dst = dst_offset is not None and dst_offset.total_seconds() > 0
+        dst_hours = dst_offset.total_seconds() / 3600 if dst_offset else 0.0
+
+        return TimezoneResponse(
+            timezone_name=tz_name,
+            utc_offset=utc_offset,
+            is_dst=is_dst,
+            dst_offset=dst_hours
+        )
+
+    except Exception as e:
+        traceback.print_exc()
+        # Fallback to geographic calculation
+        tz = round(request.lon / 15)
+        return TimezoneResponse(
+            timezone_name="UTC",
+            utc_offset=float(tz),
+            is_dst=False,
+            dst_offset=0.0
+        )
 
 
 # =============================================================================
@@ -314,7 +411,7 @@ async def save_profile(request: SaveProfileRequest):
         latitude = float(input_data.get("lat", 0))
         longitude = float(input_data.get("lon", 0))
         timezone_offset = float(input_data.get("timezone", 0))
-        ayanamsa = input_data.get("ayanamsa", "lahiri")
+        ayanamsa = input_data.get("ayanamsa", "raman")
 
         # Map ayanamsa to engine format
         ayanamsa_map = {
@@ -566,6 +663,43 @@ async def test_digital_twin():
                 "house_1": d10_houses[0] if d10_houses else None,
             },
             "validations": validations
+        }
+
+    except Exception as e:
+        traceback.print_exc()
+        return {"error": str(e)}
+
+
+@router.get("/test-chara-karakas")
+async def test_chara_karakas():
+    """
+    Test Chara Karaka calculation with Vadim's birth data.
+
+    Chara Karakas (Jaimini system) - variable significators based on planetary degrees.
+    The planet with the highest degree in sign becomes Atmakaraka (AK).
+    """
+    try:
+        # Generate enhanced Digital Twin with Vadim's data
+        digital_twin = generate_digital_twin_enhanced(
+            birth_datetime=datetime(1977, 10, 25, 6, 28, 0),
+            latitude=61.7,
+            longitude=30.7,
+            tz_offset_hours=3.0,
+            ayanamsa="Lahiri"
+        )
+
+        # Extract Chara Karakas
+        chara_karakas = digital_twin.get("chara_karakas", {})
+
+        return {
+            "test": "Chara Karakas - Vadim (1977-10-25 06:28 Sortavala)",
+            "ayanamsa": "Lahiri",
+            "chara_karakas": chara_karakas,
+            "has_dasha": "dasha" in digital_twin,
+            "summary": {
+                "atmakaraka": chara_karakas.get("by_karaka", {}).get("AK", "Unknown"),
+                "darakaraka": chara_karakas.get("by_karaka", {}).get("DK", "Unknown")
+            }
         }
 
     except Exception as e:

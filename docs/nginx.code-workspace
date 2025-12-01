@@ -1,0 +1,77 @@
+{
+	"folders": [
+		{
+			"path": "../nginx"
+		},
+		{
+			"path": "../_ARCHIVE_2025_BEFORE_CLEANUP"
+		},
+		{
+			"path": "../../mcp-infrastructure/chrome-devtools-mcp"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-airtable"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-browserstack"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-chrome"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-chrome-devtools"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-chrome-repo"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-config"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-desktop-commander"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-docker"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-docker-hub-official"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-docker-temp"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-github-server"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-google-cloud"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-google-drive"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-lighthouse"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-n8n"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-notion-temp"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-official-servers"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-playwright-ea"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-puppeteer"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-servers"
+		},
+		{
+			"path": "../../mcp-infrastructure/mcp-shadcn"
+		}
+	],
+	"settings": {}
+}

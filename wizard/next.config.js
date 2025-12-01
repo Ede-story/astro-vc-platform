@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Required for /join path routing via Nginx
-  basePath: '/join',
+  // basePath: '/join', // Disabled for local dev - enable for production Nginx
 
   // Required for Docker deployment
   output: 'standalone',

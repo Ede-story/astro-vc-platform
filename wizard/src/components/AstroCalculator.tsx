@@ -1,30 +1,39 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { fetchCalculation } from '@/lib/api';
+import { useState, useEffect, useRef, Fragment } from 'react';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { ru } from 'date-fns/locale';
+import Link from 'next/link';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
-  CalculateResponse,
+  DigitalTwin,
+  VargaChart,
   InputData,
   SavedProfile,
   VARGA_LIST,
   SIGN_NAMES,
   PLANET_NAMES,
-  SIGN_LORDS,
-  DIGNITY_NAMES
+  DIGNITY_NAMES,
+  KARAKA_NAMES,
+  EnhancedDigitalTwin,
+  VimshottariDasha,
+  CharaKarakas,
+  DashaPeriod,
+  AntardashaPeriod
 } from '@/types/astro';
 import TableColumnSelector, {
   ColumnConfig,
   DEFAULT_PLANET_COLUMNS,
   DEFAULT_HOUSE_COLUMNS
 } from './TableColumnSelector';
+import { useAuth } from '@/hooks/useAuth';
+import { createClient } from '@/lib/supabase/client';
 
 // Register Russian locale for date picker
 registerLocale('ru', ru);
 
 // Default input with RAMAN ayanamsa
+// Timezone is AUTO-DETECTED by backend - not editable by user
 const DEFAULT_INPUT: InputData = {
   name: '',
   date: '1982-05-30',
@@ -32,19 +41,43 @@ const DEFAULT_INPUT: InputData = {
   city: 'Санкт-Петербург',
   lat: 59.93,
   lon: 30.33,
-  timezone: 3,
+  timezone: 0, // Display only - auto-detected by backend
   ayanamsa: 'raman',
 };
 
-const API_URL = 'https://star-meet.com/star-api';
+// Timezone info returned by backend
+interface DetectedTimezone {
+  timezone_name: string;
+  utc_offset: number;
+  is_dst: boolean;
+  source: string;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+// Debug log - will show in browser console
+if (typeof window !== 'undefined') {
+  console.log('[StarMeet] API_URL:', API_URL);
+  console.log('[StarMeet] NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
+}
 
 export default function AstroCalculator() {
   const [input, setInput] = useState<InputData>(DEFAULT_INPUT);
   const [selectedVarga, setSelectedVarga] = useState('D1');
-  const [result, setResult] = useState<CalculateResponse | null>(null);
+
+  // Single state for the entire Digital Twin (enhanced with Dasha + Karakas)
+  const [digitalTwin, setDigitalTwin] = useState<EnhancedDigitalTwin | null>(null);
+
+  // Timezone detected by backend (read-only display)
+  const [detectedTimezone, setDetectedTimezone] = useState<DetectedTimezone | null>(null);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
+
+  // Auth state
+  const { user, isAuthenticated } = useAuth();
+  const supabase = createClient();
 
   // Collapsible form state
   const [isFormCollapsed, setIsFormCollapsed] = useState(false);
@@ -67,6 +100,10 @@ export default function AstroCalculator() {
   const [showCitySuggestions, setShowCitySuggestions] = useState(false);
   const [isTypingCity, setIsTypingCity] = useState(false);
   const cityInputRef = useRef<HTMLDivElement>(null);
+
+  // Dasha expansion state
+  const [expandedMahadasha, setExpandedMahadasha] = useState<string | null>(null);
+  const [expandedAntardasha, setExpandedAntardasha] = useState<string | null>(null);
 
   // Close city suggestions when clicking outside
   useEffect(() => {
@@ -100,11 +137,8 @@ export default function AstroCalculator() {
       );
       if (response.ok) {
         const data = await response.json();
-        console.log('City search results:', data);
         setCitySuggestions(data);
         setShowCitySuggestions(data.length > 0);
-      } else {
-        console.error('City search failed with status:', response.status);
       }
     } catch (err) {
       console.error('City search failed:', err);
@@ -113,7 +147,7 @@ export default function AstroCalculator() {
     }
   };
 
-  // Debounced city search - only when user is actively typing
+  // Debounced city search
   useEffect(() => {
     if (!isTypingCity) return;
 
@@ -125,43 +159,49 @@ export default function AstroCalculator() {
     return () => clearTimeout(timeoutId);
   }, [input.city, isTypingCity]);
 
-  // Calculate timezone from longitude (approximate)
-  const getTimezoneFromLongitude = (lon: number): number => {
-    // Simple approximation: 15 degrees = 1 hour
-    // Round to nearest 0.5
-    const tz = Math.round((lon / 15) * 2) / 2;
-    return Math.max(-12, Math.min(12, tz));
-  };
-
-  // Select city from suggestions
+  // Select city from suggestions (timezone will be auto-detected by backend on calculate)
   const selectCity = (suggestion: { display_name: string; lat: string; lon: string }) => {
-    // Extract just city name (first part before comma)
     const cityName = suggestion.display_name.split(',')[0].trim();
+    const lat = parseFloat(suggestion.lat);
     const lon = parseFloat(suggestion.lon);
-    const timezone = getTimezoneFromLongitude(lon);
-    setInput({
-      ...input,
+
+    setInput(prev => ({
+      ...prev,
       city: cityName,
-      lat: parseFloat(suggestion.lat),
+      lat: lat,
       lon: lon,
-      timezone: timezone,
-    });
+    }));
     setShowCitySuggestions(false);
     setCitySuggestions([]);
     setIsTypingCity(false);
   };
 
-  // Load profiles on mount
+  // Load profiles when user changes
   useEffect(() => {
-    loadProfiles();
-  }, []);
+    if (user) {
+      loadProfiles();
+    } else {
+      setSavedProfiles([]);
+    }
+  }, [user]);
 
   const loadProfiles = async () => {
+    if (!user) return;
+
     try {
-      const response = await fetch(`${API_URL}/v1/profiles`);
-      if (response.ok) {
-        const data = await response.json();
-        setSavedProfiles(data.profiles || []);
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, name, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (data) {
+        setSavedProfiles(data.map(p => ({
+          id: p.id,
+          name: p.name,
+          created_at: p.created_at,
+          input: {} as InputData, // Will be loaded on select
+        })));
       }
     } catch (err) {
       console.error('Failed to load profiles:', err);
@@ -170,25 +210,27 @@ export default function AstroCalculator() {
 
   const loadProfile = async (profileId: string) => {
     try {
-      const response = await fetch(`${API_URL}/v1/profiles/${profileId}`);
-      if (response.ok) {
-        const data = await response.json();
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', profileId)
+        .single();
+
+      if (data) {
         // Load input data from profile
-        if (data.input) {
-          setInput({
-            name: data.input.name || '',
-            date: data.input.date || DEFAULT_INPUT.date,
-            time: data.input.time || DEFAULT_INPUT.time,
-            city: data.input.city || DEFAULT_INPUT.city,
-            lat: data.input.lat || DEFAULT_INPUT.lat,
-            lon: data.input.lon || DEFAULT_INPUT.lon,
-            timezone: data.input.timezone || DEFAULT_INPUT.timezone,
-            ayanamsa: data.input.ayanamsa || DEFAULT_INPUT.ayanamsa,
-          });
-        }
-        // Load chart data if available
-        if (data.chart) {
-          setResult(data.chart);
+        setInput({
+          name: data.name || '',
+          date: data.birth_date || DEFAULT_INPUT.date,
+          time: data.birth_time || DEFAULT_INPUT.time,
+          city: data.birth_city || DEFAULT_INPUT.city,
+          lat: data.birth_latitude || DEFAULT_INPUT.lat,
+          lon: data.birth_longitude || DEFAULT_INPUT.lon,
+          timezone: data.birth_timezone || DEFAULT_INPUT.timezone,
+          ayanamsa: data.ayanamsa || DEFAULT_INPUT.ayanamsa,
+        });
+        // Load Digital Twin if available
+        if (data.digital_twin) {
+          setDigitalTwin(data.digital_twin as DigitalTwin);
           setIsFormCollapsed(true);
         }
         setActiveProfileId(profileId);
@@ -202,10 +244,12 @@ export default function AstroCalculator() {
     if (!confirm('Удалить этот профиль?')) return;
 
     try {
-      const response = await fetch(`${API_URL}/v1/profiles/${profileId}`, {
-        method: 'DELETE',
-      });
-      if (response.ok) {
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', profileId);
+
+      if (!error) {
         setSavedProfiles((prev: SavedProfile[]) => prev.filter((p: SavedProfile) => p.id !== profileId));
         if (activeProfileId === profileId) {
           setActiveProfileId(null);
@@ -216,31 +260,50 @@ export default function AstroCalculator() {
     }
   };
 
-  // Re-fetch when varga changes (to get updated varga_data)
-  useEffect(() => {
-    if (result) {
-      handleCalculate();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedVarga]);
+  // REMOVED: useEffect for selectedVarga - NO more API calls on varga switch!
 
   const handleCalculate = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetchCalculation({
-        date: input.date,
-        time: input.time,
-        lat: input.lat,
-        lon: input.lon,
-        timezone: input.timezone,
-        ayanamsa: input.ayanamsa,
-        varga: selectedVarga,
+      // Backend Authority: timezone is auto-detected, we don't send it
+      const response = await fetch(`${API_URL}/v1/calculate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          date: input.date,
+          time: input.time,
+          lat: input.lat,
+          lon: input.lon,
+          ayanamsa: input.ayanamsa,
+          // timezone_override: optional, for experts only
+        }),
       });
-      setResult(response);
-      // Collapse form after successful calculation
-      setIsFormCollapsed(true);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Debug: Log API response to verify sub-periods
+      console.log('[StarMeet] API Response received');
+      console.log('[StarMeet] Dasha periods:', data.digital_twin?.dasha?.periods?.length);
+      console.log('[StarMeet] First period antardashas:', data.digital_twin?.dasha?.periods?.[0]?.antardashas?.length);
+
+      if (data.success && data.digital_twin) {
+        setDigitalTwin(data.digital_twin);
+        // Save detected timezone info for display
+        if (data.detected_timezone) {
+          setDetectedTimezone(data.detected_timezone);
+          // Update input.timezone for display purposes
+          setInput(prev => ({ ...prev, timezone: data.detected_timezone.utc_offset }));
+        }
+        setIsFormCollapsed(true);
+      } else {
+        throw new Error('Invalid response format');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ошибка расчета');
     } finally {
@@ -249,32 +312,46 @@ export default function AstroCalculator() {
   };
 
   const handleSave = async () => {
-    if (!result) return;
+    if (!digitalTwin) return;
     if (!input.name.trim()) {
       alert('Введите имя профиля');
       return;
     }
 
+    // If not authenticated, redirect to login
+    if (!isAuthenticated || !user) {
+      alert('Войдите в аккаунт, чтобы сохранить профиль');
+      return;
+    }
+
     setSaveStatus('saving');
     try {
-      const response = await fetch(`${API_URL}/v1/save`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          input_data: input,
-          chart_data: result,
-        }),
-      });
+      // Save to Supabase
+      const { data, error } = await supabase
+        .from('profiles')
+        .insert({
+          user_id: user.id,
+          name: input.name,
+          birth_date: input.date,
+          birth_time: input.time,
+          birth_city: input.city,
+          birth_latitude: input.lat,
+          birth_longitude: input.lon,
+          birth_timezone: input.timezone,
+          ayanamsa: input.ayanamsa,
+          digital_twin: digitalTwin,
+        })
+        .select()
+        .single();
 
-      if (response.ok) {
-        const data = await response.json();
+      if (error) {
+        console.error('Save error:', error);
+        setSaveStatus('error');
+      } else {
         setSaveStatus('saved');
-        setActiveProfileId(data.profile_id);
-        // Reload profiles list
+        setActiveProfileId(data.id);
         await loadProfiles();
         setTimeout(() => setSaveStatus(null), 3000);
-      } else {
-        setSaveStatus('error');
       }
     } catch {
       setSaveStatus('error');
@@ -287,165 +364,14 @@ export default function AstroCalculator() {
     return `${day}.${month}.${year}`;
   };
 
-  // Get planet sign for selected varga
-  const getPlanetVargaSign = (planet: CalculateResponse['planets'][0]) => {
-    if (selectedVarga === 'D1') {
-      return planet.sign;
-    }
-    // Use varga_data from API response (has the requested varga)
-    if (result?.varga_data?.planets && result.varga_data.code === selectedVarga) {
-      const vargaPlanet = result.varga_data.planets[planet.name];
-      // Handle both old format (string) and new format ({sign, degrees})
-      if (typeof vargaPlanet === 'object' && vargaPlanet !== null) {
-        return vargaPlanet.sign || planet.sign;
-      }
-      return vargaPlanet || planet.sign;
-    }
-    // Fallback to pre-calculated varga_signs from planet data
-    const vargaSign = planet.varga_signs?.[selectedVarga as keyof typeof planet.varga_signs];
-    return vargaSign || planet.sign;
-  };
-
-  // Get planet degrees for selected varga
-  const getPlanetVargaDegrees = (planet: CalculateResponse['planets'][0]): number => {
-    if (selectedVarga === 'D1') {
-      return planet.degrees;
-    }
-    // Use varga_data from API response
-    if (result?.varga_data?.planets && result.varga_data.code === selectedVarga) {
-      const vargaPlanet = result.varga_data.planets[planet.name];
-      // Handle new format ({sign, degrees})
-      if (typeof vargaPlanet === 'object' && vargaPlanet !== null) {
-        return vargaPlanet.degrees ?? planet.degrees;
-      }
-    }
-    // Fallback to D1 degrees
-    return planet.degrees;
-  };
-
-  // Helper to get planet sign from varga_data (handles both old and new format)
-  const getVargaPlanetSign = (vargaPlanet: string | { sign: string; degrees: number }): string => {
-    if (typeof vargaPlanet === 'object' && vargaPlanet !== null) {
-      return vargaPlanet.sign;
-    }
-    return vargaPlanet;
-  };
-
-  // Get planet house for selected varga
-  const getPlanetVargaHouse = (planet: CalculateResponse['planets'][0]): number => {
-    if (selectedVarga === 'D1') {
-      return planet.house;
-    }
-
-    const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
-                   'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
-
-    // Use varga_data if available
-    if (result?.varga_data && result.varga_data.code === selectedVarga) {
-      const vargaAsc = result.varga_data.ascendant;
-      const vargaPlanet = result.varga_data.planets[planet.name];
-      if (!vargaPlanet) return planet.house;
-
-      const planetSign = getVargaPlanetSign(vargaPlanet);
-      const ascIdx = signs.indexOf(vargaAsc);
-      const planetSignIdx = signs.indexOf(planetSign);
-
-      if (ascIdx === -1 || planetSignIdx === -1) return planet.house;
-
-      // House = (planetSignIndex - ascendantIndex + 12) % 12 + 1
-      return ((planetSignIdx - ascIdx + 12) % 12) + 1;
-    }
-
-    // Fallback to D1 house
-    return planet.house;
-  };
-
-  // Get planets in a specific house for the selected varga
-  const getPlanetsInHouse = (houseNum: number): string[] => {
-    if (!result) return [];
-
-    if (selectedVarga === 'D1') {
-      return result.planets
-        .filter(p => p.house === houseNum)
-        .map(p => PLANET_NAMES[p.name] || p.name);
-    }
-
-    const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
-                   'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
-
-    // Use varga_data if available and matches selected varga
-    if (result.varga_data && result.varga_data.code === selectedVarga) {
-      const vargaAsc = result.varga_data.ascendant;
-      const ascIdx = signs.indexOf(vargaAsc);
-      if (ascIdx === -1) return [];
-      const houseSign = signs[(ascIdx + houseNum - 1) % 12];
-
-      return Object.entries(result.varga_data.planets)
-        .filter(([, vargaPlanet]) => getVargaPlanetSign(vargaPlanet) === houseSign)
-        .map(([planet]) => PLANET_NAMES[planet] || planet);
-    }
-
-    // Fallback: use pre-calculated varga_signs
-    const firstPlanet = result.planets[0];
-    if (!firstPlanet?.varga_signs) return [];
-    const vargaKey = selectedVarga as keyof typeof firstPlanet.varga_signs;
-    const ascSign = firstPlanet.varga_signs[vargaKey];
-    if (!ascSign) return [];
-    const ascIdx = signs.indexOf(ascSign);
-    if (ascIdx === -1) return [];
-    const houseSign = signs[(ascIdx + houseNum - 1) % 12];
-
-    return result.planets
-      .filter(p => {
-        const pVargaKey = selectedVarga as keyof typeof p.varga_signs;
-        return p.varga_signs?.[pVargaKey] === houseSign;
-      })
-      .map(p => PLANET_NAMES[p.name] || p.name);
-  };
-
-  // Get house sign for selected varga
-  const getHouseSign = (houseNum: number): string => {
-    if (!result) return '';
-
-    if (selectedVarga === 'D1') {
-      const house = result.houses.find(h => h.house === houseNum);
-      return house?.sign || '';
-    }
-
-    const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
-                   'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
-
-    // Use varga_data if available and matches selected varga
-    if (result.varga_data && result.varga_data.code === selectedVarga) {
-      const vargaAsc = result.varga_data.ascendant;
-      const ascIdx = signs.indexOf(vargaAsc);
-      if (ascIdx === -1) return '';
-      return signs[(ascIdx + houseNum - 1) % 12];
-    }
-
-    // Fallback: calculate from first house's abs_longitude using D1 ascendant shifted
-    // This is an approximation - ideally backend should provide varga ascendant
-    const firstHouse = result.houses[0];
-    if (!firstHouse) return '';
-    const d1AscIdx = signs.indexOf(firstHouse.sign);
-    if (d1AscIdx === -1) return '';
-    return signs[(d1AscIdx + houseNum - 1) % 12];
-  };
+  // Get active chart for selected varga - INSTANT, no API call
+  const activeChart: VargaChart | null = digitalTwin?.vargas?.[selectedVarga] || null;
 
   // Get current ascendant based on selected varga
   const getCurrentAscendant = (): string => {
-    if (!result) return '';
-
-    if (selectedVarga === 'D1') {
-      const sign = SIGN_NAMES[result.ascendant.sign] || result.ascendant.sign;
-      return `${sign} ${result.ascendant.degrees.toFixed(2)}°`;
-    }
-
-    if (result.varga_data?.ascendant) {
-      return SIGN_NAMES[result.varga_data.ascendant] || result.varga_data.ascendant;
-    }
-
-    return '';
+    if (!activeChart) return '';
+    const sign = SIGN_NAMES[activeChart.ascendant.sign_name] || activeChart.ascendant.sign_name;
+    return `${sign} ${activeChart.ascendant.degrees.toFixed(2)}°`;
   };
 
   // Check if column is visible
@@ -457,11 +383,30 @@ export default function AstroCalculator() {
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <header className="mb-8">
-          <h1 className="text-2xl font-semibold text-gray-900">
-            StarMeet
-          </h1>
-          <p className="text-gray-500 text-sm mt-1">Ведический астрологический калькулятор</p>
+        <header className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900">
+              StarMeet
+            </h1>
+            <p className="text-gray-500 text-sm mt-1">Ведический астрологический калькулятор</p>
+          </div>
+          <div>
+            {isAuthenticated ? (
+              <Link
+                href="/dashboard"
+                className="text-sm text-gray-600 hover:text-gray-900"
+              >
+                {user?.email}
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="text-sm text-brand-green hover:text-brand-green-hover"
+              >
+                Войти
+              </Link>
+            )}
+          </div>
         </header>
 
         {/* Saved Profiles Row */}
@@ -470,7 +415,7 @@ export default function AstroCalculator() {
             <button
               onClick={() => {
                 setInput({ name: '', date: '', time: '', city: '', lat: 0, lon: 0, timezone: 3, ayanamsa: 'raman' });
-                setResult(null);
+                setDigitalTwin(null);
                 setActiveProfileId(null);
                 setIsFormCollapsed(false);
                 setCitySuggestions([]);
@@ -526,7 +471,7 @@ export default function AstroCalculator() {
         </div>
 
         {/* Collapsed Form Summary */}
-        {isFormCollapsed && result && (
+        {isFormCollapsed && digitalTwin && (
           <div className="card mb-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -542,6 +487,16 @@ export default function AstroCalculator() {
                   <span className="text-gray-600">{formatDate(input.date)} {input.time}</span>
                   <span className="text-gray-400 mx-2">|</span>
                   <span className="text-gray-500">{input.lat.toFixed(2)}°, {input.lon.toFixed(2)}°</span>
+                  {/* Timezone Badge (auto-detected) */}
+                  {detectedTimezone && (
+                    <>
+                      <span className="text-gray-400 mx-2">|</span>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                        UTC{detectedTimezone.utc_offset >= 0 ? '+' : ''}{detectedTimezone.utc_offset}
+                        {detectedTimezone.is_dst && ' (DST)'}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
               <button
@@ -628,7 +583,6 @@ export default function AstroCalculator() {
                     setInput({ ...input, city: e.target.value });
                   }}
                   onFocus={() => {
-                    // Only show suggestions if user was typing (not when clicking Edit)
                     if (isTypingCity && citySuggestions.length > 0) {
                       setShowCitySuggestions(true);
                     }
@@ -656,17 +610,6 @@ export default function AstroCalculator() {
                     ))}
                   </div>
                 )}
-              </div>
-
-              <div>
-                <label className="input-label">Часовой пояс</label>
-                <input
-                  type="number"
-                  className="input-field"
-                  value={input.timezone}
-                  onChange={(e) => setInput({ ...input, timezone: parseFloat(e.target.value) })}
-                  step="0.5"
-                />
               </div>
 
               <div>
@@ -708,7 +651,7 @@ export default function AstroCalculator() {
                 <button
                   onClick={handleCalculate}
                   disabled={loading}
-                  className="bg-gray-700 text-white font-medium py-2.5 px-5 rounded-md hover:bg-gray-600 transition-colors duration-150 text-sm flex-1 disabled:opacity-50"
+                  className="bg-brand-graphite text-white font-medium py-2.5 px-5 rounded-md hover:bg-brand-graphite-hover transition-colors duration-150 text-sm flex-1 disabled:opacity-50"
                 >
                   {loading ? 'Расчет...' : 'Рассчитать'}
                 </button>
@@ -724,7 +667,7 @@ export default function AstroCalculator() {
         )}
 
         {/* Results */}
-        {result && (
+        {digitalTwin && activeChart && (
           <>
             {/* Varga Selector */}
             <div className="card mb-6">
@@ -752,16 +695,25 @@ export default function AstroCalculator() {
                 </div>
 
                 <div className="ml-auto flex gap-2">
-                  <button
-                    onClick={handleSave}
-                    disabled={saveStatus === 'saving'}
-                    className="btn-secondary"
-                  >
-                    {saveStatus === 'saving' ? 'Сохранение...' :
-                     saveStatus === 'saved' ? 'Сохранено!' :
-                     saveStatus === 'error' ? 'Ошибка' :
-                     'Сохранить профиль'}
-                  </button>
+                  {isAuthenticated ? (
+                    <button
+                      onClick={handleSave}
+                      disabled={saveStatus === 'saving'}
+                      className="btn-secondary"
+                    >
+                      {saveStatus === 'saving' ? 'Сохранение...' :
+                       saveStatus === 'saved' ? 'Сохранено!' :
+                       saveStatus === 'error' ? 'Ошибка' :
+                       'Сохранить профиль'}
+                    </button>
+                  ) : (
+                    <Link
+                      href="/login"
+                      className="btn-secondary"
+                    >
+                      Войти для сохранения
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>
@@ -786,6 +738,7 @@ export default function AstroCalculator() {
                         {isColumnVisible(planetColumns, 'name') && <th>Планета</th>}
                         {isColumnVisible(planetColumns, 'sign') && <th>Знак</th>}
                         {isColumnVisible(planetColumns, 'degrees') && <th>Градусы</th>}
+                        {isColumnVisible(planetColumns, 'retrograde') && <th>R</th>}
                         {isColumnVisible(planetColumns, 'nakshatra') && <th>Накшатра</th>}
                         {isColumnVisible(planetColumns, 'house') && <th>Дом</th>}
                         {isColumnVisible(planetColumns, 'sign_lord') && <th>Упр. знака</th>}
@@ -798,87 +751,88 @@ export default function AstroCalculator() {
                       </tr>
                     </thead>
                     <tbody>
-                      {result.planets.map((planet) => {
-                        const vargaSign = getPlanetVargaSign(planet);
-                        const vargaDegrees = getPlanetVargaDegrees(planet);
-                        return (
-                          <tr key={planet.name}>
-                            {isColumnVisible(planetColumns, 'name') && (
-                              <td className="font-medium text-gray-900">
-                                {PLANET_NAMES[planet.name] || planet.name}
-                              </td>
-                            )}
-                            {isColumnVisible(planetColumns, 'sign') && (
-                              <td>
-                                {SIGN_NAMES[vargaSign] || vargaSign}
-                              </td>
-                            )}
-                            {isColumnVisible(planetColumns, 'degrees') && (
-                              <td className="text-gray-600">
-                                {vargaDegrees.toFixed(2)}°
-                              </td>
-                            )}
-                            {isColumnVisible(planetColumns, 'nakshatra') && (
-                              <td className={selectedVarga === 'D1' ? 'text-gray-600' : 'text-gray-400'}>
-                                {planet.nakshatra}
-                                <span className="text-gray-400 ml-1">
-                                  ({planet.nakshatra_pada})
-                                </span>
-                                {selectedVarga !== 'D1' && (
-                                  <span className="text-gray-300 ml-1 text-xs">(D1)</span>
-                                )}
-                              </td>
-                            )}
-                            {isColumnVisible(planetColumns, 'house') && (
-                              <td>{getPlanetVargaHouse(planet)}</td>
-                            )}
-                            {isColumnVisible(planetColumns, 'sign_lord') && (
-                              <td className="text-gray-500">
-                                {PLANET_NAMES[SIGN_LORDS[vargaSign]] || SIGN_LORDS[vargaSign] || '-'}
-                              </td>
-                            )}
-                            {isColumnVisible(planetColumns, 'nakshatra_lord') && (
-                              <td className="text-gray-500">
-                                {PLANET_NAMES[planet.nakshatra_lord] || planet.nakshatra_lord || '-'}
-                              </td>
-                            )}
-                            {isColumnVisible(planetColumns, 'houses_owned') && (
-                              <td className="text-gray-500">
-                                {planet.houses_owned?.length > 0 ? planet.houses_owned.join(', ') : '-'}
-                              </td>
-                            )}
-                            {isColumnVisible(planetColumns, 'dignity') && (
-                              <td className={`text-sm ${
-                                planet.dignity === 'Exalted' ? 'text-green-600' :
-                                planet.dignity === 'Debilitated' ? 'text-red-600' :
-                                planet.dignity === 'Own' ? 'text-blue-600' :
-                                'text-gray-500'
-                              }`}>
-                                {DIGNITY_NAMES[planet.dignity] || planet.dignity || '-'}
-                              </td>
-                            )}
-                            {isColumnVisible(planetColumns, 'conjunctions') && (
-                              <td className="text-gray-500 text-sm">
-                                {planet.conjunctions?.length > 0
-                                  ? planet.conjunctions.map(p => PLANET_NAMES[p] || p).join(', ')
-                                  : '-'}
-                              </td>
-                            )}
-                            {isColumnVisible(planetColumns, 'aspects_giving') && (
-                              <td className="text-gray-500 text-sm">
-                                {planet.aspects_giving?.length > 0 ? planet.aspects_giving.join(', ') : '-'}
-                              </td>
-                            )}
-                            {isColumnVisible(planetColumns, 'aspects_receiving') && (
-                              <td className="text-gray-500 text-sm">
-                                {planet.aspects_receiving?.length > 0
-                                  ? planet.aspects_receiving.map(p => PLANET_NAMES[p] || p).join(', ')
-                                  : '-'}
-                              </td>
-                            )}
-                          </tr>
-                        );
-                      })}
+                      {activeChart.planets.map((planet) => (
+                        <tr key={planet.name}>
+                          {isColumnVisible(planetColumns, 'name') && (
+                            <td className="font-medium text-gray-900">
+                              {PLANET_NAMES[planet.name] || planet.name}
+                            </td>
+                          )}
+                          {isColumnVisible(planetColumns, 'sign') && (
+                            <td>
+                              {SIGN_NAMES[planet.sign_name] || planet.sign_name}
+                            </td>
+                          )}
+                          {isColumnVisible(planetColumns, 'degrees') && (
+                            <td className="text-gray-600">
+                              {planet.relative_degree.toFixed(2)}°
+                            </td>
+                          )}
+                          {isColumnVisible(planetColumns, 'retrograde') && (
+                            <td className={planet.is_retrograde ? 'text-red-500 font-medium' : 'text-gray-300'}>
+                              {planet.is_retrograde ? 'R' : '—'}
+                            </td>
+                          )}
+                          {isColumnVisible(planetColumns, 'nakshatra') && (
+                            <td className={selectedVarga === 'D1' ? 'text-gray-600' : 'text-gray-400'}>
+                              {planet.nakshatra}
+                              <span className="text-gray-400 ml-1">
+                                ({planet.nakshatra_pada})
+                              </span>
+                              {selectedVarga !== 'D1' && (
+                                <span className="text-gray-300 ml-1 text-xs">(D1)</span>
+                              )}
+                            </td>
+                          )}
+                          {isColumnVisible(planetColumns, 'house') && (
+                            <td>{planet.house_occupied}</td>
+                          )}
+                          {isColumnVisible(planetColumns, 'sign_lord') && (
+                            <td className="text-gray-500">
+                              {PLANET_NAMES[planet.sign_lord] || planet.sign_lord || '-'}
+                            </td>
+                          )}
+                          {isColumnVisible(planetColumns, 'nakshatra_lord') && (
+                            <td className="text-gray-500">
+                              {PLANET_NAMES[planet.nakshatra_lord] || planet.nakshatra_lord || '-'}
+                            </td>
+                          )}
+                          {isColumnVisible(planetColumns, 'houses_owned') && (
+                            <td className="text-gray-500">
+                              {planet.houses_owned?.length > 0 ? planet.houses_owned.join(', ') : '-'}
+                            </td>
+                          )}
+                          {isColumnVisible(planetColumns, 'dignity') && (
+                            <td className={`text-sm ${
+                              planet.dignity_state === 'Exalted' ? 'text-green-600' :
+                              planet.dignity_state === 'Debilitated' ? 'text-red-600' :
+                              planet.dignity_state === 'Own' ? 'text-brand-green' :
+                              'text-gray-500'
+                            }`}>
+                              {DIGNITY_NAMES[planet.dignity_state] || planet.dignity_state || '-'}
+                            </td>
+                          )}
+                          {isColumnVisible(planetColumns, 'conjunctions') && (
+                            <td className="text-gray-500 text-sm">
+                              {planet.conjunctions?.length > 0
+                                ? planet.conjunctions.map(p => PLANET_NAMES[p] || p).join(', ')
+                                : '-'}
+                            </td>
+                          )}
+                          {isColumnVisible(planetColumns, 'aspects_giving') && (
+                            <td className="text-gray-500 text-sm">
+                              {planet.aspects_giving_to?.length > 0 ? planet.aspects_giving_to.join(', ') : '-'}
+                            </td>
+                          )}
+                          {isColumnVisible(planetColumns, 'aspects_receiving') && (
+                            <td className="text-gray-500 text-sm">
+                              {planet.aspects_receiving_from?.length > 0
+                                ? planet.aspects_receiving_from.map(p => PLANET_NAMES[p] || p).join(', ')
+                                : '-'}
+                            </td>
+                          )}
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
@@ -907,47 +861,258 @@ export default function AstroCalculator() {
                       </tr>
                     </thead>
                     <tbody>
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((houseNum) => {
-                        const sign = getHouseSign(houseNum);
-                        const planets = getPlanetsInHouse(houseNum);
-                        const houseData = result.houses.find(h => h.house === houseNum);
-                        return (
-                          <tr key={houseNum}>
-                            {isColumnVisible(houseColumns, 'house') && (
-                              <td className="font-medium text-gray-900">{houseNum}</td>
-                            )}
-                            {isColumnVisible(houseColumns, 'sign') && (
-                              <td>{SIGN_NAMES[sign] || sign}</td>
-                            )}
-                            {isColumnVisible(houseColumns, 'occupants') && (
-                              <td className="text-gray-600">
-                                {planets.length > 0 ? planets.join(', ') : '-'}
-                              </td>
-                            )}
-                            {isColumnVisible(houseColumns, 'lord') && (
-                              <td className="text-gray-500">
-                                {PLANET_NAMES[SIGN_LORDS[sign]] || SIGN_LORDS[sign] || '-'}
-                              </td>
-                            )}
-                            {isColumnVisible(houseColumns, 'aspects_received') && (
-                              <td className="text-gray-500 text-sm">
-                                {(houseData?.aspects_received?.length ?? 0) > 0
-                                  ? houseData!.aspects_received.map((p: string) => PLANET_NAMES[p] || p).join(', ')
-                                  : '-'}
-                              </td>
-                            )}
-                          </tr>
-                        );
-                      })}
+                      {activeChart.houses.map((house) => (
+                        <tr key={house.house_number}>
+                          {isColumnVisible(houseColumns, 'house') && (
+                            <td className="font-medium text-gray-900">{house.house_number}</td>
+                          )}
+                          {isColumnVisible(houseColumns, 'sign') && (
+                            <td>{SIGN_NAMES[house.sign_name] || house.sign_name}</td>
+                          )}
+                          {isColumnVisible(houseColumns, 'occupants') && (
+                            <td className="text-gray-600">
+                              {house.occupants?.length > 0
+                                ? house.occupants.map(p => PLANET_NAMES[p] || p).join(', ')
+                                : '-'}
+                            </td>
+                          )}
+                          {isColumnVisible(houseColumns, 'lord') && (
+                            <td className="text-gray-500">
+                              {PLANET_NAMES[house.lord] || house.lord || '-'}
+                            </td>
+                          )}
+                          {isColumnVisible(houseColumns, 'aspects_received') && (
+                            <td className="text-gray-500 text-sm">
+                              {house.aspects_received?.length > 0
+                                ? house.aspects_received.map(p => PLANET_NAMES[p] || p).join(', ')
+                                : '-'}
+                            </td>
+                          )}
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>
 
+            {/* Dasha & Karakas Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+              {/* Vimshottari Dasha with expandable sub-periods */}
+              {digitalTwin.dasha && (
+                <div className="card">
+                  <h3 className="text-base font-medium text-gray-900 mb-4">
+                    Vimshottari Dasha (Периоды)
+                  </h3>
+                  <div className="space-y-3">
+                    {/* Current Period Highlight */}
+                    <div className="bg-blue-50 p-3 rounded-lg">
+                      <div className="text-sm text-blue-600 font-medium">Текущий период</div>
+                      <div className="text-lg font-semibold text-blue-900 mt-1">
+                        {PLANET_NAMES[digitalTwin.dasha.current_mahadasha || ''] || digitalTwin.dasha.current_mahadasha || '—'}
+                        {digitalTwin.dasha.current_antardasha && (
+                          <span className="text-blue-600 font-normal">
+                            {' / '}
+                            {PLANET_NAMES[digitalTwin.dasha.current_antardasha] || digitalTwin.dasha.current_antardasha}
+                          </span>
+                        )}
+                        {digitalTwin.dasha.current_pratyantardasha && (
+                          <span className="text-blue-500 font-normal text-sm">
+                            {' / '}
+                            {PLANET_NAMES[digitalTwin.dasha.current_pratyantardasha] || digitalTwin.dasha.current_pratyantardasha}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-blue-500 mt-1">
+                        Накшатра рождения: {digitalTwin.dasha.birth_nakshatra} (пада {digitalTwin.dasha.nakshatra_pada})
+                      </div>
+                    </div>
+                    {/* Dasha Periods with expandable Antardashas */}
+                    <div className="overflow-x-auto">
+                      <table className="data-table text-sm">
+                        <thead>
+                          <tr>
+                            <th className="w-8"></th>
+                            <th>Период</th>
+                            <th>Лет / Дней</th>
+                            <th>Начало</th>
+                            <th>Конец</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {digitalTwin.dasha.periods.slice(0, 9).map((period: DashaPeriod, idx: number) => (
+                            <Fragment key={idx}>
+                              {/* Mahadasha Row */}
+                              <tr
+                                className={`cursor-pointer hover:bg-gray-50 ${period.lord === digitalTwin.dasha?.current_mahadasha ? 'bg-blue-50' : ''}`}
+                                onClick={() => {
+                                  if (expandedMahadasha === period.lord) {
+                                    setExpandedMahadasha(null);
+                                    setExpandedAntardasha(null);
+                                  } else {
+                                    setExpandedMahadasha(period.lord);
+                                    setExpandedAntardasha(null);
+                                  }
+                                }}
+                              >
+                                <td className="text-center">
+                                  {period.antardashas && period.antardashas.length > 0 && (
+                                    <span className={`text-gray-400 transition-transform inline-block ${expandedMahadasha === period.lord ? 'rotate-90' : ''}`}>
+                                      ▶
+                                    </span>
+                                  )}
+                                </td>
+                                <td className={`font-medium ${period.lord === digitalTwin.dasha?.current_mahadasha ? 'text-blue-700' : 'text-gray-900'}`}>
+                                  {PLANET_NAMES[period.lord] || period.lord}
+                                </td>
+                                <td className="text-gray-600">{period.years} лет</td>
+                                <td className="text-gray-500">{period.start_date}</td>
+                                <td className="text-gray-500">{period.end_date}</td>
+                              </tr>
+                              {/* Antardasha Rows (expanded) */}
+                              {expandedMahadasha === period.lord && period.antardashas && period.antardashas.map((ad: AntardashaPeriod, adIdx: number) => (
+                                <Fragment key={`${idx}-${adIdx}`}>
+                                  <tr
+                                    className={`cursor-pointer hover:bg-gray-50 ${
+                                      period.lord === digitalTwin.dasha?.current_mahadasha &&
+                                      ad.lord === digitalTwin.dasha?.current_antardasha
+                                        ? 'bg-blue-100'
+                                        : 'bg-gray-50'
+                                    }`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (expandedAntardasha === `${period.lord}-${ad.lord}`) {
+                                        setExpandedAntardasha(null);
+                                      } else {
+                                        setExpandedAntardasha(`${period.lord}-${ad.lord}`);
+                                      }
+                                    }}
+                                  >
+                                    <td className="text-center pl-4">
+                                      {ad.pratyantardashas && ad.pratyantardashas.length > 0 && (
+                                        <span className={`text-gray-300 text-xs transition-transform inline-block ${expandedAntardasha === `${period.lord}-${ad.lord}` ? 'rotate-90' : ''}`}>
+                                          ▶
+                                        </span>
+                                      )}
+                                    </td>
+                                    <td className={`pl-6 ${
+                                      period.lord === digitalTwin.dasha?.current_mahadasha &&
+                                      ad.lord === digitalTwin.dasha?.current_antardasha
+                                        ? 'text-blue-600 font-medium'
+                                        : 'text-gray-600'
+                                    }`}>
+                                      ↳ {PLANET_NAMES[ad.lord] || ad.lord}
+                                    </td>
+                                    <td className="text-gray-500">{ad.days} дней</td>
+                                    <td className="text-gray-400 text-xs">{ad.start_date}</td>
+                                    <td className="text-gray-400 text-xs">{ad.end_date}</td>
+                                  </tr>
+                                  {/* Pratyantardasha Rows (expanded) */}
+                                  {expandedAntardasha === `${period.lord}-${ad.lord}` && ad.pratyantardashas && ad.pratyantardashas.map((pd, pdIdx: number) => (
+                                    <tr
+                                      key={`${idx}-${adIdx}-${pdIdx}`}
+                                      className={`${
+                                        period.lord === digitalTwin.dasha?.current_mahadasha &&
+                                        ad.lord === digitalTwin.dasha?.current_antardasha &&
+                                        pd.lord === digitalTwin.dasha?.current_pratyantardasha
+                                          ? 'bg-blue-50'
+                                          : 'bg-gray-100'
+                                      }`}
+                                    >
+                                      <td></td>
+                                      <td className={`pl-12 text-xs ${
+                                        period.lord === digitalTwin.dasha?.current_mahadasha &&
+                                        ad.lord === digitalTwin.dasha?.current_antardasha &&
+                                        pd.lord === digitalTwin.dasha?.current_pratyantardasha
+                                          ? 'text-blue-500 font-medium'
+                                          : 'text-gray-400'
+                                      }`}>
+                                        ↳↳ {PLANET_NAMES[pd.lord] || pd.lord}
+                                      </td>
+                                      <td className="text-gray-300 text-xs">—</td>
+                                      <td className="text-gray-300 text-xs">{pd.start_date}</td>
+                                      <td className="text-gray-300 text-xs">{pd.end_date}</td>
+                                    </tr>
+                                  ))}
+                                </Fragment>
+                              ))}
+                            </Fragment>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      Нажмите на период для просмотра подпериодов (Antardasha / Pratyantardasha)
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Chara Karakas */}
+              {digitalTwin.chara_karakas && (
+                <div className="card">
+                  <h3 className="text-base font-medium text-gray-900 mb-4">
+                    Chara Karakas (Джаймини)
+                  </h3>
+                  <div className="space-y-3">
+                    {/* Atmakaraka Highlight */}
+                    <div className="bg-amber-50 p-3 rounded-lg">
+                      <div className="text-sm text-amber-600 font-medium">Атмакарака (душа)</div>
+                      <div className="text-lg font-semibold text-amber-900 mt-1">
+                        {PLANET_NAMES[digitalTwin.chara_karakas.by_karaka['AK']] || digitalTwin.chara_karakas.by_karaka['AK'] || '—'}
+                      </div>
+                      <div className="text-xs text-amber-500 mt-1">
+                        Даракарака (супруг): {PLANET_NAMES[digitalTwin.chara_karakas.by_karaka['DK']] || digitalTwin.chara_karakas.by_karaka['DK'] || '—'}
+                      </div>
+                    </div>
+                    {/* Karakas Table */}
+                    <div className="overflow-x-auto">
+                      <table className="data-table text-sm">
+                        <thead>
+                          <tr>
+                            <th>Карака</th>
+                            <th>Планета</th>
+                            <th>Градусы</th>
+                            <th>Знак</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {digitalTwin.chara_karakas.karakas.map((karaka) => (
+                            <tr key={karaka.karaka_code}>
+                              <td className="font-medium text-gray-900" title={karaka.karaka_meaning}>
+                                {karaka.karaka_code}
+                                <span className="text-gray-400 text-xs ml-1">
+                                  ({karaka.karaka_name})
+                                </span>
+                              </td>
+                              <td className="text-gray-700">
+                                {PLANET_NAMES[karaka.planet] || karaka.planet}
+                              </td>
+                              <td className="text-gray-500">
+                                {karaka.degrees_in_sign.toFixed(2)}°
+                              </td>
+                              <td className="text-gray-500">
+                                {SIGN_NAMES[karaka.sign] || karaka.sign}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="text-xs text-gray-400 mt-2">
+                      {digitalTwin.chara_karakas.note}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Footer info */}
             <div className="mt-6 text-xs text-gray-400">
-              Аянамса: {result.ayanamsa} | Варга: {result.requested_varga || 'D1'}
+              Аянамса: {digitalTwin.meta.ayanamsa} | Delta: {digitalTwin.meta.ayanamsa_delta.toFixed(4)}°
+              {detectedTimezone && (
+                <> | Timezone: {detectedTimezone.timezone_name} (UTC{detectedTimezone.utc_offset >= 0 ? '+' : ''}{detectedTimezone.utc_offset})</>
+              )}
             </div>
           </>
         )}

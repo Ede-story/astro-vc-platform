@@ -2,10 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* StarMeet Brand Colors */
+:root {
+  --color-brand-green: #6B9B37;
+  --color-brand-green-hover: #5a8a2d;
+  --color-brand-graphite: #2f3538;
+  --color-brand-graphite-hover: #3d4448;
+  --font-montserrat: 'Montserrat', sans-serif;
+}
+
 /* StarMeet - Clean Minimalist Theme */
 body {
   @apply bg-gray-50 text-gray-900;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-montserrat), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* Custom scrollbar - subtle */
@@ -52,8 +61,19 @@ select.input-field {
 
 /* Button styles */
 .btn-primary {
-  @apply bg-gray-900 text-white font-medium py-2.5 px-5 rounded-md
-         hover:bg-gray-800 transition-colors duration-150 text-sm;
+  @apply text-white font-medium py-2.5 px-5 rounded-md transition-colors duration-150 text-sm;
+  background-color: var(--color-brand-graphite);
+}
+.btn-primary:hover {
+  background-color: var(--color-brand-graphite-hover);
+}
+
+.btn-brand-green {
+  @apply text-white font-medium py-3 px-5 rounded-xl transition-colors duration-150;
+  background-color: var(--color-brand-green);
+}
+.btn-brand-green:hover {
+  background-color: var(--color-brand-green-hover);
 }
 
 .btn-secondary {
@@ -117,7 +137,11 @@ select.input-field {
 }
 
 .react-datepicker__day--selected {
-  @apply bg-gray-900 text-white hover:bg-gray-800;
+  @apply text-white;
+  background-color: var(--color-brand-graphite) !important;
+}
+.react-datepicker__day--selected:hover {
+  background-color: var(--color-brand-graphite-hover) !important;
 }
 
 .react-datepicker__day--keyboard-selected {
@@ -136,7 +160,8 @@ select.input-field {
 
 .react-datepicker__month-option--selected,
 .react-datepicker__year-option--selected {
-  @apply bg-gray-900 text-white;
+  @apply text-white;
+  background-color: var(--color-brand-graphite);
 }
 
 .react-datepicker__navigation {

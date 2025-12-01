@@ -1,0 +1,6310 @@
+{
+  "name": "Вадим Архипов",
+  "username": "vadim288",
+  "bio": "Предприниматель, муж и отец четверых детей. Более 30 лет я строил бизнес-системы, но с 2014 года моим главным вектором стало изучение человека: астрологии и психологии.\n\nМое хобби переросло в дело жизни. Я верю, что автоматизация и технологии должны служить не только прибыли, но и гармонии. Моя личная миссия через StarMeet помочь каждому найти свои истинные таланты и людей, с которыми можно создать великое: будь то крепкая семья или масштабный бизнес. Мои ценности это доброта, честность, осознанность и гармоничные отношения.",
+  "career": "В бизнесе с 1994 года. Прошел путь от продаж до создания трех компаний, ставших лидерами в своих нишах. Моя страсть - это инновации, масштаб и построение систем, где работает «коллективное лидерство». Я люблю создавать команды, которые побеждают благодаря сплоченности, а не давлению.\n\nСейчас я завершил все прошлые проекты, чтобы на 100% сфокусироваться на StarMeet. Мы строим глобальную платформу для раскрытия человеческого потенциала и повышения благополучия людей через поиск идеальной совместимости.",
+  "birth_date": "1977-10-23T21:00:00.000Z",
+  "birth_time": "06:28:00",
+  "birth_city": "Сортавала",
+  "birth_latitude": 61.70274,
+  "birth_longitude": 30.691231,
+  "birth_timezone": 0,
+  "ayanamsa": "raman",
+  "digital_twin": {
+    "meta": {
+      "ayanamsa": "Raman",
+      "latitude": 61.70274,
+      "longitude": 30.691231,
+      "julian_day": 2443440.644444444,
+      "generated_at": "2025-11-29T08:17:35.106792",
+      "ayanamsa_delta": 1.425146,
+      "birth_datetime": "1977-10-24T06:28:00",
+      "timezone_offset": 3
+    },
+    "vargas": {
+      "D1": {
+        "houses": [
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [
+              "Venus",
+              "Rahu"
+            ],
+            "sign_name": "Virgo",
+            "house_number": 1,
+            "aspects_received": []
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [
+              "Sun",
+              "Mercury"
+            ],
+            "sign_name": "Libra",
+            "house_number": 2,
+            "aspects_received": [
+              "Moon",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [],
+            "sign_name": "Scorpio",
+            "house_number": 3,
+            "aspects_received": [
+              "Mars",
+              "Jupiter",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [],
+            "sign_name": "Sagittarius",
+            "house_number": 4,
+            "aspects_received": [
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [],
+            "sign_name": "Capricorn",
+            "house_number": 5,
+            "aspects_received": [
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [],
+            "sign_name": "Aquarius",
+            "house_number": 6,
+            "aspects_received": [
+              "Mars",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [
+              "Moon",
+              "Ketu"
+            ],
+            "sign_name": "Pisces",
+            "house_number": 7,
+            "aspects_received": [
+              "Mars",
+              "Jupiter",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [],
+            "sign_name": "Aries",
+            "house_number": 8,
+            "aspects_received": [
+              "Venus",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [],
+            "sign_name": "Taurus",
+            "house_number": 9,
+            "aspects_received": [
+              "Sun",
+              "Mercury"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [
+              "Jupiter"
+            ],
+            "sign_name": "Gemini",
+            "house_number": 10,
+            "aspects_received": [
+              "Saturn",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [
+              "Mars"
+            ],
+            "sign_name": "Cancer",
+            "house_number": 11,
+            "aspects_received": []
+          },
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [
+              "Saturn"
+            ],
+            "sign_name": "Leo",
+            "house_number": 12,
+            "aspects_received": [
+              "Ketu"
+            ]
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 7,
+            "nakshatra": "Swati",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [
+              "Mercury"
+            ],
+            "houses_owned": [
+              12
+            ],
+            "dignity_state": "Debilitated",
+            "is_retrograde": false,
+            "house_occupied": 2,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 8.51,
+            "aspects_giving_to": [
+              9
+            ],
+            "aspects_receiving_from": [
+              "Moon",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Moon",
+            "sign_id": 12,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Jupiter",
+            "sign_name": "Pisces",
+            "conjunctions": [
+              "Ketu"
+            ],
+            "houses_owned": [
+              11
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 7,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 5.71,
+            "aspects_giving_to": [
+              2
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Jupiter",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Mars",
+            "sign_id": 4,
+            "nakshatra": "Pushya",
+            "sign_lord": "Moon",
+            "sign_name": "Cancer",
+            "conjunctions": [],
+            "houses_owned": [
+              3,
+              8
+            ],
+            "dignity_state": "Debilitated",
+            "is_retrograde": false,
+            "house_occupied": 11,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 6.75,
+            "aspects_giving_to": [
+              3,
+              6,
+              7
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 7,
+            "nakshatra": "Swati",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [
+              "Sun"
+            ],
+            "houses_owned": [
+              1,
+              10
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 2,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 11.95,
+            "aspects_giving_to": [
+              9
+            ],
+            "aspects_receiving_from": [
+              "Moon",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 3,
+            "nakshatra": "Ardra",
+            "sign_lord": "Mercury",
+            "sign_name": "Gemini",
+            "conjunctions": [],
+            "houses_owned": [
+              4,
+              7
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 10,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 14.04,
+            "aspects_giving_to": [
+              3,
+              5,
+              7
+            ],
+            "aspects_receiving_from": [
+              "Saturn",
+              "Rahu"
+            ]
+          },
+          {
+            "name": "Venus",
+            "sign_id": 6,
+            "nakshatra": "Hasta",
+            "sign_lord": "Mercury",
+            "sign_name": "Virgo",
+            "conjunctions": [
+              "Rahu"
+            ],
+            "houses_owned": [
+              2,
+              9
+            ],
+            "dignity_state": "Debilitated",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 16.68,
+            "aspects_giving_to": [
+              8
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 5,
+            "nakshatra": "Magha",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [],
+            "houses_owned": [
+              5,
+              6
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 6.38,
+            "aspects_giving_to": [
+              3,
+              7,
+              10
+            ],
+            "aspects_receiving_from": [
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 6,
+            "nakshatra": "Hasta",
+            "sign_lord": "Mercury",
+            "sign_name": "Virgo",
+            "conjunctions": [
+              "Venus"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 21.79,
+            "aspects_giving_to": [
+              6,
+              8,
+              10
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 12,
+            "nakshatra": "Revati",
+            "sign_lord": "Jupiter",
+            "sign_name": "Pisces",
+            "conjunctions": [
+              "Moon"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 7,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 21.79,
+            "aspects_giving_to": [
+              2,
+              4,
+              12
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Jupiter",
+              "Saturn"
+            ]
+          }
+        ],
+        "ascendant": {
+          "degrees": 22.88,
+          "sign_id": 6,
+          "sign_name": "Virgo"
+        }
+      },
+      "D2": {
+        "houses": [
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [
+              "Sun",
+              "Mercury",
+              "Jupiter",
+              "Venus",
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ],
+            "sign_name": "Leo",
+            "house_number": 1,
+            "aspects_received": []
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [],
+            "sign_name": "Virgo",
+            "house_number": 2,
+            "aspects_received": []
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [],
+            "sign_name": "Libra",
+            "house_number": 3,
+            "aspects_received": []
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [],
+            "sign_name": "Scorpio",
+            "house_number": 4,
+            "aspects_received": [
+              "Mars",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [],
+            "sign_name": "Sagittarius",
+            "house_number": 5,
+            "aspects_received": []
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [],
+            "sign_name": "Capricorn",
+            "house_number": 6,
+            "aspects_received": [
+              "Jupiter",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [],
+            "sign_name": "Aquarius",
+            "house_number": 7,
+            "aspects_received": [
+              "Moon",
+              "Mars"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [],
+            "sign_name": "Pisces",
+            "house_number": 8,
+            "aspects_received": [
+              "Sun",
+              "Mars",
+              "Mercury",
+              "Jupiter",
+              "Venus",
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [],
+            "sign_name": "Aries",
+            "house_number": 9,
+            "aspects_received": []
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [],
+            "sign_name": "Taurus",
+            "house_number": 10,
+            "aspects_received": [
+              "Jupiter",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [],
+            "sign_name": "Gemini",
+            "house_number": 11,
+            "aspects_received": [
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [
+              "Moon",
+              "Mars"
+            ],
+            "sign_name": "Cancer",
+            "house_number": 12,
+            "aspects_received": []
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 5,
+            "nakshatra": "Swati",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Mercury",
+              "Jupiter",
+              "Venus",
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ],
+            "houses_owned": [
+              1
+            ],
+            "dignity_state": "Moolatrikona",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 8.51,
+            "aspects_giving_to": [
+              8
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Moon",
+            "sign_id": 4,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Moon",
+            "sign_name": "Cancer",
+            "conjunctions": [
+              "Mars"
+            ],
+            "houses_owned": [
+              12
+            ],
+            "dignity_state": "Own",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 5.71,
+            "aspects_giving_to": [
+              7
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Mars",
+            "sign_id": 4,
+            "nakshatra": "Pushya",
+            "sign_lord": "Moon",
+            "sign_name": "Cancer",
+            "conjunctions": [
+              "Moon"
+            ],
+            "houses_owned": [
+              4,
+              9
+            ],
+            "dignity_state": "Debilitated",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 6.75,
+            "aspects_giving_to": [
+              4,
+              7,
+              8
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 5,
+            "nakshatra": "Swati",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Sun",
+              "Jupiter",
+              "Venus",
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ],
+            "houses_owned": [
+              2,
+              11
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 11.95,
+            "aspects_giving_to": [
+              8
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 5,
+            "nakshatra": "Ardra",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Sun",
+              "Mercury",
+              "Venus",
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ],
+            "houses_owned": [
+              5,
+              8
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 14.04,
+            "aspects_giving_to": [
+              6,
+              8,
+              10
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Venus",
+            "sign_id": 5,
+            "nakshatra": "Hasta",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Sun",
+              "Mercury",
+              "Jupiter",
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ],
+            "houses_owned": [
+              3,
+              10
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 1.68,
+            "aspects_giving_to": [
+              8
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 5,
+            "nakshatra": "Magha",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Sun",
+              "Mercury",
+              "Jupiter",
+              "Venus",
+              "Rahu",
+              "Ketu"
+            ],
+            "houses_owned": [
+              6,
+              7
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 6.38,
+            "aspects_giving_to": [
+              4,
+              8,
+              11
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 5,
+            "nakshatra": "Hasta",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Sun",
+              "Mercury",
+              "Jupiter",
+              "Venus",
+              "Saturn",
+              "Ketu"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 6.79,
+            "aspects_giving_to": [
+              6,
+              8,
+              10
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 5,
+            "nakshatra": "Revati",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Sun",
+              "Mercury",
+              "Jupiter",
+              "Venus",
+              "Saturn",
+              "Rahu"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 6.79,
+            "aspects_giving_to": [
+              6,
+              8,
+              10
+            ],
+            "aspects_receiving_from": []
+          }
+        ],
+        "ascendant": {
+          "degrees": 7.88,
+          "sign_id": 5,
+          "sign_name": "Leo"
+        }
+      },
+      "D3": {
+        "houses": [
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [
+              "Rahu"
+            ],
+            "sign_name": "Taurus",
+            "house_number": 1,
+            "aspects_received": [
+              "Sun",
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [],
+            "sign_name": "Gemini",
+            "house_number": 2,
+            "aspects_received": [
+              "Saturn",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [
+              "Mars"
+            ],
+            "sign_name": "Cancer",
+            "house_number": 3,
+            "aspects_received": [
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [
+              "Saturn"
+            ],
+            "sign_name": "Leo",
+            "house_number": 4,
+            "aspects_received": [
+              "Venus",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [],
+            "sign_name": "Virgo",
+            "house_number": 5,
+            "aspects_received": [
+              "Mercury"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [
+              "Sun",
+              "Jupiter"
+            ],
+            "sign_name": "Libra",
+            "house_number": 6,
+            "aspects_received": [
+              "Moon",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [
+              "Ketu"
+            ],
+            "sign_name": "Scorpio",
+            "house_number": 7,
+            "aspects_received": [
+              "Mars",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [],
+            "sign_name": "Sagittarius",
+            "house_number": 8,
+            "aspects_received": [
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [
+              "Venus"
+            ],
+            "sign_name": "Capricorn",
+            "house_number": 9,
+            "aspects_received": []
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [
+              "Mercury"
+            ],
+            "sign_name": "Aquarius",
+            "house_number": 10,
+            "aspects_received": [
+              "Mars",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [
+              "Moon"
+            ],
+            "sign_name": "Pisces",
+            "house_number": 11,
+            "aspects_received": [
+              "Mars",
+              "Jupiter",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [],
+            "sign_name": "Aries",
+            "house_number": 12,
+            "aspects_received": [
+              "Ketu"
+            ]
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 7,
+            "nakshatra": "Swati",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [
+              "Jupiter"
+            ],
+            "houses_owned": [
+              4
+            ],
+            "dignity_state": "Debilitated",
+            "is_retrograde": false,
+            "house_occupied": 6,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 8.51,
+            "aspects_giving_to": [
+              1
+            ],
+            "aspects_receiving_from": [
+              "Moon",
+              "Rahu"
+            ]
+          },
+          {
+            "name": "Moon",
+            "sign_id": 12,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Jupiter",
+            "sign_name": "Pisces",
+            "conjunctions": [],
+            "houses_owned": [
+              3
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 11,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 5.71,
+            "aspects_giving_to": [
+              6
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Jupiter",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Mars",
+            "sign_id": 4,
+            "nakshatra": "Pushya",
+            "sign_lord": "Moon",
+            "sign_name": "Cancer",
+            "conjunctions": [],
+            "houses_owned": [
+              7,
+              12
+            ],
+            "dignity_state": "Debilitated",
+            "is_retrograde": false,
+            "house_occupied": 3,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 6.75,
+            "aspects_giving_to": [
+              7,
+              10,
+              11
+            ],
+            "aspects_receiving_from": [
+              "Jupiter"
+            ]
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 11,
+            "nakshatra": "Swati",
+            "sign_lord": "Saturn",
+            "sign_name": "Aquarius",
+            "conjunctions": [],
+            "houses_owned": [
+              2,
+              5
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 10,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 1.95,
+            "aspects_giving_to": [
+              5
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Rahu"
+            ]
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 7,
+            "nakshatra": "Ardra",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [
+              "Sun"
+            ],
+            "houses_owned": [
+              8,
+              11
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 6,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 4.04,
+            "aspects_giving_to": [
+              1,
+              3,
+              11
+            ],
+            "aspects_receiving_from": [
+              "Moon",
+              "Rahu"
+            ]
+          },
+          {
+            "name": "Venus",
+            "sign_id": 10,
+            "nakshatra": "Hasta",
+            "sign_lord": "Saturn",
+            "sign_name": "Capricorn",
+            "conjunctions": [],
+            "houses_owned": [
+              1,
+              6
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 9,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 6.68,
+            "aspects_giving_to": [
+              4
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 5,
+            "nakshatra": "Magha",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [],
+            "houses_owned": [
+              9,
+              10
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 4,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 6.38,
+            "aspects_giving_to": [
+              2,
+              7,
+              11
+            ],
+            "aspects_receiving_from": [
+              "Venus",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 2,
+            "nakshatra": "Hasta",
+            "sign_lord": "Venus",
+            "sign_name": "Taurus",
+            "conjunctions": [],
+            "houses_owned": [],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 1.79,
+            "aspects_giving_to": [
+              6,
+              8,
+              10
+            ],
+            "aspects_receiving_from": [
+              "Sun",
+              "Jupiter"
+            ]
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 8,
+            "nakshatra": "Revati",
+            "sign_lord": "Mars",
+            "sign_name": "Scorpio",
+            "conjunctions": [],
+            "houses_owned": [],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 7,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 1.79,
+            "aspects_giving_to": [
+              2,
+              4,
+              12
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Saturn"
+            ]
+          }
+        ],
+        "ascendant": {
+          "degrees": 2.88,
+          "sign_id": 2,
+          "sign_name": "Taurus"
+        }
+      },
+      "D4": {
+        "houses": [
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [],
+            "sign_name": "Gemini",
+            "house_number": 1,
+            "aspects_received": [
+              "Jupiter",
+              "Saturn",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [
+              "Mars"
+            ],
+            "sign_name": "Cancer",
+            "house_number": 2,
+            "aspects_received": []
+          },
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [
+              "Saturn"
+            ],
+            "sign_name": "Leo",
+            "house_number": 3,
+            "aspects_received": [
+              "Sun",
+              "Mercury",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [
+              "Jupiter",
+              "Ketu"
+            ],
+            "sign_name": "Virgo",
+            "house_number": 4,
+            "aspects_received": []
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [],
+            "sign_name": "Libra",
+            "house_number": 5,
+            "aspects_received": [
+              "Moon",
+              "Venus",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [],
+            "sign_name": "Scorpio",
+            "house_number": 6,
+            "aspects_received": [
+              "Mars",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [],
+            "sign_name": "Sagittarius",
+            "house_number": 7,
+            "aspects_received": [
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [
+              "Sun",
+              "Mercury"
+            ],
+            "sign_name": "Capricorn",
+            "house_number": 8,
+            "aspects_received": []
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [],
+            "sign_name": "Aquarius",
+            "house_number": 9,
+            "aspects_received": [
+              "Mars",
+              "Jupiter",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [
+              "Moon",
+              "Venus",
+              "Rahu"
+            ],
+            "sign_name": "Pisces",
+            "house_number": 10,
+            "aspects_received": [
+              "Mars",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [],
+            "sign_name": "Aries",
+            "house_number": 11,
+            "aspects_received": [
+              "Jupiter",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [],
+            "sign_name": "Taurus",
+            "house_number": 12,
+            "aspects_received": []
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 10,
+            "nakshatra": "Swati",
+            "sign_lord": "Saturn",
+            "sign_name": "Capricorn",
+            "conjunctions": [
+              "Mercury"
+            ],
+            "houses_owned": [
+              3
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 8,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 1.01,
+            "aspects_giving_to": [
+              3
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Moon",
+            "sign_id": 12,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Jupiter",
+            "sign_name": "Pisces",
+            "conjunctions": [
+              "Venus",
+              "Rahu"
+            ],
+            "houses_owned": [
+              2
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 10,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 5.71,
+            "aspects_giving_to": [
+              5
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Mars",
+            "sign_id": 4,
+            "nakshatra": "Pushya",
+            "sign_lord": "Moon",
+            "sign_name": "Cancer",
+            "conjunctions": [],
+            "houses_owned": [
+              6,
+              11
+            ],
+            "dignity_state": "Debilitated",
+            "is_retrograde": false,
+            "house_occupied": 2,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 6.75,
+            "aspects_giving_to": [
+              6,
+              9,
+              10
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 10,
+            "nakshatra": "Swati",
+            "sign_lord": "Saturn",
+            "sign_name": "Capricorn",
+            "conjunctions": [
+              "Sun"
+            ],
+            "houses_owned": [
+              1,
+              4
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 8,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 4.45,
+            "aspects_giving_to": [
+              3
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 6,
+            "nakshatra": "Ardra",
+            "sign_lord": "Mercury",
+            "sign_name": "Virgo",
+            "conjunctions": [
+              "Ketu"
+            ],
+            "houses_owned": [
+              7,
+              10
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 4,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 6.54,
+            "aspects_giving_to": [
+              1,
+              9,
+              11
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Venus",
+            "sign_id": 12,
+            "nakshatra": "Hasta",
+            "sign_lord": "Jupiter",
+            "sign_name": "Pisces",
+            "conjunctions": [
+              "Moon",
+              "Rahu"
+            ],
+            "houses_owned": [
+              5,
+              12
+            ],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 10,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 1.68,
+            "aspects_giving_to": [
+              5
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 5,
+            "nakshatra": "Magha",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [],
+            "houses_owned": [
+              8,
+              9
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 3,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 6.38,
+            "aspects_giving_to": [
+              1,
+              6,
+              10
+            ],
+            "aspects_receiving_from": [
+              "Sun",
+              "Mercury",
+              "Rahu"
+            ]
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 12,
+            "nakshatra": "Hasta",
+            "sign_lord": "Jupiter",
+            "sign_name": "Pisces",
+            "conjunctions": [
+              "Moon",
+              "Venus"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 10,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 6.79,
+            "aspects_giving_to": [
+              3,
+              5,
+              7
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 6,
+            "nakshatra": "Revati",
+            "sign_lord": "Mercury",
+            "sign_name": "Virgo",
+            "conjunctions": [
+              "Jupiter"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 4,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 6.79,
+            "aspects_giving_to": [
+              1,
+              9,
+              11
+            ],
+            "aspects_receiving_from": []
+          }
+        ],
+        "ascendant": {
+          "degrees": 0.38,
+          "sign_id": 3,
+          "sign_name": "Gemini"
+        }
+      },
+      "D7": {
+        "houses": [
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [
+              "Rahu"
+            ],
+            "sign_name": "Leo",
+            "house_number": 1,
+            "aspects_received": []
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [
+              "Jupiter",
+              "Saturn"
+            ],
+            "sign_name": "Virgo",
+            "house_number": 2,
+            "aspects_received": [
+              "Mars",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [
+              "Moon"
+            ],
+            "sign_name": "Libra",
+            "house_number": 3,
+            "aspects_received": [
+              "Mars"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [
+              "Sun"
+            ],
+            "sign_name": "Scorpio",
+            "house_number": 4,
+            "aspects_received": [
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [
+              "Mercury"
+            ],
+            "sign_name": "Sagittarius",
+            "house_number": 5,
+            "aspects_received": [
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [],
+            "sign_name": "Capricorn",
+            "house_number": 6,
+            "aspects_received": [
+              "Venus",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [
+              "Mars",
+              "Ketu"
+            ],
+            "sign_name": "Aquarius",
+            "house_number": 7,
+            "aspects_received": [
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [],
+            "sign_name": "Pisces",
+            "house_number": 8,
+            "aspects_received": [
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [],
+            "sign_name": "Aries",
+            "house_number": 9,
+            "aspects_received": [
+              "Jupiter",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [],
+            "sign_name": "Taurus",
+            "house_number": 10,
+            "aspects_received": [
+              "Moon",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [
+              "Venus"
+            ],
+            "sign_name": "Gemini",
+            "house_number": 11,
+            "aspects_received": [
+              "Sun",
+              "Mars",
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [],
+            "sign_name": "Cancer",
+            "house_number": 12,
+            "aspects_received": [
+              "Mercury",
+              "Saturn",
+              "Ketu"
+            ]
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 8,
+            "nakshatra": "Swati",
+            "sign_lord": "Mars",
+            "sign_name": "Scorpio",
+            "conjunctions": [],
+            "houses_owned": [
+              1
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 4,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 4.23,
+            "aspects_giving_to": [
+              11
+            ],
+            "aspects_receiving_from": [
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Moon",
+            "sign_id": 7,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [],
+            "houses_owned": [
+              12
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 3,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 1.42,
+            "aspects_giving_to": [
+              10
+            ],
+            "aspects_receiving_from": [
+              "Mars"
+            ]
+          },
+          {
+            "name": "Mars",
+            "sign_id": 11,
+            "nakshatra": "Pushya",
+            "sign_lord": "Saturn",
+            "sign_name": "Aquarius",
+            "conjunctions": [
+              "Ketu"
+            ],
+            "houses_owned": [
+              4,
+              9
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 7,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 2.46,
+            "aspects_giving_to": [
+              2,
+              3,
+              11
+            ],
+            "aspects_receiving_from": [
+              "Jupiter"
+            ]
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 9,
+            "nakshatra": "Swati",
+            "sign_lord": "Jupiter",
+            "sign_name": "Sagittarius",
+            "conjunctions": [],
+            "houses_owned": [
+              2,
+              11
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 5,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 3.38,
+            "aspects_giving_to": [
+              12
+            ],
+            "aspects_receiving_from": [
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 6,
+            "nakshatra": "Ardra",
+            "sign_lord": "Mercury",
+            "sign_name": "Virgo",
+            "conjunctions": [
+              "Saturn"
+            ],
+            "houses_owned": [
+              5,
+              8
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 2,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 1.18,
+            "aspects_giving_to": [
+              7,
+              9,
+              11
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Venus",
+            "sign_id": 3,
+            "nakshatra": "Hasta",
+            "sign_lord": "Mercury",
+            "sign_name": "Gemini",
+            "conjunctions": [],
+            "houses_owned": [
+              3,
+              10
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 11,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 3.82,
+            "aspects_giving_to": [
+              6
+            ],
+            "aspects_receiving_from": [
+              "Sun",
+              "Mars",
+              "Jupiter"
+            ]
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 6,
+            "nakshatra": "Magha",
+            "sign_lord": "Mercury",
+            "sign_name": "Virgo",
+            "conjunctions": [
+              "Jupiter"
+            ],
+            "houses_owned": [
+              6,
+              7
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 2,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 2.09,
+            "aspects_giving_to": [
+              5,
+              9,
+              12
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 5,
+            "nakshatra": "Hasta",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [],
+            "houses_owned": [],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 0.36,
+            "aspects_giving_to": [
+              6,
+              8,
+              10
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 11,
+            "nakshatra": "Revati",
+            "sign_lord": "Saturn",
+            "sign_name": "Aquarius",
+            "conjunctions": [
+              "Mars"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 7,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 0.36,
+            "aspects_giving_to": [
+              2,
+              4,
+              12
+            ],
+            "aspects_receiving_from": [
+              "Jupiter"
+            ]
+          }
+        ],
+        "ascendant": {
+          "degrees": 1.45,
+          "sign_id": 5,
+          "sign_name": "Leo"
+        }
+      },
+      "D9": {
+        "houses": [
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [
+              "Rahu"
+            ],
+            "sign_name": "Cancer",
+            "house_number": 1,
+            "aspects_received": [
+              "Sun",
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [
+              "Moon"
+            ],
+            "sign_name": "Leo",
+            "house_number": 2,
+            "aspects_received": [
+              "Mercury",
+              "Saturn",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [
+              "Mars"
+            ],
+            "sign_name": "Virgo",
+            "house_number": 3,
+            "aspects_received": [
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [],
+            "sign_name": "Libra",
+            "house_number": 4,
+            "aspects_received": [
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [],
+            "sign_name": "Scorpio",
+            "house_number": 5,
+            "aspects_received": [
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [
+              "Sun"
+            ],
+            "sign_name": "Sagittarius",
+            "house_number": 6,
+            "aspects_received": [
+              "Saturn",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [
+              "Mercury",
+              "Ketu"
+            ],
+            "sign_name": "Capricorn",
+            "house_number": 7,
+            "aspects_received": [
+              "Mars",
+              "Venus"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [
+              "Jupiter"
+            ],
+            "sign_name": "Aquarius",
+            "house_number": 8,
+            "aspects_received": [
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [],
+            "sign_name": "Pisces",
+            "house_number": 9,
+            "aspects_received": [
+              "Moon",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [],
+            "sign_name": "Aries",
+            "house_number": 10,
+            "aspects_received": [
+              "Mars",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [
+              "Saturn"
+            ],
+            "sign_name": "Taurus",
+            "house_number": 11,
+            "aspects_received": [
+              "Mars"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [
+              "Venus"
+            ],
+            "sign_name": "Gemini",
+            "house_number": 12,
+            "aspects_received": [
+              "Ketu"
+            ]
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 9,
+            "nakshatra": "Swati",
+            "sign_lord": "Jupiter",
+            "sign_name": "Sagittarius",
+            "conjunctions": [],
+            "houses_owned": [
+              2
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 6,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 1.85,
+            "aspects_giving_to": [
+              1
+            ],
+            "aspects_receiving_from": [
+              "Saturn",
+              "Rahu"
+            ]
+          },
+          {
+            "name": "Moon",
+            "sign_id": 5,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [],
+            "houses_owned": [
+              1
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 2,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 2.38,
+            "aspects_giving_to": [
+              9
+            ],
+            "aspects_receiving_from": [
+              "Mercury",
+              "Saturn",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Mars",
+            "sign_id": 6,
+            "nakshatra": "Pushya",
+            "sign_lord": "Mercury",
+            "sign_name": "Virgo",
+            "conjunctions": [],
+            "houses_owned": [
+              5,
+              10
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 3,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 0.08,
+            "aspects_giving_to": [
+              7,
+              10,
+              11
+            ],
+            "aspects_receiving_from": [
+              "Jupiter"
+            ]
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 10,
+            "nakshatra": "Swati",
+            "sign_lord": "Saturn",
+            "sign_name": "Capricorn",
+            "conjunctions": [
+              "Ketu"
+            ],
+            "houses_owned": [
+              3,
+              12
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 7,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 1.95,
+            "aspects_giving_to": [
+              2
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Venus"
+            ]
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 11,
+            "nakshatra": "Ardra",
+            "sign_lord": "Saturn",
+            "sign_name": "Aquarius",
+            "conjunctions": [],
+            "houses_owned": [
+              6,
+              9
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 8,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 0.71,
+            "aspects_giving_to": [
+              1,
+              3,
+              5
+            ],
+            "aspects_receiving_from": [
+              "Rahu"
+            ]
+          },
+          {
+            "name": "Venus",
+            "sign_id": 3,
+            "nakshatra": "Hasta",
+            "sign_lord": "Mercury",
+            "sign_name": "Gemini",
+            "conjunctions": [],
+            "houses_owned": [
+              4,
+              11
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 0.01,
+            "aspects_giving_to": [
+              7
+            ],
+            "aspects_receiving_from": [
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 2,
+            "nakshatra": "Magha",
+            "sign_lord": "Venus",
+            "sign_name": "Taurus",
+            "conjunctions": [],
+            "houses_owned": [
+              7,
+              8
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 11,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 3.05,
+            "aspects_giving_to": [
+              2,
+              6,
+              9
+            ],
+            "aspects_receiving_from": [
+              "Mars"
+            ]
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 4,
+            "nakshatra": "Hasta",
+            "sign_lord": "Moon",
+            "sign_name": "Cancer",
+            "conjunctions": [],
+            "houses_owned": [],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 1.79,
+            "aspects_giving_to": [
+              6,
+              8,
+              10
+            ],
+            "aspects_receiving_from": [
+              "Sun",
+              "Jupiter"
+            ]
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 10,
+            "nakshatra": "Revati",
+            "sign_lord": "Saturn",
+            "sign_name": "Capricorn",
+            "conjunctions": [
+              "Mercury"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 7,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 1.79,
+            "aspects_giving_to": [
+              2,
+              4,
+              12
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Venus"
+            ]
+          }
+        ],
+        "ascendant": {
+          "degrees": 2.88,
+          "sign_id": 4,
+          "sign_name": "Cancer"
+        }
+      },
+      "D10": {
+        "houses": [
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [
+              "Sun",
+              "Moon",
+              "Rahu"
+            ],
+            "sign_name": "Sagittarius",
+            "house_number": 1,
+            "aspects_received": [
+              "Mars"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [
+              "Mercury"
+            ],
+            "sign_name": "Capricorn",
+            "house_number": 2,
+            "aspects_received": [
+              "Mars",
+              "Saturn",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [],
+            "sign_name": "Aquarius",
+            "house_number": 3,
+            "aspects_received": []
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [],
+            "sign_name": "Pisces",
+            "house_number": 4,
+            "aspects_received": [
+              "Jupiter",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [],
+            "sign_name": "Aries",
+            "house_number": 5,
+            "aspects_received": []
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [
+              "Mars"
+            ],
+            "sign_name": "Taurus",
+            "house_number": 6,
+            "aspects_received": [
+              "Jupiter",
+              "Venus",
+              "Saturn",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [
+              "Ketu"
+            ],
+            "sign_name": "Gemini",
+            "house_number": 7,
+            "aspects_received": []
+          },
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [],
+            "sign_name": "Cancer",
+            "house_number": 8,
+            "aspects_received": [
+              "Sun",
+              "Moon",
+              "Jupiter",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [],
+            "sign_name": "Leo",
+            "house_number": 9,
+            "aspects_received": [
+              "Mercury",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [],
+            "sign_name": "Virgo",
+            "house_number": 10,
+            "aspects_received": [
+              "Mars",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [
+              "Jupiter",
+              "Venus",
+              "Saturn"
+            ],
+            "sign_name": "Libra",
+            "house_number": 11,
+            "aspects_received": []
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [],
+            "sign_name": "Scorpio",
+            "house_number": 12,
+            "aspects_received": [
+              "Ketu"
+            ]
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 9,
+            "nakshatra": "Swati",
+            "sign_lord": "Jupiter",
+            "sign_name": "Sagittarius",
+            "conjunctions": [
+              "Moon",
+              "Rahu"
+            ],
+            "houses_owned": [
+              9
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 2.51,
+            "aspects_giving_to": [
+              8
+            ],
+            "aspects_receiving_from": [
+              "Mars"
+            ]
+          },
+          {
+            "name": "Moon",
+            "sign_id": 9,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Jupiter",
+            "sign_name": "Sagittarius",
+            "conjunctions": [
+              "Sun",
+              "Rahu"
+            ],
+            "houses_owned": [
+              8
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 2.71,
+            "aspects_giving_to": [
+              8
+            ],
+            "aspects_receiving_from": [
+              "Mars"
+            ]
+          },
+          {
+            "name": "Mars",
+            "sign_id": 2,
+            "nakshatra": "Pushya",
+            "sign_lord": "Venus",
+            "sign_name": "Taurus",
+            "conjunctions": [],
+            "houses_owned": [
+              5,
+              12
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 6,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 0.75,
+            "aspects_giving_to": [
+              1,
+              2,
+              10
+            ],
+            "aspects_receiving_from": [
+              "Jupiter",
+              "Venus",
+              "Saturn",
+              "Rahu"
+            ]
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 10,
+            "nakshatra": "Swati",
+            "sign_lord": "Saturn",
+            "sign_name": "Capricorn",
+            "conjunctions": [],
+            "houses_owned": [
+              7,
+              10
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 2,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 2.95,
+            "aspects_giving_to": [
+              9
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Saturn",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 7,
+            "nakshatra": "Ardra",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [
+              "Venus",
+              "Saturn"
+            ],
+            "houses_owned": [
+              1,
+              4
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 11,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 2.04,
+            "aspects_giving_to": [
+              4,
+              6,
+              8
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Venus",
+            "sign_id": 7,
+            "nakshatra": "Hasta",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [
+              "Jupiter",
+              "Saturn"
+            ],
+            "houses_owned": [
+              6,
+              11
+            ],
+            "dignity_state": "Moolatrikona",
+            "is_retrograde": false,
+            "house_occupied": 11,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 1.68,
+            "aspects_giving_to": [
+              6
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 7,
+            "nakshatra": "Magha",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [
+              "Jupiter",
+              "Venus"
+            ],
+            "houses_owned": [
+              2,
+              3
+            ],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 11,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 0.38,
+            "aspects_giving_to": [
+              2,
+              6,
+              9
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 9,
+            "nakshatra": "Hasta",
+            "sign_lord": "Jupiter",
+            "sign_name": "Sagittarius",
+            "conjunctions": [
+              "Sun",
+              "Moon"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 0.79,
+            "aspects_giving_to": [
+              6,
+              8,
+              10
+            ],
+            "aspects_receiving_from": [
+              "Mars"
+            ]
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 3,
+            "nakshatra": "Revati",
+            "sign_lord": "Mercury",
+            "sign_name": "Gemini",
+            "conjunctions": [],
+            "houses_owned": [],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 7,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 0.79,
+            "aspects_giving_to": [
+              2,
+              4,
+              12
+            ],
+            "aspects_receiving_from": []
+          }
+        ],
+        "ascendant": {
+          "degrees": 1.88,
+          "sign_id": 9,
+          "sign_name": "Sagittarius"
+        }
+      },
+      "D12": {
+        "houses": [
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [],
+            "sign_name": "Gemini",
+            "house_number": 1,
+            "aspects_received": [
+              "Jupiter",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [],
+            "sign_name": "Cancer",
+            "house_number": 2,
+            "aspects_received": []
+          },
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [],
+            "sign_name": "Leo",
+            "house_number": 3,
+            "aspects_received": [
+              "Sun",
+              "Jupiter",
+              "Saturn",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [
+              "Mars"
+            ],
+            "sign_name": "Virgo",
+            "house_number": 4,
+            "aspects_received": [
+              "Mercury"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [
+              "Saturn"
+            ],
+            "sign_name": "Libra",
+            "house_number": 5,
+            "aspects_received": [
+              "Venus",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [
+              "Jupiter",
+              "Ketu"
+            ],
+            "sign_name": "Scorpio",
+            "house_number": 6,
+            "aspects_received": []
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [],
+            "sign_name": "Sagittarius",
+            "house_number": 7,
+            "aspects_received": [
+              "Moon",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [
+              "Sun"
+            ],
+            "sign_name": "Capricorn",
+            "house_number": 8,
+            "aspects_received": [
+              "Mars",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [
+              "Mercury"
+            ],
+            "sign_name": "Aquarius",
+            "house_number": 9,
+            "aspects_received": [
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [
+              "Venus"
+            ],
+            "sign_name": "Pisces",
+            "house_number": 10,
+            "aspects_received": []
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [],
+            "sign_name": "Aries",
+            "house_number": 11,
+            "aspects_received": [
+              "Mars",
+              "Jupiter",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [
+              "Moon",
+              "Rahu"
+            ],
+            "sign_name": "Taurus",
+            "house_number": 12,
+            "aspects_received": [
+              "Mars",
+              "Saturn"
+            ]
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 10,
+            "nakshatra": "Swati",
+            "sign_lord": "Saturn",
+            "sign_name": "Capricorn",
+            "conjunctions": [],
+            "houses_owned": [
+              3
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 8,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 1.01,
+            "aspects_giving_to": [
+              3
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Moon",
+            "sign_id": 2,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Venus",
+            "sign_name": "Taurus",
+            "conjunctions": [
+              "Rahu"
+            ],
+            "houses_owned": [
+              2
+            ],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 0.71,
+            "aspects_giving_to": [
+              7
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Mars",
+            "sign_id": 6,
+            "nakshatra": "Pushya",
+            "sign_lord": "Mercury",
+            "sign_name": "Virgo",
+            "conjunctions": [],
+            "houses_owned": [
+              6,
+              11
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 4,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 1.75,
+            "aspects_giving_to": [
+              8,
+              11,
+              12
+            ],
+            "aspects_receiving_from": [
+              "Mercury"
+            ]
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 11,
+            "nakshatra": "Swati",
+            "sign_lord": "Saturn",
+            "sign_name": "Aquarius",
+            "conjunctions": [],
+            "houses_owned": [
+              1,
+              4
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 9,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 1.95,
+            "aspects_giving_to": [
+              4
+            ],
+            "aspects_receiving_from": [
+              "Rahu"
+            ]
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 8,
+            "nakshatra": "Ardra",
+            "sign_lord": "Mars",
+            "sign_name": "Scorpio",
+            "conjunctions": [
+              "Ketu"
+            ],
+            "houses_owned": [
+              7,
+              10
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 6,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 1.54,
+            "aspects_giving_to": [
+              1,
+              3,
+              11
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Venus",
+            "sign_id": 12,
+            "nakshatra": "Hasta",
+            "sign_lord": "Jupiter",
+            "sign_name": "Pisces",
+            "conjunctions": [],
+            "houses_owned": [
+              5,
+              12
+            ],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 10,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 1.68,
+            "aspects_giving_to": [
+              5
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 7,
+            "nakshatra": "Magha",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [],
+            "houses_owned": [
+              8,
+              9
+            ],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 5,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 1.38,
+            "aspects_giving_to": [
+              3,
+              8,
+              12
+            ],
+            "aspects_receiving_from": [
+              "Venus",
+              "Rahu"
+            ]
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 2,
+            "nakshatra": "Hasta",
+            "sign_lord": "Venus",
+            "sign_name": "Taurus",
+            "conjunctions": [
+              "Moon"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 1.79,
+            "aspects_giving_to": [
+              5,
+              7,
+              9
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 8,
+            "nakshatra": "Revati",
+            "sign_lord": "Mars",
+            "sign_name": "Scorpio",
+            "conjunctions": [
+              "Jupiter"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 6,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 1.79,
+            "aspects_giving_to": [
+              1,
+              3,
+              11
+            ],
+            "aspects_receiving_from": []
+          }
+        ],
+        "ascendant": {
+          "degrees": 0.38,
+          "sign_id": 3,
+          "sign_name": "Gemini"
+        }
+      },
+      "D16": {
+        "houses": [
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [],
+            "sign_name": "Sagittarius",
+            "house_number": 1,
+            "aspects_received": [
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [],
+            "sign_name": "Capricorn",
+            "house_number": 2,
+            "aspects_received": []
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [],
+            "sign_name": "Aquarius",
+            "house_number": 3,
+            "aspects_received": [
+              "Mars",
+              "Jupiter",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [
+              "Moon"
+            ],
+            "sign_name": "Pisces",
+            "house_number": 4,
+            "aspects_received": [
+              "Sun",
+              "Mars",
+              "Venus"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [],
+            "sign_name": "Aries",
+            "house_number": 5,
+            "aspects_received": [
+              "Jupiter",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [],
+            "sign_name": "Taurus",
+            "house_number": 6,
+            "aspects_received": [
+              "Mercury"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [],
+            "sign_name": "Gemini",
+            "house_number": 7,
+            "aspects_received": [
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [
+              "Mars",
+              "Jupiter"
+            ],
+            "sign_name": "Cancer",
+            "house_number": 8,
+            "aspects_received": []
+          },
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [
+              "Sun",
+              "Venus"
+            ],
+            "sign_name": "Leo",
+            "house_number": 9,
+            "aspects_received": [
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [],
+            "sign_name": "Virgo",
+            "house_number": 10,
+            "aspects_received": [
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [
+              "Mercury"
+            ],
+            "sign_name": "Libra",
+            "house_number": 11,
+            "aspects_received": [
+              "Moon"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ],
+            "sign_name": "Scorpio",
+            "house_number": 12,
+            "aspects_received": [
+              "Mars"
+            ]
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 5,
+            "nakshatra": "Swati",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Venus"
+            ],
+            "houses_owned": [
+              9
+            ],
+            "dignity_state": "Moolatrikona",
+            "is_retrograde": false,
+            "house_occupied": 9,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 1.01,
+            "aspects_giving_to": [
+              4
+            ],
+            "aspects_receiving_from": [
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Moon",
+            "sign_id": 12,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Jupiter",
+            "sign_name": "Pisces",
+            "conjunctions": [],
+            "houses_owned": [
+              8
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 4,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 0.08,
+            "aspects_giving_to": [
+              11
+            ],
+            "aspects_receiving_from": [
+              "Sun",
+              "Mars",
+              "Venus"
+            ]
+          },
+          {
+            "name": "Mars",
+            "sign_id": 4,
+            "nakshatra": "Pushya",
+            "sign_lord": "Moon",
+            "sign_name": "Cancer",
+            "conjunctions": [
+              "Jupiter"
+            ],
+            "houses_owned": [
+              5,
+              12
+            ],
+            "dignity_state": "Debilitated",
+            "is_retrograde": false,
+            "house_occupied": 8,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 1.12,
+            "aspects_giving_to": [
+              3,
+              4,
+              12
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 7,
+            "nakshatra": "Swati",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [],
+            "houses_owned": [
+              7,
+              10
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 11,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 0.7,
+            "aspects_giving_to": [
+              6
+            ],
+            "aspects_receiving_from": [
+              "Moon"
+            ]
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 4,
+            "nakshatra": "Ardra",
+            "sign_lord": "Moon",
+            "sign_name": "Cancer",
+            "conjunctions": [
+              "Mars"
+            ],
+            "houses_owned": [
+              1,
+              4
+            ],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 8,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 0.92,
+            "aspects_giving_to": [
+              1,
+              3,
+              5
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Venus",
+            "sign_id": 5,
+            "nakshatra": "Hasta",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Sun"
+            ],
+            "houses_owned": [
+              6,
+              11
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 9,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 1.68,
+            "aspects_giving_to": [
+              4
+            ],
+            "aspects_receiving_from": [
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 8,
+            "nakshatra": "Magha",
+            "sign_lord": "Mars",
+            "sign_name": "Scorpio",
+            "conjunctions": [
+              "Rahu",
+              "Ketu"
+            ],
+            "houses_owned": [
+              2,
+              3
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 0.75,
+            "aspects_giving_to": [
+              3,
+              7,
+              10
+            ],
+            "aspects_receiving_from": [
+              "Mars"
+            ]
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 8,
+            "nakshatra": "Hasta",
+            "sign_lord": "Mars",
+            "sign_name": "Scorpio",
+            "conjunctions": [
+              "Saturn",
+              "Ketu"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Debilitated",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 1.16,
+            "aspects_giving_to": [
+              5,
+              7,
+              9
+            ],
+            "aspects_receiving_from": [
+              "Mars"
+            ]
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 8,
+            "nakshatra": "Revati",
+            "sign_lord": "Mars",
+            "sign_name": "Scorpio",
+            "conjunctions": [
+              "Saturn",
+              "Rahu"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 1.16,
+            "aspects_giving_to": [
+              5,
+              7,
+              9
+            ],
+            "aspects_receiving_from": [
+              "Mars"
+            ]
+          }
+        ],
+        "ascendant": {
+          "degrees": 0.38,
+          "sign_id": 9,
+          "sign_name": "Sagittarius"
+        }
+      },
+      "D20": {
+        "houses": [
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [
+              "Moon",
+              "Mercury"
+            ],
+            "sign_name": "Scorpio",
+            "house_number": 1,
+            "aspects_received": [
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [],
+            "sign_name": "Sagittarius",
+            "house_number": 2,
+            "aspects_received": [
+              "Mars",
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [],
+            "sign_name": "Capricorn",
+            "house_number": 3,
+            "aspects_received": []
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [],
+            "sign_name": "Aquarius",
+            "house_number": 4,
+            "aspects_received": [
+              "Jupiter",
+              "Venus",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [],
+            "sign_name": "Pisces",
+            "house_number": 5,
+            "aspects_received": [
+              "Mars",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [
+              "Saturn"
+            ],
+            "sign_name": "Aries",
+            "house_number": 6,
+            "aspects_received": [
+              "Sun",
+              "Mars"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [
+              "Jupiter"
+            ],
+            "sign_name": "Taurus",
+            "house_number": 7,
+            "aspects_received": [
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [],
+            "sign_name": "Gemini",
+            "house_number": 8,
+            "aspects_received": [
+              "Moon",
+              "Mercury"
+            ]
+          },
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [
+              "Venus"
+            ],
+            "sign_name": "Cancer",
+            "house_number": 9,
+            "aspects_received": [
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [
+              "Mars"
+            ],
+            "sign_name": "Leo",
+            "house_number": 10,
+            "aspects_received": []
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [
+              "Sun"
+            ],
+            "sign_name": "Virgo",
+            "house_number": 11,
+            "aspects_received": []
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [
+              "Rahu",
+              "Ketu"
+            ],
+            "sign_name": "Libra",
+            "house_number": 12,
+            "aspects_received": [
+              "Jupiter"
+            ]
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 6,
+            "nakshatra": "Swati",
+            "sign_lord": "Mercury",
+            "sign_name": "Virgo",
+            "conjunctions": [],
+            "houses_owned": [
+              10
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 11,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 1.01,
+            "aspects_giving_to": [
+              6
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Moon",
+            "sign_id": 8,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Mars",
+            "sign_name": "Scorpio",
+            "conjunctions": [
+              "Mercury"
+            ],
+            "houses_owned": [
+              9
+            ],
+            "dignity_state": "Debilitated",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 1.21,
+            "aspects_giving_to": [
+              8
+            ],
+            "aspects_receiving_from": [
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Mars",
+            "sign_id": 5,
+            "nakshatra": "Pushya",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [],
+            "houses_owned": [
+              1,
+              6
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 10,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 0.75,
+            "aspects_giving_to": [
+              2,
+              5,
+              6
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 8,
+            "nakshatra": "Swati",
+            "sign_lord": "Mars",
+            "sign_name": "Scorpio",
+            "conjunctions": [
+              "Moon"
+            ],
+            "houses_owned": [
+              8,
+              11
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 1.45,
+            "aspects_giving_to": [
+              8
+            ],
+            "aspects_receiving_from": [
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 2,
+            "nakshatra": "Ardra",
+            "sign_lord": "Venus",
+            "sign_name": "Taurus",
+            "conjunctions": [],
+            "houses_owned": [
+              2,
+              5
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 7,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 0.54,
+            "aspects_giving_to": [
+              2,
+              4,
+              12
+            ],
+            "aspects_receiving_from": [
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Venus",
+            "sign_id": 4,
+            "nakshatra": "Hasta",
+            "sign_lord": "Moon",
+            "sign_name": "Cancer",
+            "conjunctions": [],
+            "houses_owned": [
+              7,
+              12
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 9,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 0.18,
+            "aspects_giving_to": [
+              4
+            ],
+            "aspects_receiving_from": [
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 1,
+            "nakshatra": "Magha",
+            "sign_lord": "Mars",
+            "sign_name": "Aries",
+            "conjunctions": [],
+            "houses_owned": [
+              3,
+              4
+            ],
+            "dignity_state": "Debilitated",
+            "is_retrograde": false,
+            "house_occupied": 6,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 0.38,
+            "aspects_giving_to": [
+              1,
+              4,
+              9
+            ],
+            "aspects_receiving_from": [
+              "Sun",
+              "Mars"
+            ]
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 7,
+            "nakshatra": "Hasta",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [
+              "Ketu"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 0.79,
+            "aspects_giving_to": [
+              5,
+              7,
+              9
+            ],
+            "aspects_receiving_from": [
+              "Jupiter"
+            ]
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 7,
+            "nakshatra": "Revati",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [
+              "Rahu"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 0.79,
+            "aspects_giving_to": [
+              5,
+              7,
+              9
+            ],
+            "aspects_receiving_from": [
+              "Jupiter"
+            ]
+          }
+        ],
+        "ascendant": {
+          "degrees": 0.38,
+          "sign_id": 8,
+          "sign_name": "Scorpio"
+        }
+      },
+      "D24": {
+        "houses": [
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [
+              "Saturn"
+            ],
+            "sign_name": "Capricorn",
+            "house_number": 1,
+            "aspects_received": []
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [
+              "Sun"
+            ],
+            "sign_name": "Aquarius",
+            "house_number": 2,
+            "aspects_received": [
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [],
+            "sign_name": "Pisces",
+            "house_number": 3,
+            "aspects_received": [
+              "Venus"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [],
+            "sign_name": "Aries",
+            "house_number": 4,
+            "aspects_received": [
+              "Mars",
+              "Jupiter",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [
+              "Mercury"
+            ],
+            "sign_name": "Taurus",
+            "house_number": 5,
+            "aspects_received": [
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [],
+            "sign_name": "Gemini",
+            "house_number": 6,
+            "aspects_received": [
+              "Moon"
+            ]
+          },
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [
+              "Jupiter"
+            ],
+            "sign_name": "Cancer",
+            "house_number": 7,
+            "aspects_received": [
+              "Mars",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [
+              "Venus"
+            ],
+            "sign_name": "Leo",
+            "house_number": 8,
+            "aspects_received": [
+              "Mars",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [],
+            "sign_name": "Virgo",
+            "house_number": 9,
+            "aspects_received": [
+              "Sun",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [],
+            "sign_name": "Libra",
+            "house_number": 10,
+            "aspects_received": []
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [
+              "Moon"
+            ],
+            "sign_name": "Scorpio",
+            "house_number": 11,
+            "aspects_received": [
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [
+              "Mars",
+              "Rahu",
+              "Ketu"
+            ],
+            "sign_name": "Sagittarius",
+            "house_number": 12,
+            "aspects_received": [
+              "Mercury",
+              "Jupiter"
+            ]
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 11,
+            "nakshatra": "Swati",
+            "sign_lord": "Saturn",
+            "sign_name": "Aquarius",
+            "conjunctions": [],
+            "houses_owned": [
+              8
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 2,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 1.01,
+            "aspects_giving_to": [
+              9
+            ],
+            "aspects_receiving_from": [
+              "Jupiter"
+            ]
+          },
+          {
+            "name": "Moon",
+            "sign_id": 8,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Mars",
+            "sign_name": "Scorpio",
+            "conjunctions": [],
+            "houses_owned": [
+              7
+            ],
+            "dignity_state": "Debilitated",
+            "is_retrograde": false,
+            "house_occupied": 11,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 0.71,
+            "aspects_giving_to": [
+              6
+            ],
+            "aspects_receiving_from": [
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Mars",
+            "sign_id": 9,
+            "nakshatra": "Pushya",
+            "sign_lord": "Jupiter",
+            "sign_name": "Sagittarius",
+            "conjunctions": [
+              "Rahu",
+              "Ketu"
+            ],
+            "houses_owned": [
+              4,
+              11
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 0.5,
+            "aspects_giving_to": [
+              4,
+              7,
+              8
+            ],
+            "aspects_receiving_from": [
+              "Mercury",
+              "Jupiter"
+            ]
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 2,
+            "nakshatra": "Swati",
+            "sign_lord": "Venus",
+            "sign_name": "Taurus",
+            "conjunctions": [],
+            "houses_owned": [
+              6,
+              9
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 5,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 0.7,
+            "aspects_giving_to": [
+              12
+            ],
+            "aspects_receiving_from": [
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 4,
+            "nakshatra": "Ardra",
+            "sign_lord": "Moon",
+            "sign_name": "Cancer",
+            "conjunctions": [],
+            "houses_owned": [
+              3,
+              12
+            ],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 7,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 0.29,
+            "aspects_giving_to": [
+              2,
+              4,
+              12
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Venus",
+            "sign_id": 5,
+            "nakshatra": "Hasta",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [],
+            "houses_owned": [
+              5,
+              10
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 8,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 0.43,
+            "aspects_giving_to": [
+              3
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 10,
+            "nakshatra": "Magha",
+            "sign_lord": "Saturn",
+            "sign_name": "Capricorn",
+            "conjunctions": [],
+            "houses_owned": [
+              1,
+              2
+            ],
+            "dignity_state": "Own",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 0.13,
+            "aspects_giving_to": [
+              4,
+              8,
+              11
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 9,
+            "nakshatra": "Hasta",
+            "sign_lord": "Jupiter",
+            "sign_name": "Sagittarius",
+            "conjunctions": [
+              "Mars",
+              "Ketu"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 0.54,
+            "aspects_giving_to": [
+              5,
+              7,
+              9
+            ],
+            "aspects_receiving_from": [
+              "Mercury",
+              "Jupiter"
+            ]
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 9,
+            "nakshatra": "Revati",
+            "sign_lord": "Jupiter",
+            "sign_name": "Sagittarius",
+            "conjunctions": [
+              "Mars",
+              "Rahu"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 0.54,
+            "aspects_giving_to": [
+              5,
+              7,
+              9
+            ],
+            "aspects_receiving_from": [
+              "Mercury",
+              "Jupiter"
+            ]
+          }
+        ],
+        "ascendant": {
+          "degrees": 0.38,
+          "sign_id": 10,
+          "sign_name": "Capricorn"
+        }
+      },
+      "D27": {
+        "houses": [
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [],
+            "sign_name": "Pisces",
+            "house_number": 1,
+            "aspects_received": [
+              "Mars",
+              "Mercury",
+              "Jupiter",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [],
+            "sign_name": "Aries",
+            "house_number": 2,
+            "aspects_received": [
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [
+              "Sun"
+            ],
+            "sign_name": "Taurus",
+            "house_number": 3,
+            "aspects_received": [
+              "Jupiter",
+              "Venus",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [
+              "Moon"
+            ],
+            "sign_name": "Gemini",
+            "house_number": 4,
+            "aspects_received": []
+          },
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [
+              "Mars"
+            ],
+            "sign_name": "Cancer",
+            "house_number": 5,
+            "aspects_received": [
+              "Jupiter",
+              "Saturn",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [
+              "Mercury",
+              "Ketu"
+            ],
+            "sign_name": "Leo",
+            "house_number": 6,
+            "aspects_received": []
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [
+              "Saturn"
+            ],
+            "sign_name": "Virgo",
+            "house_number": 7,
+            "aspects_received": [
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [
+              "Jupiter",
+              "Venus"
+            ],
+            "sign_name": "Libra",
+            "house_number": 8,
+            "aspects_received": []
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [],
+            "sign_name": "Scorpio",
+            "house_number": 9,
+            "aspects_received": [
+              "Mars",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [],
+            "sign_name": "Sagittarius",
+            "house_number": 10,
+            "aspects_received": [
+              "Sun",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [],
+            "sign_name": "Capricorn",
+            "house_number": 11,
+            "aspects_received": [
+              "Moon",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [
+              "Rahu"
+            ],
+            "sign_name": "Aquarius",
+            "house_number": 12,
+            "aspects_received": [
+              "Mars"
+            ]
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 2,
+            "nakshatra": "Swati",
+            "sign_lord": "Venus",
+            "sign_name": "Taurus",
+            "conjunctions": [],
+            "houses_owned": [
+              6
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 3,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 0.73,
+            "aspects_giving_to": [
+              10
+            ],
+            "aspects_receiving_from": [
+              "Jupiter",
+              "Venus",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Moon",
+            "sign_id": 3,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Mercury",
+            "sign_name": "Gemini",
+            "conjunctions": [],
+            "houses_owned": [
+              5
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 4,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 0.15,
+            "aspects_giving_to": [
+              11
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Mars",
+            "sign_id": 4,
+            "nakshatra": "Pushya",
+            "sign_lord": "Moon",
+            "sign_name": "Cancer",
+            "conjunctions": [],
+            "houses_owned": [
+              2,
+              9
+            ],
+            "dignity_state": "Debilitated",
+            "is_retrograde": false,
+            "house_occupied": 5,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 0.08,
+            "aspects_giving_to": [
+              1,
+              9,
+              12
+            ],
+            "aspects_receiving_from": [
+              "Jupiter",
+              "Saturn",
+              "Rahu"
+            ]
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 5,
+            "nakshatra": "Swati",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Ketu"
+            ],
+            "houses_owned": [
+              4,
+              7
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 6,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 0.84,
+            "aspects_giving_to": [
+              1
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 7,
+            "nakshatra": "Ardra",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [
+              "Venus"
+            ],
+            "houses_owned": [
+              1,
+              10
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 8,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 0.71,
+            "aspects_giving_to": [
+              1,
+              3,
+              5
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Venus",
+            "sign_id": 7,
+            "nakshatra": "Hasta",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [
+              "Jupiter"
+            ],
+            "houses_owned": [
+              3,
+              8
+            ],
+            "dignity_state": "Moolatrikona",
+            "is_retrograde": false,
+            "house_occupied": 8,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 0.01,
+            "aspects_giving_to": [
+              3
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 6,
+            "nakshatra": "Magha",
+            "sign_lord": "Mercury",
+            "sign_name": "Virgo",
+            "conjunctions": [],
+            "houses_owned": [
+              11,
+              12
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 7,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 0.82,
+            "aspects_giving_to": [
+              2,
+              5,
+              10
+            ],
+            "aspects_receiving_from": [
+              "Rahu"
+            ]
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 11,
+            "nakshatra": "Hasta",
+            "sign_lord": "Saturn",
+            "sign_name": "Aquarius",
+            "conjunctions": [],
+            "houses_owned": [],
+            "dignity_state": "Own",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 0.68,
+            "aspects_giving_to": [
+              5,
+              7,
+              9
+            ],
+            "aspects_receiving_from": [
+              "Mars"
+            ]
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 5,
+            "nakshatra": "Revati",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Mercury"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 6,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 0.68,
+            "aspects_giving_to": [
+              1,
+              3,
+              11
+            ],
+            "aspects_receiving_from": []
+          }
+        ],
+        "ascendant": {
+          "degrees": 0.66,
+          "sign_id": 12,
+          "sign_name": "Pisces"
+        }
+      },
+      "D30": {
+        "houses": [
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [
+              "Rahu",
+              "Ketu"
+            ],
+            "sign_name": "Pisces",
+            "house_number": 1,
+            "aspects_received": []
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [],
+            "sign_name": "Aries",
+            "house_number": 2,
+            "aspects_received": [
+              "Moon",
+              "Mars"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [],
+            "sign_name": "Taurus",
+            "house_number": 3,
+            "aspects_received": [
+              "Mars",
+              "Jupiter",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [],
+            "sign_name": "Gemini",
+            "house_number": 4,
+            "aspects_received": []
+          },
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [],
+            "sign_name": "Cancer",
+            "house_number": 5,
+            "aspects_received": [
+              "Mercury",
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [],
+            "sign_name": "Leo",
+            "house_number": 6,
+            "aspects_received": [
+              "Venus",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [
+              "Moon",
+              "Mars"
+            ],
+            "sign_name": "Virgo",
+            "house_number": 7,
+            "aspects_received": [
+              "Sun",
+              "Jupiter",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [],
+            "sign_name": "Libra",
+            "house_number": 8,
+            "aspects_received": [
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [],
+            "sign_name": "Scorpio",
+            "house_number": 9,
+            "aspects_received": []
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [
+              "Mercury",
+              "Jupiter"
+            ],
+            "sign_name": "Sagittarius",
+            "house_number": 10,
+            "aspects_received": [
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [
+              "Venus"
+            ],
+            "sign_name": "Capricorn",
+            "house_number": 11,
+            "aspects_received": [
+              "Mars"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [
+              "Sun",
+              "Saturn"
+            ],
+            "sign_name": "Aquarius",
+            "house_number": 12,
+            "aspects_received": []
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 11,
+            "nakshatra": "Swati",
+            "sign_lord": "Saturn",
+            "sign_name": "Aquarius",
+            "conjunctions": [
+              "Saturn"
+            ],
+            "houses_owned": [
+              6
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 0,
+            "aspects_giving_to": [
+              7
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Moon",
+            "sign_id": 6,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Mercury",
+            "sign_name": "Virgo",
+            "conjunctions": [
+              "Mars"
+            ],
+            "houses_owned": [
+              5
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 7,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 0,
+            "aspects_giving_to": [
+              2
+            ],
+            "aspects_receiving_from": [
+              "Sun",
+              "Jupiter",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Mars",
+            "sign_id": 6,
+            "nakshatra": "Pushya",
+            "sign_lord": "Mercury",
+            "sign_name": "Virgo",
+            "conjunctions": [
+              "Moon"
+            ],
+            "houses_owned": [
+              2,
+              9
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 7,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 0,
+            "aspects_giving_to": [
+              2,
+              3,
+              11
+            ],
+            "aspects_receiving_from": [
+              "Sun",
+              "Jupiter",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 9,
+            "nakshatra": "Swati",
+            "sign_lord": "Jupiter",
+            "sign_name": "Sagittarius",
+            "conjunctions": [
+              "Jupiter"
+            ],
+            "houses_owned": [
+              4,
+              7
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 10,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 0,
+            "aspects_giving_to": [
+              5
+            ],
+            "aspects_receiving_from": [
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 9,
+            "nakshatra": "Ardra",
+            "sign_lord": "Jupiter",
+            "sign_name": "Sagittarius",
+            "conjunctions": [
+              "Mercury"
+            ],
+            "houses_owned": [
+              1,
+              10
+            ],
+            "dignity_state": "Moolatrikona",
+            "is_retrograde": false,
+            "house_occupied": 10,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 0,
+            "aspects_giving_to": [
+              3,
+              5,
+              7
+            ],
+            "aspects_receiving_from": [
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Venus",
+            "sign_id": 10,
+            "nakshatra": "Hasta",
+            "sign_lord": "Saturn",
+            "sign_name": "Capricorn",
+            "conjunctions": [],
+            "houses_owned": [
+              3,
+              8
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 11,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 0,
+            "aspects_giving_to": [
+              6
+            ],
+            "aspects_receiving_from": [
+              "Mars"
+            ]
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 11,
+            "nakshatra": "Magha",
+            "sign_lord": "Saturn",
+            "sign_name": "Aquarius",
+            "conjunctions": [
+              "Sun"
+            ],
+            "houses_owned": [
+              11,
+              12
+            ],
+            "dignity_state": "Moolatrikona",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 0,
+            "aspects_giving_to": [
+              3,
+              7,
+              10
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 12,
+            "nakshatra": "Hasta",
+            "sign_lord": "Jupiter",
+            "sign_name": "Pisces",
+            "conjunctions": [
+              "Ketu"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 0,
+            "aspects_giving_to": [
+              6,
+              8,
+              10
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 12,
+            "nakshatra": "Revati",
+            "sign_lord": "Jupiter",
+            "sign_name": "Pisces",
+            "conjunctions": [
+              "Rahu"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 0,
+            "aspects_giving_to": [
+              6,
+              8,
+              10
+            ],
+            "aspects_receiving_from": []
+          }
+        ],
+        "ascendant": {
+          "degrees": 0,
+          "sign_id": 12,
+          "sign_name": "Pisces"
+        }
+      },
+      "D40": {
+        "houses": [
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [],
+            "sign_name": "Aries",
+            "house_number": 1,
+            "aspects_received": []
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [
+              "Moon"
+            ],
+            "sign_name": "Taurus",
+            "house_number": 2,
+            "aspects_received": [
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [
+              "Mars"
+            ],
+            "sign_name": "Gemini",
+            "house_number": 3,
+            "aspects_received": []
+          },
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [
+              "Mercury"
+            ],
+            "sign_name": "Cancer",
+            "house_number": 4,
+            "aspects_received": [
+              "Jupiter",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [
+              "Venus"
+            ],
+            "sign_name": "Leo",
+            "house_number": 5,
+            "aspects_received": [
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [],
+            "sign_name": "Virgo",
+            "house_number": 6,
+            "aspects_received": []
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [
+              "Jupiter"
+            ],
+            "sign_name": "Libra",
+            "house_number": 7,
+            "aspects_received": [
+              "Sun",
+              "Mars",
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [],
+            "sign_name": "Scorpio",
+            "house_number": 8,
+            "aspects_received": []
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [
+              "Saturn"
+            ],
+            "sign_name": "Sagittarius",
+            "house_number": 9,
+            "aspects_received": [
+              "Moon",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [],
+            "sign_name": "Capricorn",
+            "house_number": 10,
+            "aspects_received": [
+              "Mars"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [],
+            "sign_name": "Aquarius",
+            "house_number": 11,
+            "aspects_received": [
+              "Mars",
+              "Mercury"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [
+              "Sun",
+              "Rahu",
+              "Ketu"
+            ],
+            "sign_name": "Pisces",
+            "house_number": 12,
+            "aspects_received": [
+              "Jupiter",
+              "Venus",
+              "Saturn"
+            ]
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 12,
+            "nakshatra": "Swati",
+            "sign_lord": "Jupiter",
+            "sign_name": "Pisces",
+            "conjunctions": [
+              "Rahu",
+              "Ketu"
+            ],
+            "houses_owned": [
+              5
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 0.26,
+            "aspects_giving_to": [
+              7
+            ],
+            "aspects_receiving_from": [
+              "Jupiter",
+              "Venus",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Moon",
+            "sign_id": 2,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Venus",
+            "sign_name": "Taurus",
+            "conjunctions": [],
+            "houses_owned": [
+              4
+            ],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 2,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 0.46,
+            "aspects_giving_to": [
+              9
+            ],
+            "aspects_receiving_from": [
+              "Jupiter"
+            ]
+          },
+          {
+            "name": "Mars",
+            "sign_id": 3,
+            "nakshatra": "Pushya",
+            "sign_lord": "Mercury",
+            "sign_name": "Gemini",
+            "conjunctions": [],
+            "houses_owned": [
+              1,
+              8
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 3,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 0.75,
+            "aspects_giving_to": [
+              7,
+              10,
+              11
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 4,
+            "nakshatra": "Swati",
+            "sign_lord": "Moon",
+            "sign_name": "Cancer",
+            "conjunctions": [],
+            "houses_owned": [
+              3,
+              6
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 4,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 0.7,
+            "aspects_giving_to": [
+              11
+            ],
+            "aspects_receiving_from": [
+              "Jupiter",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 7,
+            "nakshatra": "Ardra",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [],
+            "houses_owned": [
+              9,
+              12
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 7,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 0.54,
+            "aspects_giving_to": [
+              2,
+              4,
+              12
+            ],
+            "aspects_receiving_from": [
+              "Sun",
+              "Mars",
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Venus",
+            "sign_id": 5,
+            "nakshatra": "Hasta",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [],
+            "houses_owned": [
+              2,
+              7
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 5,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 0.18,
+            "aspects_giving_to": [
+              12
+            ],
+            "aspects_receiving_from": [
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 9,
+            "nakshatra": "Magha",
+            "sign_lord": "Jupiter",
+            "sign_name": "Sagittarius",
+            "conjunctions": [],
+            "houses_owned": [
+              10,
+              11
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 9,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 0.38,
+            "aspects_giving_to": [
+              4,
+              7,
+              12
+            ],
+            "aspects_receiving_from": [
+              "Moon",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 12,
+            "nakshatra": "Hasta",
+            "sign_lord": "Jupiter",
+            "sign_name": "Pisces",
+            "conjunctions": [
+              "Sun",
+              "Ketu"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 0.04,
+            "aspects_giving_to": [
+              5,
+              7,
+              9
+            ],
+            "aspects_receiving_from": [
+              "Jupiter",
+              "Venus",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 12,
+            "nakshatra": "Revati",
+            "sign_lord": "Jupiter",
+            "sign_name": "Pisces",
+            "conjunctions": [
+              "Sun",
+              "Rahu"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 0.04,
+            "aspects_giving_to": [
+              5,
+              7,
+              9
+            ],
+            "aspects_receiving_from": [
+              "Jupiter",
+              "Venus",
+              "Saturn"
+            ]
+          }
+        ],
+        "ascendant": {
+          "degrees": 0.38,
+          "sign_id": 1,
+          "sign_name": "Aries"
+        }
+      },
+      "D45": {
+        "houses": [
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [],
+            "sign_name": "Libra",
+            "house_number": 1,
+            "aspects_received": [
+              "Mars"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [],
+            "sign_name": "Scorpio",
+            "house_number": 2,
+            "aspects_received": [
+              "Sun"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [],
+            "sign_name": "Sagittarius",
+            "house_number": 3,
+            "aspects_received": [
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [
+              "Venus"
+            ],
+            "sign_name": "Capricorn",
+            "house_number": 4,
+            "aspects_received": [
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [
+              "Mars"
+            ],
+            "sign_name": "Aquarius",
+            "house_number": 5,
+            "aspects_received": [
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [],
+            "sign_name": "Pisces",
+            "house_number": 6,
+            "aspects_received": [
+              "Moon",
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [
+              "Sun"
+            ],
+            "sign_name": "Aries",
+            "house_number": 7,
+            "aspects_received": [
+              "Mercury",
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [
+              "Saturn"
+            ],
+            "sign_name": "Taurus",
+            "house_number": 8,
+            "aspects_received": [
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [],
+            "sign_name": "Gemini",
+            "house_number": 9,
+            "aspects_received": [
+              "Mars",
+              "Jupiter"
+            ]
+          },
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [],
+            "sign_name": "Cancer",
+            "house_number": 10,
+            "aspects_received": []
+          },
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [
+              "Moon",
+              "Rahu",
+              "Ketu"
+            ],
+            "sign_name": "Leo",
+            "house_number": 11,
+            "aspects_received": [
+              "Venus",
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [
+              "Mercury",
+              "Jupiter"
+            ],
+            "sign_name": "Virgo",
+            "house_number": 12,
+            "aspects_received": [
+              "Mars"
+            ]
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 1,
+            "nakshatra": "Swati",
+            "sign_lord": "Mars",
+            "sign_name": "Aries",
+            "conjunctions": [],
+            "houses_owned": [
+              11
+            ],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 7,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 0.51,
+            "aspects_giving_to": [
+              2
+            ],
+            "aspects_receiving_from": [
+              "Mercury",
+              "Jupiter"
+            ]
+          },
+          {
+            "name": "Moon",
+            "sign_id": 5,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Rahu",
+              "Ketu"
+            ],
+            "houses_owned": [
+              10
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 11,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 0.38,
+            "aspects_giving_to": [
+              6
+            ],
+            "aspects_receiving_from": [
+              "Venus",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Mars",
+            "sign_id": 11,
+            "nakshatra": "Pushya",
+            "sign_lord": "Saturn",
+            "sign_name": "Aquarius",
+            "conjunctions": [],
+            "houses_owned": [
+              2,
+              7
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 5,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 0.08,
+            "aspects_giving_to": [
+              1,
+              9,
+              12
+            ],
+            "aspects_receiving_from": [
+              "Jupiter"
+            ]
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 6,
+            "nakshatra": "Swati",
+            "sign_lord": "Mercury",
+            "sign_name": "Virgo",
+            "conjunctions": [
+              "Jupiter"
+            ],
+            "houses_owned": [
+              9,
+              12
+            ],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 0.61,
+            "aspects_giving_to": [
+              7
+            ],
+            "aspects_receiving_from": [
+              "Mars"
+            ]
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 6,
+            "nakshatra": "Ardra",
+            "sign_lord": "Mercury",
+            "sign_name": "Virgo",
+            "conjunctions": [
+              "Mercury"
+            ],
+            "houses_owned": [
+              3,
+              6
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 12,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 0.04,
+            "aspects_giving_to": [
+              5,
+              7,
+              9
+            ],
+            "aspects_receiving_from": [
+              "Mars"
+            ]
+          },
+          {
+            "name": "Venus",
+            "sign_id": 10,
+            "nakshatra": "Hasta",
+            "sign_lord": "Saturn",
+            "sign_name": "Capricorn",
+            "conjunctions": [],
+            "houses_owned": [
+              1,
+              8
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 4,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 0.01,
+            "aspects_giving_to": [
+              11
+            ],
+            "aspects_receiving_from": [
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 2,
+            "nakshatra": "Magha",
+            "sign_lord": "Venus",
+            "sign_name": "Taurus",
+            "conjunctions": [],
+            "houses_owned": [
+              4,
+              5
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 8,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 0.38,
+            "aspects_giving_to": [
+              3,
+              6,
+              11
+            ],
+            "aspects_receiving_from": [
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 5,
+            "nakshatra": "Hasta",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Moon",
+              "Ketu"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 11,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 0.46,
+            "aspects_giving_to": [
+              4,
+              6,
+              8
+            ],
+            "aspects_receiving_from": [
+              "Venus",
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 5,
+            "nakshatra": "Revati",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Moon",
+              "Rahu"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 11,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 0.46,
+            "aspects_giving_to": [
+              4,
+              6,
+              8
+            ],
+            "aspects_receiving_from": [
+              "Venus",
+              "Saturn"
+            ]
+          }
+        ],
+        "ascendant": {
+          "degrees": 0.21,
+          "sign_id": 7,
+          "sign_name": "Libra"
+        }
+      },
+      "D60": {
+        "houses": [
+          {
+            "lord": "Mercury",
+            "sign_id": 3,
+            "occupants": [
+              "Venus"
+            ],
+            "sign_name": "Gemini",
+            "house_number": 1,
+            "aspects_received": [
+              "Saturn"
+            ]
+          },
+          {
+            "lord": "Moon",
+            "sign_id": 4,
+            "occupants": [],
+            "sign_name": "Cancer",
+            "house_number": 2,
+            "aspects_received": [
+              "Jupiter",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Sun",
+            "sign_id": 5,
+            "occupants": [
+              "Mars",
+              "Saturn"
+            ],
+            "sign_name": "Leo",
+            "house_number": 3,
+            "aspects_received": []
+          },
+          {
+            "lord": "Mercury",
+            "sign_id": 6,
+            "occupants": [
+              "Mercury"
+            ],
+            "sign_name": "Virgo",
+            "house_number": 4,
+            "aspects_received": [
+              "Moon",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 7,
+            "occupants": [
+              "Jupiter",
+              "Ketu"
+            ],
+            "sign_name": "Libra",
+            "house_number": 5,
+            "aspects_received": [
+              "Sun"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 8,
+            "occupants": [],
+            "sign_name": "Scorpio",
+            "house_number": 6,
+            "aspects_received": [
+              "Saturn",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 9,
+            "occupants": [],
+            "sign_name": "Sagittarius",
+            "house_number": 7,
+            "aspects_received": [
+              "Mars"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 10,
+            "occupants": [],
+            "sign_name": "Capricorn",
+            "house_number": 8,
+            "aspects_received": [
+              "Venus",
+              "Rahu"
+            ]
+          },
+          {
+            "lord": "Saturn",
+            "sign_id": 11,
+            "occupants": [
+              "Moon"
+            ],
+            "sign_name": "Aquarius",
+            "house_number": 9,
+            "aspects_received": []
+          },
+          {
+            "lord": "Jupiter",
+            "sign_id": 12,
+            "occupants": [
+              "Sun"
+            ],
+            "sign_name": "Pisces",
+            "house_number": 10,
+            "aspects_received": [
+              "Mars",
+              "Jupiter",
+              "Saturn",
+              "Ketu"
+            ]
+          },
+          {
+            "lord": "Mars",
+            "sign_id": 1,
+            "occupants": [
+              "Rahu"
+            ],
+            "sign_name": "Aries",
+            "house_number": 11,
+            "aspects_received": [
+              "Mars",
+              "Mercury"
+            ]
+          },
+          {
+            "lord": "Venus",
+            "sign_id": 2,
+            "occupants": [],
+            "sign_name": "Taurus",
+            "house_number": 12,
+            "aspects_received": [
+              "Jupiter",
+              "Ketu"
+            ]
+          }
+        ],
+        "planets": [
+          {
+            "name": "Sun",
+            "sign_id": 12,
+            "nakshatra": "Swati",
+            "sign_lord": "Jupiter",
+            "sign_name": "Pisces",
+            "conjunctions": [],
+            "houses_owned": [
+              3
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 10,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 1,
+            "absolute_degree": 188.512,
+            "relative_degree": 0.01,
+            "aspects_giving_to": [
+              5
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Jupiter",
+              "Saturn",
+              "Ketu"
+            ]
+          },
+          {
+            "name": "Moon",
+            "sign_id": 11,
+            "nakshatra": "Uttara Bhadrapada",
+            "sign_lord": "Saturn",
+            "sign_name": "Aquarius",
+            "conjunctions": [],
+            "houses_owned": [
+              2
+            ],
+            "dignity_state": "Neutral",
+            "is_retrograde": false,
+            "house_occupied": 9,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 1,
+            "absolute_degree": 335.7086,
+            "relative_degree": 0.21,
+            "aspects_giving_to": [
+              4
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Mars",
+            "sign_id": 5,
+            "nakshatra": "Pushya",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Saturn"
+            ],
+            "houses_owned": [
+              6,
+              11
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 3,
+            "nakshatra_lord": "Saturn",
+            "nakshatra_pada": 2,
+            "absolute_degree": 96.7499,
+            "relative_degree": 0.25,
+            "aspects_giving_to": [
+              7,
+              10,
+              11
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Mercury",
+            "sign_id": 6,
+            "nakshatra": "Swati",
+            "sign_lord": "Mercury",
+            "sign_name": "Virgo",
+            "conjunctions": [],
+            "houses_owned": [
+              1,
+              4
+            ],
+            "dignity_state": "Exalted",
+            "is_retrograde": false,
+            "house_occupied": 4,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 191.9468,
+            "relative_degree": 0.45,
+            "aspects_giving_to": [
+              11
+            ],
+            "aspects_receiving_from": [
+              "Moon",
+              "Rahu"
+            ]
+          },
+          {
+            "name": "Jupiter",
+            "sign_id": 7,
+            "nakshatra": "Ardra",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [
+              "Ketu"
+            ],
+            "houses_owned": [
+              7,
+              10
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 5,
+            "nakshatra_lord": "Rahu",
+            "nakshatra_pada": 3,
+            "absolute_degree": 74.0401,
+            "relative_degree": 0.04,
+            "aspects_giving_to": [
+              2,
+              10,
+              12
+            ],
+            "aspects_receiving_from": [
+              "Sun"
+            ]
+          },
+          {
+            "name": "Venus",
+            "sign_id": 3,
+            "nakshatra": "Hasta",
+            "sign_lord": "Mercury",
+            "sign_name": "Gemini",
+            "conjunctions": [],
+            "houses_owned": [
+              5,
+              12
+            ],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 1,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 3,
+            "absolute_degree": 166.6758,
+            "relative_degree": 0.18,
+            "aspects_giving_to": [
+              8
+            ],
+            "aspects_receiving_from": [
+              "Saturn"
+            ]
+          },
+          {
+            "name": "Saturn",
+            "sign_id": 5,
+            "nakshatra": "Magha",
+            "sign_lord": "Sun",
+            "sign_name": "Leo",
+            "conjunctions": [
+              "Mars"
+            ],
+            "houses_owned": [
+              8,
+              9
+            ],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 3,
+            "nakshatra_lord": "Ketu",
+            "nakshatra_pada": 2,
+            "absolute_degree": 126.3787,
+            "relative_degree": 0.38,
+            "aspects_giving_to": [
+              1,
+              6,
+              10
+            ],
+            "aspects_receiving_from": []
+          },
+          {
+            "name": "Rahu",
+            "sign_id": 1,
+            "nakshatra": "Hasta",
+            "sign_lord": "Mars",
+            "sign_name": "Aries",
+            "conjunctions": [],
+            "houses_owned": [],
+            "dignity_state": "Enemy",
+            "is_retrograde": false,
+            "house_occupied": 11,
+            "nakshatra_lord": "Moon",
+            "nakshatra_pada": 4,
+            "absolute_degree": 171.7899,
+            "relative_degree": 0.29,
+            "aspects_giving_to": [
+              4,
+              6,
+              8
+            ],
+            "aspects_receiving_from": [
+              "Mars",
+              "Mercury"
+            ]
+          },
+          {
+            "name": "Ketu",
+            "sign_id": 7,
+            "nakshatra": "Revati",
+            "sign_lord": "Venus",
+            "sign_name": "Libra",
+            "conjunctions": [
+              "Jupiter"
+            ],
+            "houses_owned": [],
+            "dignity_state": "Friend",
+            "is_retrograde": false,
+            "house_occupied": 5,
+            "nakshatra_lord": "Mercury",
+            "nakshatra_pada": 2,
+            "absolute_degree": 351.7899,
+            "relative_degree": 0.29,
+            "aspects_giving_to": [
+              2,
+              10,
+              12
+            ],
+            "aspects_receiving_from": [
+              "Sun"
+            ]
+          }
+        ],
+        "ascendant": {
+          "degrees": 0.38,
+          "sign_id": 3,
+          "sign_name": "Gemini"
+        }
+      }
+    }
+  },
+  "psych_scores": {
+    "role": 100,
+    "drive": 100,
+    "focus": 92,
+    "energy": 6,
+    "novelty": 89,
+    "conflict": 90,
+    "decisions": 92,
+    "structure": 92,
+    "communication": 74,
+    "interest_sphere": 26
+  },
+  "seeking": [
+    "business",
+    "mentor",
+    "friendship",
+    "networking",
+    "collaboration"
+  ],
+  "offerings": [
+    "expertise",
+    "mentoring",
+    "creativity"
+  ],
+  "is_public": true,
+  "onboarding_completed": true,
+  "created_at": "2025-11-29T18:24:59.564Z"
+}

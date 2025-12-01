@@ -27,6 +27,7 @@ import swisseph as swe
 
 # jyotishganit library - our trusted calculation engine
 from jyotishganit import calculate_birth_chart
+from jyotishganit.dasha.vimshottari import calculate_vimshottari_dashas as jyotish_calculate_dashas
 
 # Native Varga functions from jyotishganit
 from jyotishganit.components.divisional_charts import (
@@ -73,9 +74,9 @@ AYANAMSA_IDS = {
     'Fagan_Bradley': swe.SIDM_FAGAN_BRADLEY,
 }
 
-# All supported Varga charts
-VARGA_CODES = ['D1', 'D2', 'D3', 'D4', 'D7', 'D9', 'D10', 'D12',
-               'D16', 'D20', 'D24', 'D27', 'D30', 'D40', 'D45', 'D60']
+# All supported Varga charts (now including D5, D6, D8, D11)
+VARGA_CODES = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10',
+               'D11', 'D12', 'D16', 'D20', 'D24', 'D27', 'D30', 'D40', 'D45', 'D60']
 
 # Sign Lords (Rulers)
 SIGN_LORDS = {
@@ -174,6 +175,177 @@ PLANETARY_ASPECTS = {
     'Rahu': [5, 7, 9],  # Same as Jupiter
     'Ketu': [5, 7, 9]   # Same as Jupiter
 }
+
+# Sign classifications for varga calculations
+ODD_SIGNS = ['Aries', 'Gemini', 'Leo', 'Libra', 'Sagittarius', 'Aquarius']
+EVEN_SIGNS = ['Taurus', 'Cancer', 'Virgo', 'Scorpio', 'Capricorn', 'Pisces']
+MOVABLE_SIGNS = ['Aries', 'Cancer', 'Libra', 'Capricorn']  # Chara
+FIXED_SIGNS = ['Taurus', 'Leo', 'Scorpio', 'Aquarius']      # Sthira
+DUAL_SIGNS = ['Gemini', 'Virgo', 'Sagittarius', 'Pisces']   # Dvisvabhava
+
+# Vimshottari Dasha periods (in years)
+VIMSHOTTARI_PERIODS = {
+    'Ketu': 7, 'Venus': 20, 'Sun': 6, 'Moon': 10, 'Mars': 7,
+    'Rahu': 18, 'Jupiter': 16, 'Saturn': 19, 'Mercury': 17
+}
+
+# Vimshottari Dasha order
+VIMSHOTTARI_ORDER = ['Ketu', 'Venus', 'Sun', 'Moon', 'Mars', 'Rahu', 'Jupiter', 'Saturn', 'Mercury']
+
+
+# =============================================================================
+# MISSING VARGA CALCULATIONS (D5, D6, D8, D11)
+# =============================================================================
+
+def panchamsha_from_long(sign_name: str, degrees: float) -> Tuple[int, str, float]:
+    """
+    Calculate D5 (Panchamsha) - 1/5th division for children and creativity.
+
+    Formula (Parashari method):
+    - Each sign divided into 5 parts of 6° each
+    - Odd signs (Aries, Gemini, etc.): Start from Aries
+    - Even signs (Taurus, Cancer, etc.): Start from Sagittarius
+
+    Args:
+        sign_name: D1 sign name
+        degrees: Degrees within sign (0-30)
+
+    Returns:
+        Tuple of (part_number, varga_sign, degrees_in_part)
+    """
+    # Determine which 6° division (1-5)
+    division = int(degrees / 6) + 1
+    division = min(division, 5)
+
+    # Get degrees within the division
+    degrees_in_part = (degrees % 6) * 5  # Scale to 30° in varga sign
+
+    # Determine starting sign based on odd/even
+    if sign_name in ODD_SIGNS:
+        start_sign_idx = 0  # Aries
+    else:
+        start_sign_idx = 8  # Sagittarius
+
+    # Calculate varga sign
+    varga_sign_idx = (start_sign_idx + division - 1) % 12
+    varga_sign = SIGNS[varga_sign_idx]
+
+    return (division, varga_sign, degrees_in_part)
+
+
+def shashthamsha_from_long(sign_name: str, degrees: float) -> Tuple[int, str, float]:
+    """
+    Calculate D6 (Shashthamsha) - 1/6th division for health and enemies.
+
+    Formula (Parashari method):
+    - Each sign divided into 6 parts of 5° each
+    - Odd signs: Start from same sign
+    - Even signs: Start from 7th sign (opposite)
+
+    Args:
+        sign_name: D1 sign name
+        degrees: Degrees within sign (0-30)
+
+    Returns:
+        Tuple of (part_number, varga_sign, degrees_in_part)
+    """
+    # Determine which 5° division (1-6)
+    division = int(degrees / 5) + 1
+    division = min(division, 6)
+
+    # Get degrees within the division
+    degrees_in_part = (degrees % 5) * 6  # Scale to 30° in varga sign
+
+    # Get starting sign index
+    base_sign_idx = SIGNS.index(sign_name) if sign_name in SIGNS else 0
+
+    if sign_name in ODD_SIGNS:
+        start_sign_idx = base_sign_idx  # Same sign
+    else:
+        start_sign_idx = (base_sign_idx + 6) % 12  # 7th sign (opposite)
+
+    # Calculate varga sign
+    varga_sign_idx = (start_sign_idx + division - 1) % 12
+    varga_sign = SIGNS[varga_sign_idx]
+
+    return (division, varga_sign, degrees_in_part)
+
+
+def ashtamsha_from_long(sign_name: str, degrees: float) -> Tuple[int, str, float]:
+    """
+    Calculate D8 (Ashtamsha) - 1/8th division for longevity and obstacles.
+
+    Formula (Parashari method):
+    - Each sign divided into 8 parts of 3.75° each
+    - Movable signs (Chara): Start from Aries
+    - Fixed signs (Sthira): Start from Sagittarius
+    - Dual signs (Dvisvabhava): Start from Leo
+
+    Args:
+        sign_name: D1 sign name
+        degrees: Degrees within sign (0-30)
+
+    Returns:
+        Tuple of (part_number, varga_sign, degrees_in_part)
+    """
+    # Determine which 3.75° division (1-8)
+    division_size = 30.0 / 8.0  # 3.75°
+    division = int(degrees / division_size) + 1
+    division = min(division, 8)
+
+    # Get degrees within the division
+    degrees_in_part = (degrees % division_size) * 8  # Scale to 30° in varga sign
+
+    # Determine starting sign based on sign quality
+    if sign_name in MOVABLE_SIGNS:
+        start_sign_idx = 0  # Aries
+    elif sign_name in FIXED_SIGNS:
+        start_sign_idx = 8  # Sagittarius
+    else:  # Dual signs
+        start_sign_idx = 4  # Leo
+
+    # Calculate varga sign
+    varga_sign_idx = (start_sign_idx + division - 1) % 12
+    varga_sign = SIGNS[varga_sign_idx]
+
+    return (division, varga_sign, degrees_in_part)
+
+
+def rudramsha_from_long(sign_name: str, degrees: float) -> Tuple[int, str, float]:
+    """
+    Calculate D11 (Rudramsha/Ekadashamsha) - 1/11th division for wealth acquisition.
+
+    Formula (Parashari method):
+    - Each sign divided into 11 parts of 2.727...° each
+    - Odd signs: Start from Aries
+    - Even signs: Start from Scorpio
+
+    Args:
+        sign_name: D1 sign name
+        degrees: Degrees within sign (0-30)
+
+    Returns:
+        Tuple of (part_number, varga_sign, degrees_in_part)
+    """
+    # Determine which 2.727° division (1-11)
+    division_size = 30.0 / 11.0  # ~2.727°
+    division = int(degrees / division_size) + 1
+    division = min(division, 11)
+
+    # Get degrees within the division
+    degrees_in_part = (degrees % division_size) * 11  # Scale to 30° in varga sign
+
+    # Determine starting sign based on odd/even
+    if sign_name in ODD_SIGNS:
+        start_sign_idx = 0  # Aries
+    else:
+        start_sign_idx = 7  # Scorpio
+
+    # Calculate varga sign (cycle through 11 signs)
+    varga_sign_idx = (start_sign_idx + division - 1) % 12
+    varga_sign = SIGNS[varga_sign_idx]
+
+    return (division, varga_sign, degrees_in_part)
 
 
 # =============================================================================
@@ -509,8 +681,20 @@ def get_varga_sign(abs_longitude: float, varga_code: str) -> str:
             _, result_sign, _ = chaturtamsa_from_long(sign_name, degrees_in_sign)
             return result_sign
 
+        elif varga_upper == 'D5':
+            _, result_sign, _ = panchamsha_from_long(sign_name, degrees_in_sign)
+            return result_sign
+
+        elif varga_upper == 'D6':
+            _, result_sign, _ = shashthamsha_from_long(sign_name, degrees_in_sign)
+            return result_sign
+
         elif varga_upper == 'D7':
             _, result_sign, _ = saptamsa_from_long(sign_name, degrees_in_sign)
+            return result_sign
+
+        elif varga_upper == 'D8':
+            _, result_sign, _ = ashtamsha_from_long(sign_name, degrees_in_sign)
             return result_sign
 
         elif varga_upper == 'D9':
@@ -519,6 +703,10 @@ def get_varga_sign(abs_longitude: float, varga_code: str) -> str:
 
         elif varga_upper == 'D10':
             _, result_sign, _ = dasamsa_from_long(sign_name, degrees_in_sign)
+            return result_sign
+
+        elif varga_upper == 'D11':
+            _, result_sign, _ = rudramsha_from_long(sign_name, degrees_in_sign)
             return result_sign
 
         elif varga_upper == 'D12':
@@ -604,8 +792,20 @@ def get_varga_sign_and_degrees(abs_longitude: float, varga_code: str) -> Tuple[s
             part, result_sign, deg = chaturtamsa_from_long(sign_name, degrees_in_sign)
             return (result_sign, deg if deg is not None else 0.0)
 
+        elif varga_upper == 'D5':
+            part, result_sign, deg = panchamsha_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D6':
+            part, result_sign, deg = shashthamsha_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
         elif varga_upper == 'D7':
             part, result_sign, deg = saptamsa_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D8':
+            part, result_sign, deg = ashtamsha_from_long(sign_name, degrees_in_sign)
             return (result_sign, deg if deg is not None else 0.0)
 
         elif varga_upper == 'D9':
@@ -614,6 +814,10 @@ def get_varga_sign_and_degrees(abs_longitude: float, varga_code: str) -> Tuple[s
 
         elif varga_upper == 'D10':
             part, result_sign, deg = dasamsa_from_long(sign_name, degrees_in_sign)
+            return (result_sign, deg if deg is not None else 0.0)
+
+        elif varga_upper == 'D11':
+            part, result_sign, deg = rudramsha_from_long(sign_name, degrees_in_sign)
             return (result_sign, deg if deg is not None else 0.0)
 
         elif varga_upper == 'D12':
@@ -1196,6 +1400,472 @@ def _generate_varga_chart(base_chart: ChartData, varga_code: str) -> Dict[str, A
         "planets": planets_data,
         "houses": houses_data
     }
+
+
+# =============================================================================
+# CHARA KARAKA CALCULATION (Jaimini System)
+# =============================================================================
+
+# Chara Karaka names and meanings
+CHARA_KARAKA_NAMES = [
+    ('AK', 'Atmakaraka', 'Soul, Self'),
+    ('AmK', 'Amatyakaraka', 'Career, Minister'),
+    ('BK', 'Bhratrikaraka', 'Siblings, Courage'),
+    ('MK', 'Matrikaraka', 'Mother, Property'),
+    ('PiK', 'Pitrikaraka', 'Father, Authority'),
+    ('PuK', 'Putrakaraka', 'Children, Creativity'),
+    ('GK', 'Gnatikaraka', 'Enemies, Obstacles'),
+    ('DK', 'Darakaraka', 'Spouse, Partner'),
+]
+
+def calculate_chara_karakas(planets_data: List[Dict]) -> Dict[str, Any]:
+    """
+    Calculate Chara Karakas (Jaimini Astrology) based on planetary degrees.
+
+    In Jaimini system, Chara Karakas are determined by sorting planets
+    by their degrees within their sign (sign_degrees / relative_degree).
+    The planet with the highest degree becomes Atmakaraka (AK),
+    the next becomes Amatyakaraka (AmK), and so on.
+
+    Traditional 8-planet scheme includes: Sun, Moon, Mars, Mercury,
+    Jupiter, Venus, Saturn, and Rahu. Ketu is excluded.
+
+    Args:
+        planets_data: List of planet dicts from D1 chart, each with
+                     'name' and 'relative_degree' (or 'sign_degrees')
+
+    Returns:
+        Dict with:
+        - 'karakas': List of karaka assignments
+        - 'by_planet': Dict mapping planet name to karaka
+        - 'by_karaka': Dict mapping karaka code to planet name
+    """
+    # Planets used for Chara Karaka (8-planet scheme, excluding Ketu)
+    KARAKA_PLANETS = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu']
+
+    # Extract relevant planets with their degrees
+    planet_degrees = []
+    for planet in planets_data:
+        name = planet.get('name', '')
+        if name in KARAKA_PLANETS:
+            # Get degrees within sign (relative_degree or sign_degrees)
+            degrees = planet.get('relative_degree') or planet.get('sign_degrees', 0)
+            planet_degrees.append({
+                'name': name,
+                'degrees': float(degrees),
+                'sign': planet.get('sign_name', ''),
+                'house': planet.get('house_occupied', 0)
+            })
+
+    # Sort by degrees DESCENDING (highest degree = Atmakaraka)
+    planet_degrees.sort(key=lambda x: x['degrees'], reverse=True)
+
+    # Assign Karakas
+    karakas = []
+    by_planet = {}
+    by_karaka = {}
+
+    for i, planet_info in enumerate(planet_degrees):
+        if i < len(CHARA_KARAKA_NAMES):
+            karaka_code, karaka_name, karaka_meaning = CHARA_KARAKA_NAMES[i]
+
+            karaka_entry = {
+                'rank': i + 1,
+                'karaka_code': karaka_code,
+                'karaka_name': karaka_name,
+                'karaka_meaning': karaka_meaning,
+                'planet': planet_info['name'],
+                'degrees_in_sign': round(planet_info['degrees'], 4),
+                'sign': planet_info['sign'],
+                'house': planet_info['house']
+            }
+            karakas.append(karaka_entry)
+            by_planet[planet_info['name']] = karaka_code
+            by_karaka[karaka_code] = planet_info['name']
+
+    return {
+        'karakas': karakas,
+        'by_planet': by_planet,
+        'by_karaka': by_karaka,
+        'note': 'Chara Karakas are variable significators based on planetary degrees (Jaimini system)'
+    }
+
+
+# =============================================================================
+# VIMSHOTTARI DASHA CALCULATION (Using native jyotishganit library)
+# =============================================================================
+
+def calculate_vimshottari_dasha_native(
+    birth_datetime: datetime.datetime,
+    latitude: float,
+    longitude: float,
+    tz_offset_hours: float,
+    ayanamsa_delta: float,
+    moon_longitude: float
+) -> Dict[str, Any]:
+    """
+    Calculate Vimshottari Dasha periods using native jyotishganit library.
+
+    This function uses the library's calculate_vimshottari_dashas() which provides:
+    - Full Mahadasha periods (9 lords x 120 years cycle)
+    - Antardasha sub-periods within each Mahadasha
+    - Pratyantardasha sub-sub-periods within each Antardasha
+    - Current and upcoming period detection
+
+    Args:
+        birth_datetime: Birth date and time (local time)
+        latitude: Birth latitude
+        longitude: Birth longitude
+        tz_offset_hours: Timezone offset in hours
+        ayanamsa_delta: Ayanamsa value in degrees
+        moon_longitude: Moon's absolute longitude (for nakshatra info)
+
+    Returns:
+        Dict with nested dasha structure including all levels
+    """
+    # Get Moon's nakshatra for display
+    nakshatra, pada = longitude_to_nakshatra(moon_longitude)
+    nakshatra_lord = NAKSHATRA_LORDS.get(nakshatra, 'Ketu')
+
+    try:
+        # Calculate using native library with max_depth=3 (includes Pratyantardasha)
+        dashas = jyotish_calculate_dashas(
+            person_birth_datetime=birth_datetime,
+            timezone_offset=tz_offset_hours,
+            latitude=latitude,
+            longitude=longitude,
+            ayanamsa_degrees=ayanamsa_delta,
+            max_depth=3  # MD + AD + PD
+        )
+
+        # Extract current periods
+        current_mahadasha = None
+        current_antardasha = None
+        current_pratyantardasha = None
+
+        current_mahadashas = getattr(dashas.current, 'get', lambda k, d: {})('mahadashas', {})
+        if not current_mahadashas and hasattr(dashas.current, 'mahadashas'):
+            current_mahadashas = dashas.current.get('mahadashas', {})
+
+        if current_mahadashas:
+            md_lords = list(current_mahadashas.keys())
+            if md_lords:
+                current_mahadasha = md_lords[0]
+                md_data = current_mahadashas[current_mahadasha]
+                antardashas = md_data.get('antardashas', {})
+                if antardashas:
+                    ad_lords = list(antardashas.keys())
+                    if ad_lords:
+                        current_antardasha = ad_lords[0]
+                        ad_data = antardashas[current_antardasha]
+                        pratyantardashas = ad_data.get('pratyantardashas', {})
+                        if pratyantardashas:
+                            pd_lords = list(pratyantardashas.keys())
+                            if pd_lords:
+                                current_pratyantardasha = pd_lords[0]
+
+        # Build flat periods list for backward compatibility
+        periods = []
+        all_mahadashas = dashas.all.get('mahadashas', {}) if hasattr(dashas.all, 'get') else {}
+        if not all_mahadashas and hasattr(dashas.all, 'mahadashas'):
+            all_mahadashas = getattr(dashas.all, 'mahadashas', {})
+
+        for lord, md_data in all_mahadashas.items():
+            start_date = md_data.get('start') or md_data['start']
+            end_date = md_data.get('end') or md_data['end']
+            duration_days = (end_date - start_date).days
+            years = duration_days / 365.25
+
+            # Build antardashas list for this mahadasha
+            antardashas = []
+            ad_data_dict = md_data.get('antardashas', {})
+            for ad_lord, ad_data in ad_data_dict.items():
+                ad_start = ad_data.get('start') or ad_data['start']
+                ad_end = ad_data.get('end') or ad_data['end']
+                ad_duration_days = (ad_end - ad_start).days
+
+                # Build pratyantardashas list
+                pratyantardashas = []
+                pd_data_dict = ad_data.get('pratyantardashas', {})
+                for pd_lord, pd_data in pd_data_dict.items():
+                    pd_start = pd_data.get('start') or pd_data['start']
+                    pd_end = pd_data.get('end') or pd_data['end']
+                    pratyantardashas.append({
+                        "lord": pd_lord,
+                        "start_date": pd_start.strftime("%Y-%m-%d"),
+                        "end_date": pd_end.strftime("%Y-%m-%d"),
+                    })
+
+                antardashas.append({
+                    "lord": ad_lord,
+                    "start_date": ad_start.strftime("%Y-%m-%d"),
+                    "end_date": ad_end.strftime("%Y-%m-%d"),
+                    "days": ad_duration_days,
+                    "pratyantardashas": pratyantardashas,
+                })
+
+            periods.append({
+                "lord": lord,
+                "years": round(years, 2),
+                "start_date": start_date.strftime("%Y-%m-%d"),
+                "end_date": end_date.strftime("%Y-%m-%d"),
+                "antardashas": antardashas,
+            })
+
+        # Get balance from native calculation
+        balance = dashas.balance if hasattr(dashas, 'balance') else {}
+        first_dasha_balance = list(balance.values())[0] if balance else 0
+
+        return {
+            "birth_nakshatra": nakshatra,
+            "birth_nakshatra_lord": nakshatra_lord,
+            "nakshatra_pada": pada,
+            "current_mahadasha": current_mahadasha,
+            "current_antardasha": current_antardasha,
+            "current_pratyantardasha": current_pratyantardasha,
+            "first_dasha_balance_years": round(first_dasha_balance, 2),
+            "periods": periods
+        }
+
+    except Exception as e:
+        # Fallback to basic calculation if library fails
+        return calculate_vimshottari_dasha_basic(moon_longitude, birth_datetime)
+
+
+def calculate_vimshottari_dasha_basic(moon_longitude: float, birth_datetime: datetime.datetime) -> Dict[str, Any]:
+    """
+    Basic Vimshottari Dasha calculation (fallback without sub-periods).
+
+    This is a simplified version used as fallback if native library fails.
+    Only calculates Mahadasha periods without Antardasha/Pratyantardasha.
+
+    Args:
+        moon_longitude: Moon's absolute longitude (0-360)
+        birth_datetime: Birth date and time
+
+    Returns:
+        Dict with basic dasha info
+    """
+    # Get Moon's nakshatra
+    nakshatra, pada = longitude_to_nakshatra(moon_longitude)
+    nakshatra_lord = NAKSHATRA_LORDS.get(nakshatra, 'Ketu')
+
+    # Calculate elapsed portion of nakshatra at birth
+    nakshatra_span = 360.0 / 27.0  # 13.333...°
+    nakshatra_start = (NAKSHATRAS.index(nakshatra)) * nakshatra_span
+    elapsed_in_nakshatra = moon_longitude - nakshatra_start
+    nakshatra_progress = elapsed_in_nakshatra / nakshatra_span  # 0-1
+
+    # Find starting dasha lord's position in cycle
+    start_lord_idx = VIMSHOTTARI_ORDER.index(nakshatra_lord)
+
+    # Calculate balance of first dasha (remaining portion)
+    first_dasha_total_years = VIMSHOTTARI_PERIODS[nakshatra_lord]
+    first_dasha_balance = first_dasha_total_years * (1 - nakshatra_progress)
+
+    # Build dasha periods
+    periods = []
+    total_days_elapsed = 0
+
+    for i in range(18):  # 2 full cycles (120 * 2 = 240 years)
+        lord_idx = (start_lord_idx + i) % 9
+        lord = VIMSHOTTARI_ORDER[lord_idx]
+
+        if i == 0:
+            years = first_dasha_balance
+        else:
+            years = VIMSHOTTARI_PERIODS[lord]
+
+        days = years * 365.25
+        start_date = birth_datetime + datetime.timedelta(days=total_days_elapsed)
+        end_date = start_date + datetime.timedelta(days=days)
+        total_days_elapsed += days
+
+        periods.append({
+            "lord": lord,
+            "years": round(years, 2),
+            "start_date": start_date.strftime("%Y-%m-%d"),
+            "end_date": end_date.strftime("%Y-%m-%d"),
+            "antardashas": [],  # Empty for basic version
+        })
+
+    # Find current Mahadasha
+    now = datetime.datetime.now()
+    current_mahadasha = None
+    current_antardasha = None
+
+    for period in periods:
+        start = datetime.datetime.strptime(period["start_date"], "%Y-%m-%d")
+        end = datetime.datetime.strptime(period["end_date"], "%Y-%m-%d")
+        if start <= now <= end:
+            current_mahadasha = period["lord"]
+            # Basic Antardasha calculation
+            maha_days = (end - start).days
+            days_elapsed = (now - start).days
+            progress = days_elapsed / maha_days if maha_days > 0 else 0
+
+            maha_lord_idx = VIMSHOTTARI_ORDER.index(current_mahadasha)
+            antar_progress = 0
+            for j in range(9):
+                antar_lord_idx = (maha_lord_idx + j) % 9
+                antar_lord = VIMSHOTTARI_ORDER[antar_lord_idx]
+                antar_portion = VIMSHOTTARI_PERIODS[antar_lord] / 120.0
+                if antar_progress + antar_portion >= progress:
+                    current_antardasha = antar_lord
+                    break
+                antar_progress += antar_portion
+            break
+
+    return {
+        "birth_nakshatra": nakshatra,
+        "birth_nakshatra_lord": nakshatra_lord,
+        "nakshatra_pada": pada,
+        "current_mahadasha": current_mahadasha,
+        "current_antardasha": current_antardasha,
+        "current_pratyantardasha": None,
+        "first_dasha_balance_years": round(first_dasha_balance, 2),
+        "periods": periods
+    }
+
+
+# =============================================================================
+# RETROGRADE DETECTION
+# =============================================================================
+
+def is_planet_retrograde(planet_name: str, jd: float) -> bool:
+    """
+    Detect if a planet is retrograde at a given Julian Day.
+
+    Retrograde motion occurs when a planet appears to move backward
+    in the sky. This is determined by checking the planet's daily motion.
+
+    Args:
+        planet_name: Name of the planet (Sun, Moon, Mars, etc.)
+        jd: Julian Day
+
+    Returns:
+        True if the planet is retrograde, False otherwise
+    """
+    # Sun and Moon are never retrograde
+    if planet_name in ['Sun', 'Moon']:
+        return False
+
+    # Rahu and Ketu are always retrograde (conventionally)
+    if planet_name in ['Rahu', 'Ketu']:
+        return True
+
+    # Map planet names to Swiss Ephemeris planet IDs
+    planet_ids = {
+        'Mercury': swe.MERCURY,
+        'Venus': swe.VENUS,
+        'Mars': swe.MARS,
+        'Jupiter': swe.JUPITER,
+        'Saturn': swe.SATURN,
+    }
+
+    if planet_name not in planet_ids:
+        return False
+
+    planet_id = planet_ids[planet_name]
+
+    try:
+        # Get planet position for current day and next day
+        pos_today, ret_today = swe.calc_ut(jd, planet_id)
+        pos_tomorrow, ret_tomorrow = swe.calc_ut(jd + 1, planet_id)
+
+        # Check daily motion (longitude change)
+        # If negative (accounting for 360° wrap), planet is retrograde
+        daily_motion = pos_tomorrow[0] - pos_today[0]
+
+        # Handle wrap around 0/360
+        if daily_motion > 180:
+            daily_motion -= 360
+        elif daily_motion < -180:
+            daily_motion += 360
+
+        return daily_motion < 0
+    except Exception:
+        return False
+
+
+# =============================================================================
+# ENHANCED DIGITAL TWIN GENERATOR (with Dasha and Retrograde)
+# =============================================================================
+
+def generate_digital_twin_enhanced(
+    birth_datetime: datetime.datetime,
+    latitude: float,
+    longitude: float,
+    tz_offset_hours: float,
+    ayanamsa: str = 'Lahiri'
+) -> Dict[str, Any]:
+    """
+    Generate enhanced Digital Twin with Vimshottari Dasha and retrograde data.
+
+    This is an extension of generate_digital_twin() that also calculates:
+    - Vimshottari Dasha periods (Mahadasha/Antardasha)
+    - Retrograde status for each planet (correctly calculated)
+
+    Args:
+        birth_datetime: Birth date and time (local time)
+        latitude: Birth latitude
+        longitude: Birth longitude
+        tz_offset_hours: Timezone offset in hours
+        ayanamsa: Ayanamsa to use ('Lahiri', 'Raman', etc.)
+
+    Returns:
+        Enhanced Digital Twin dict with dasha section
+    """
+    # Generate base digital twin
+    base_twin = generate_digital_twin(
+        birth_datetime=birth_datetime,
+        latitude=latitude,
+        longitude=longitude,
+        tz_offset_hours=tz_offset_hours,
+        ayanamsa=ayanamsa
+    )
+
+    # Get Julian Day for retrograde calculation
+    jd = datetime_to_jd(birth_datetime, tz_offset_hours)
+
+    # Update planets with retrograde status
+    if 'vargas' in base_twin and 'D1' in base_twin['vargas']:
+        d1_planets = base_twin['vargas']['D1']['planets']
+        moon_longitude = None
+
+        for planet in d1_planets:
+            # Calculate retrograde status
+            planet['is_retrograde'] = is_planet_retrograde(planet['name'], jd)
+
+            # Store Moon longitude for Dasha calculation
+            if planet['name'] == 'Moon':
+                moon_longitude = planet['absolute_degree']
+
+        # Update all vargas with retrograde info from D1
+        retrograde_status = {p['name']: p['is_retrograde'] for p in d1_planets}
+        for varga_code in VARGA_CODES:
+            if varga_code in base_twin['vargas']:
+                for planet in base_twin['vargas'][varga_code]['planets']:
+                    planet['is_retrograde'] = retrograde_status.get(planet['name'], False)
+
+        # Calculate Vimshottari Dasha with full sub-periods
+        if moon_longitude is not None:
+            # Use native library function for full sub-periods support
+            dasha_data = calculate_vimshottari_dasha_native(
+                birth_datetime=birth_datetime,
+                latitude=latitude,
+                longitude=longitude,
+                tz_offset_hours=tz_offset_hours,
+                ayanamsa_delta=base_twin['meta']['ayanamsa_delta'],
+                moon_longitude=moon_longitude
+            )
+            base_twin['dasha'] = dasha_data
+
+        # Calculate Chara Karakas (Jaimini system)
+        chara_karakas = calculate_chara_karakas(d1_planets)
+        base_twin['chara_karakas'] = chara_karakas
+
+    return base_twin
 
 
 # =============================================================================

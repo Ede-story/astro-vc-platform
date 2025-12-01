@@ -86,7 +86,70 @@ export interface VargaData {
   planets: Record<string, string | VargaPlanetData>;  // Support both old and new format
 }
 
+// Digital Twin types (new architecture)
+export interface DigitalTwinPlanet {
+  name: string;
+  sign_id: number;
+  sign_name: string;
+  absolute_degree: number;
+  relative_degree: number;
+  house_occupied: number;
+  houses_owned: number[];
+  nakshatra: string;
+  nakshatra_lord: string;
+  nakshatra_pada: number;
+  sign_lord: string;
+  dignity_state: string;
+  aspects_giving_to: number[];
+  aspects_receiving_from: string[];
+  conjunctions: string[];
+  is_retrograde?: boolean;
+}
+
+export interface DigitalTwinHouse {
+  house_number: number;
+  sign_id: number;
+  sign_name: string;
+  lord: string;
+  occupants: string[];
+  aspects_received: string[];
+}
+
+export interface DigitalTwinAscendant {
+  sign_id: number;
+  sign_name: string;
+  degrees: number;
+}
+
+export interface VargaChart {
+  ascendant: DigitalTwinAscendant;
+  planets: DigitalTwinPlanet[];
+  houses: DigitalTwinHouse[];
+}
+
+export interface DigitalTwinMeta {
+  birth_datetime: string;
+  latitude: number;
+  longitude: number;
+  timezone_offset: number;
+  ayanamsa: string;
+  ayanamsa_delta: number;
+  julian_day: number;
+  generated_at: string;
+}
+
+export interface DigitalTwin {
+  meta: DigitalTwinMeta;
+  vargas: Record<string, VargaChart>;
+}
+
 export interface CalculateResponse {
+  success: boolean;
+  digital_twin: DigitalTwin;
+}
+
+// Legacy types (kept for backward compatibility)
+export interface LegacyCalculateResponse {
   success: boolean;
   ayanamsa: string;
   ayanamsa_delta: number;
@@ -117,15 +180,19 @@ export interface SavedProfile {
   input: InputData;
 }
 
-// Varga list
+// Varga list - All 20 vargas
 export const VARGA_LIST = [
   { code: 'D1', name: 'Раши (основная)' },
   { code: 'D2', name: 'Хора' },
   { code: 'D3', name: 'Дреккана' },
   { code: 'D4', name: 'Чатуртхамша' },
+  { code: 'D5', name: 'Панчамша (дети)' },
+  { code: 'D6', name: 'Шаштхамша (здоровье)' },
   { code: 'D7', name: 'Саптамша' },
+  { code: 'D8', name: 'Аштамша (долголетие)' },
   { code: 'D9', name: 'Навамша' },
   { code: 'D10', name: 'Дашамша' },
+  { code: 'D11', name: 'Рудрамша (богатство)' },
   { code: 'D12', name: 'Двадашамша' },
   { code: 'D16', name: 'Шодашамша' },
   { code: 'D20', name: 'Вимшамша' },
@@ -181,3 +248,74 @@ export const SIGN_LORDS: Record<string, string> = {
   'Aquarius': 'Saturn',
   'Pisces': 'Jupiter',
 };
+
+// Vimshottari Dasha types with nested sub-periods
+export interface PratyantardashaPeriod {
+  lord: string;
+  start_date: string;
+  end_date: string;
+}
+
+export interface AntardashaPeriod {
+  lord: string;
+  start_date: string;
+  end_date: string;
+  days: number;
+  pratyantardashas: PratyantardashaPeriod[];
+}
+
+export interface DashaPeriod {
+  lord: string;
+  years: number;
+  start_date: string;
+  end_date: string;
+  antardashas?: AntardashaPeriod[];
+}
+
+export interface VimshottariDasha {
+  birth_nakshatra: string;
+  birth_nakshatra_lord: string;
+  nakshatra_pada: number;
+  current_mahadasha: string | null;
+  current_antardasha: string | null;
+  current_pratyantardasha?: string | null;
+  first_dasha_balance_years: number;
+  periods: DashaPeriod[];
+}
+
+// Chara Karaka types (Jaimini system)
+export interface CharaKaraka {
+  rank: number;
+  karaka_code: string;       // AK, AmK, BK, MK, PiK, PuK, GK, DK
+  karaka_name: string;       // Atmakaraka, Amatyakaraka, etc.
+  karaka_meaning: string;    // Soul, Career, etc.
+  planet: string;            // Sun, Moon, etc.
+  degrees_in_sign: number;
+  sign: string;
+  house: number;
+}
+
+export interface CharaKarakas {
+  karakas: CharaKaraka[];
+  by_planet: Record<string, string>;   // Planet -> Karaka code
+  by_karaka: Record<string, string>;   // Karaka code -> Planet
+  note: string;
+}
+
+// Karaka translations
+export const KARAKA_NAMES: Record<string, string> = {
+  'AK': 'Атмакарака (душа)',
+  'AmK': 'Аматьякарака (карьера)',
+  'BK': 'Бхратрикарака (братья)',
+  'MK': 'Матрикарака (мать)',
+  'PiK': 'Питрикарака (отец)',
+  'PuK': 'Путракарака (дети)',
+  'GK': 'Гнатикарака (враги)',
+  'DK': 'Даракарака (супруг)',
+};
+
+// Enhanced Digital Twin with Dasha and Karakas
+export interface EnhancedDigitalTwin extends DigitalTwin {
+  dasha?: VimshottariDasha;
+  chara_karakas?: CharaKarakas;
+}
