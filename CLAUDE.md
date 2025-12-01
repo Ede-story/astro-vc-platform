@@ -1,210 +1,236 @@
-# CLAUDE.md – StarMeet Project Context & Constitution
+# StarMeet Platform - Claude Code Guide
 
-**Version:** 6.0 (All-in-GCP Monolith Architecture)
-**Last Updated:** 2025-11-27
-**Server:** GCP (`mastodon-vm`) | **OS:** Linux
-**Status:** Infrastructure Phase - Preparing Next.js + FastAPI stack
-
----
-
-## 1. VISION & GOAL
-**StarMeet** is a unified ecosystem merging a Social Network (Mastodon) with Professional Astrology.
-**Goal:** Create a "Bridge" between social data and astrological data to enable AI-driven matching.
-
-**Architecture (All-in-GCP Monolith):**
-```
-Nginx (Gateway) -> [Mastodon, Next.js, FastAPI] -> PgBouncer -> PostgreSQL
+## Quick Deploy Command
+```bash
+gcloud compute ssh mastodon-vm --zone=europe-southwest1-c --command="cd ~/StarMeet-platform && git pull origin main && docker compose build --no-cache wizard starmeet-api && docker compose up -d && docker compose ps"
 ```
 
-1.  **Social Core:** Mastodon v4.2 (Ruby on Rails) -> Identity Provider
-2.  **Wizard UI:** Next.js 14+ (Dockerized on GCP) -> Onboarding Wizard at `/join`
-3.  **Astro API:** FastAPI (Python 3.11) -> REST API at `/api`
-4.  **Astro Engine:** `jyotishganit` library -> Calculation Core
-5.  **Database:** PostgreSQL 14 + PgBouncer (connection pooling)
+---
+
+## Infrastructure Overview
+
+### Google Cloud
+- **Project**: mastodon-server-461818
+- **VM Name**: mastodon-vm
+- **Zone**: europe-southwest1-c
+- **External IP**: 34.175.197.44
+- **Domain**: star-meet.com
+
+### SSH Access
+```bash
+gcloud compute ssh mastodon-vm --zone=europe-southwest1-c
+```
+
+### SSH with Command
+```bash
+gcloud compute ssh mastodon-vm --zone=europe-southwest1-c --command="<command>"
+```
 
 ---
 
-## 2. RULES OF ENGAGEMENT (CRITICAL)
+## Docker Services (4 containers)
 
-### A. HONESTY & INTEGRITY
-* **NO HALLUCINATIONS:** If you cannot find a solution or an API endpoint, **STOP** and report it.
-* **NO CRUTCHES:** Do not build temporary "hacks" unless explicitly asked for a prototype.
-* **RESOURCE AWARENESS:** We have **32GB free disk space**. Be mindful with large Docker images.
+| Service | Container Name | Port | Image |
+|---------|---------------|------|-------|
+| Frontend (Next.js) | starmeet-wizard | 3001 | starmeet/wizard:latest |
+| Backend (FastAPI) | starmeet-api | 8000 | starmeet/api:latest |
+| Cache | starmeet-redis | 6379 | redis:7-alpine |
+| Gateway | starmeet-nginx | 80, 443 | nginx:alpine |
 
-### B. AUTONOMOUS TESTING (DEFINITION OF DONE)
-Before marking a task as "Completed", you MUST:
-1.  **Check Container Health:** `docker compose ps` (Must be `Up`, not `Restarting`).
-2.  **Check Logs:** `docker compose logs --tail=20 <service>` (No tracebacks/crashes).
-3.  **Verify Connectivity:** `curl -I http://localhost:<port>` inside the server.
-* **Rule:** If `curl` returns 500/502/Connection Refused -> **FIX IT** before reporting.
+### Docker Commands on Server
+```bash
+# View all containers
+docker compose ps
 
-### C. EXECUTION PROTOCOL
-* **REMOTE ONLY:** All commands run on GCP via SSH. Never run code on local macOS terminal.
-* **DATA SAFETY:** The volume `vadimarhipov_postgres14` contains PRODUCTION DATA. **NEVER** delete it.
+# View logs
+docker compose logs -f wizard
+docker compose logs -f starmeet-api
+docker compose logs -f nginx
 
-### D. ARCHITECTURE RULES (CRITICAL)
-* **Frontend NEVER calculates.** Next.js only renders JSON received from Backend API.
-* **All services communicate via internal Docker network `astro-network`.**
-* ❌ **NO STREAMLIT** - Deprecated. Legacy code archived in `_ARCHIVE_STREAMLIT_POC/`.
-* ❌ **NO VERCEL** - All services run on GCP for zero-latency and unified cookies.
+# Restart specific service
+docker compose restart wizard
+docker compose restart starmeet-api
+docker compose restart nginx
 
-### E. LANGUAGE PROTOCOL
-* **THINKING & PLANNING:** Use **English** for internal logic, code comments.
-* **REPORTS & COMMUNICATION:** All responses to the user must be in **RUSSIAN**.
-* **UI TEXT:** All user-facing text must be in **RUSSIAN**.
+# Rebuild and restart
+docker compose build --no-cache wizard && docker compose up -d wizard
+docker compose build --no-cache starmeet-api && docker compose up -d starmeet-api
 
----
-
-## 3. TECHNICAL STACK (APPROVED)
-
-| Component | Technology | Port | Route |
-| :--- | :--- | :--- | :--- |
-| **Gateway** | Nginx (Alpine) | 443 | All traffic |
-| **Social Core** | Mastodon v4.2.27 | 3000 | `/` (default) |
-| **Wizard UI** | Next.js 14+ (Docker) | 3001 | `/join`, `/_next` |
-| **Astro API** | FastAPI (Python 3.11) | 8000 | `/api` |
-| **DB Pooler** | PgBouncer | 6432 | Internal |
-| **Database** | PostgreSQL 14 | 5432 | Internal |
-| **Cache** | Redis 7 | 6379 | Internal |
+# Full restart
+docker compose down && docker compose up -d
+```
 
 ---
 
-## 4. LIVE INFRASTRUCTURE
+## Supabase Cloud
 
-**Networking:**
-* Network Name: `astro-network`
-* Subnet: `172.21.0.0/16`
-* All containers on same network for internal communication
+- **URL**: https://lhirxjxwdjlyyztmeceh.supabase.co
+- **Dashboard**: https://supabase.com/dashboard/project/lhirxjxwdjlyyztmeceh
+- **Anon Key**: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoaXJ4anh3ZGpseXl6dG1lY2VoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzNDU2NzUsImV4cCI6MjA3OTkyMTY3NX0.RQXVSSlneqGwxA3Cta7mizmkKrI9qfZyr-v7JlULU08
 
-**URL Routing (Path-Based):**
-| Path | Service | Container |
-|------|---------|-----------|
-| `/` | Mastodon | `mastodon-web:3000` |
-| `/api/v1/streaming/` | Streaming | `mastodon-streaming:4000` |
-| `/api/*` | FastAPI | `starmeet-api:8000` |
-| `/join/*`, `/_next/*` | Next.js | `starmeet-wizard:3001` |
-
-**Persistence (Volumes):**
-* `vadimarhipov_postgres14`: **CRITICAL DB DATA** - NEVER DELETE
-* `vadimarhipov_public-system`: User uploads
-* `vadimarhipov_redis`: Redis data
-
-**Hardware Resources:**
-* **RAM:** 16GB Total (e2-standard-4)
-* **DISK:** 49G Total, ~32G Free
+**IMPORTANT**: `NEXT_PUBLIC_*` variables must be set at **build time** in Dockerfile, not runtime!
 
 ---
 
-## 5. PROJECT STRUCTURE
+## Project Structure
 
 ```
 StarMeet-platform/
-├── CLAUDE.md              # This file (Source of Truth)
-├── CURRENT_INFRA.md       # Infrastructure documentation
-├── docker-compose.yml     # Main compose file
-├── init-astro-db.sql      # Database initialization
-├── mastodon/              # Mastodon source (Ruby)
-├── backend/               # FastAPI application
+├── backend/                 # FastAPI backend
 │   ├── app/
-│   │   ├── core/
-│   │   │   └── astro_engine.py  # GOLDEN MATH
-│   │   ├── api/
-│   │   └── models/
-│   └── Dockerfile
-├── wizard/                # Next.js application
+│   │   ├── main.py         # Entry point
+│   │   └── routers/
+│   │       └── astro.py    # Astro calculations API
+│   ├── Dockerfile
+│   └── requirements.txt
+├── wizard/                  # Next.js frontend
 │   ├── src/
-│   └── Dockerfile
-├── packages/
-│   └── astro_core/        # Shared Python library
-└── nginx/
-    └── nginx.conf
+│   │   ├── app/            # App Router pages
+│   │   ├── components/
+│   │   └── lib/supabase/   # Supabase client
+│   ├── Dockerfile
+│   └── package.json
+├── nginx/
+│   └── nginx.conf          # Reverse proxy config
+├── packages/               # Shared Python packages
+│   └── starmeet_astro/     # Astro calculation library
+├── docker-compose.yml
+└── CLAUDE.md               # This file
 ```
 
 ---
 
-## 6. GIT WORKFLOW & SAFETY
+## Deployment Checklist
 
-**Repository:** `https://github.com/Ede-story/astro-vc-platform`
+### 1. Before Deploy
+- [ ] Test locally: `npm run dev` (wizard) and `uvicorn` (backend)
+- [ ] Commit and push to main branch
 
-### A. AUTO-COMMIT RULE
-After completing any significant task, execute:
+### 2. Deploy Commands
 ```bash
-cd /Users/vadimarhipov/StarMeet-platform
-git add .
-git commit -m "Task: <short description>"
-git push
+# Option A: Quick deploy (pull + rebuild + restart)
+gcloud compute ssh mastodon-vm --zone=europe-southwest1-c --command="cd ~/StarMeet-platform && git pull origin main && docker compose build --no-cache wizard starmeet-api && docker compose up -d && docker compose ps"
+
+# Option B: Frontend only
+gcloud compute ssh mastodon-vm --zone=europe-southwest1-c --command="cd ~/StarMeet-platform && git pull origin main && docker compose build --no-cache wizard && docker compose up -d wizard"
+
+# Option C: Backend only
+gcloud compute ssh mastodon-vm --zone=europe-southwest1-c --command="cd ~/StarMeet-platform && git pull origin main && docker compose build --no-cache starmeet-api && docker compose up -d starmeet-api"
+
+# Option D: Config only (nginx)
+gcloud compute ssh mastodon-vm --zone=europe-southwest1-c --command="cd ~/StarMeet-platform && git pull origin main && docker compose restart nginx"
 ```
 
-### B. SECRET SAFETY
-**NEVER commit:**
-* `.env.production`, `.env.*`
-* `mastodon/public/system/`
-* `*.tar.gz`, `*.dat`
+### 3. After Deploy
+```bash
+# Verify services are running
+gcloud compute ssh mastodon-vm --zone=europe-southwest1-c --command="docker compose ps"
+
+# Check for errors
+gcloud compute ssh mastodon-vm --zone=europe-southwest1-c --command="docker compose logs --tail=50 wizard"
+```
+
+### 4. Test Endpoints
+```bash
+curl -s https://star-meet.com/health
+curl -s https://star-meet.com/star-api/health
+curl -s -o /dev/null -w "%{http_code}" https://star-meet.com/login
+curl -s -o /dev/null -w "%{http_code}" https://star-meet.com/join
+```
 
 ---
 
-## 7. COMMAND CHEATSHEET
+## URL Routes
 
+| Route | Service | Description |
+|-------|---------|-------------|
+| / | redirect | → /join |
+| /join | wizard | Astro calculator |
+| /login | wizard | Login page |
+| /signup | wizard | Registration |
+| /dashboard | wizard | User dashboard |
+| /star-api/* | starmeet-api | FastAPI backend |
+| /health | nginx | Health check |
+
+---
+
+## Common Issues & Fixes
+
+### 1. "Application error: a client-side exception"
+**Cause**: Missing `NEXT_PUBLIC_*` env vars at build time
+**Fix**: Add vars to `wizard/Dockerfile` builder stage, rebuild
+
+### 2. Next.js build fails with Supabase error
+**Cause**: Static generation trying to use Supabase at build time
+**Fix**: Use server/client component pattern:
+```tsx
+// page.tsx (server component)
+export const dynamic = 'force-dynamic';
+import ClientComponent from './ClientComponent';
+export default function Page() { return <ClientComponent />; }
+
+// ClientComponent.tsx (client component)
+'use client';
+// ... use Supabase here
+```
+
+### 3. API returning 404
+**Cause**: Missing nginx route
+**Fix**: Add location block in `nginx/nginx.conf`
+
+### 4. Container not starting
 ```bash
-# SSH Connect
-gcloud compute ssh mastodon-vm --zone=europe-southwest1-c
-
-# Deploy all services
-docker compose up -d
-
-# Deploy specific service
-docker compose up -d --build starmeet-api
-
 # Check logs
-docker compose logs -f starmeet-api
+gcloud compute ssh mastodon-vm --zone=europe-southwest1-c --command="docker compose logs wizard"
 
-# Check container status
-docker compose ps
-
-# Check disk space
-df -h
-
-# PgBouncer stats
-docker exec pgbouncer psql -p 6432 -U postgres pgbouncer -c "SHOW POOLS"
+# Check health
+gcloud compute ssh mastodon-vm --zone=europe-southwest1-c --command="docker compose ps"
 ```
 
 ---
 
-## 8. ROADMAP
+## Local Development
 
-### PHASE 1: INFRASTRUCTURE (Current)
-- [x] Update documentation (CLAUDE.md, CURRENT_INFRA.md)
-- [ ] Add PgBouncer to docker-compose
-- [ ] Create `astro_db` database
-- [ ] Configure Nginx path-based routing
-- [ ] Create folder structure
+### Frontend (wizard)
+```bash
+cd wizard
+npm install
+npm run dev  # http://localhost:3001
+```
 
-### PHASE 2: BACKEND API
-- [ ] FastAPI scaffold with health endpoints
-- [ ] Connect to PostgreSQL via PgBouncer
-- [ ] Port `astro_engine.py` (Golden Math)
-- [ ] CRUD endpoints for profiles
+### Backend (starmeet-api)
+```bash
+cd backend
+source .venv/bin/activate
+pip install -r requirements.txt
+PYTHONPATH=/path/to/packages uvicorn app.main:app --reload --port 8000
+```
 
-### PHASE 3: WIZARD UI
-- [ ] Next.js scaffold with basePath=/join
-- [ ] Multi-step onboarding form
-- [ ] API integration
-- [ ] Chart visualization
-
-### PHASE 4: INTEGRATION
-- [ ] Mastodon OAuth2 integration
-- [ ] User linking (Mastodon ID <-> Astro Profile)
-- [ ] Matching algorithm
+### Environment Variables (wizard/.env.local)
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://lhirxjxwdjlyyztmeceh.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
 
 ---
 
-## 9. KNOWN ISSUES
+## SSL Certificates
 
-* **Mastodon unhealthy:** `mastodon-web` reports unhealthy but responds (502/200 intermittent).
+Certificates are managed by Certbot and stored at:
+- `/etc/letsencrypt/live/star-meet.com/fullchain.pem`
+- `/etc/letsencrypt/live/star-meet.com/privkey.pem`
+
+Renewal is automatic via cron job.
 
 ---
 
-## 10. CLEANUP LOG
+## Useful Aliases (add to server ~/.bashrc)
 
-**2025-11-27:** Streamlit deprecated. Pivoting to Next.js + FastAPI.
-**2025-11-25:** VedAstro C# repos deleted (~20GB freed on GCP).
+```bash
+alias dc="docker compose"
+alias dps="docker compose ps"
+alias dlogs="docker compose logs -f"
+alias drestart="docker compose restart"
+alias drebuild="docker compose build --no-cache"
+```
