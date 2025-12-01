@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
+import { personalitySliders } from '@/data/personality-sliders';
 
 interface Profile {
   id: string;
@@ -14,24 +15,32 @@ interface Profile {
   career: string | null;
   is_public: boolean;
   is_primary: boolean;
+  birth_date: string;
+  birth_time: string | null;
+  birth_city: string | null;
+  ayanamsa: string;
+  seeking: string[];
+  offerings: string[];
+  psych_scores: Record<string, number>;
+  psych_completed_at: string | null;
 }
 
 const SEEKING_OPTIONS = [
-  { id: 'business', label: 'Bизнес-партнёр' },
-  { id: 'mentor', label: 'Ментор' },
-  { id: 'romance', label: 'Романтика' },
-  { id: 'friendship', label: 'Дружба' },
-  { id: 'networking', label: 'Нетворкинг' },
-  { id: 'collaboration', label: 'Коллаборация' },
+  { id: 'business', label: 'Бизнес-партнёр', icon: '💼' },
+  { id: 'mentor', label: 'Ментор', icon: '🎓' },
+  { id: 'romance', label: 'Романтика', icon: '💕' },
+  { id: 'friendship', label: 'Дружба', icon: '🤝' },
+  { id: 'networking', label: 'Нетворкинг', icon: '🌐' },
+  { id: 'collaboration', label: 'Коллаборация', icon: '🎯' },
 ];
 
 const OFFERING_OPTIONS = [
-  { id: 'expertise', label: 'Экспертиза' },
-  { id: 'investment', label: 'Инвестиции' },
-  { id: 'mentoring', label: 'Менторство' },
-  { id: 'connections', label: 'Связи' },
-  { id: 'creativity', label: 'Креатив' },
-  { id: 'support', label: 'Поддержка' },
+  { id: 'expertise', label: 'Экспертиза', icon: '💡' },
+  { id: 'investment', label: 'Инвестиции', icon: '💰' },
+  { id: 'mentoring', label: 'Менторство', icon: '📚' },
+  { id: 'connections', label: 'Связи', icon: '🔗' },
+  { id: 'creativity', label: 'Креатив', icon: '🎨' },
+  { id: 'support', label: 'Поддержка', icon: '🤗' },
 ];
 
 export default function SettingsClient() {
@@ -49,6 +58,11 @@ export default function SettingsClient() {
   const [isPublic, setIsPublic] = useState(false);
   const [seeking, setSeeking] = useState<string[]>([]);
   const [offerings, setOfferings] = useState<string[]>([]);
+  const [psychScores, setPsychScores] = useState<Record<string, number>>({});
+
+  // Calibration edit mode
+  const [editingCalibration, setEditingCalibration] = useState(false);
+  const [tempPsychScores, setTempPsychScores] = useState<Record<string, number>>({});
 
   const router = useRouter();
   const supabase = createClient();
@@ -94,7 +108,7 @@ export default function SettingsClient() {
     loadData();
   }, [router, supabase]);
 
-  const populateForm = (p: any) => {
+  const populateForm = (p: Profile) => {
     setName(p.name || '');
     setUsername(p.username || '');
     setBio(p.bio || '');
@@ -102,6 +116,8 @@ export default function SettingsClient() {
     setIsPublic(p.is_public || false);
     setSeeking(p.seeking || []);
     setOfferings(p.offerings || []);
+    setPsychScores(p.psych_scores || {});
+    setTempPsychScores(p.psych_scores || {});
   };
 
   const handleSave = async () => {
@@ -111,17 +127,25 @@ export default function SettingsClient() {
     setMessage(null);
 
     try {
+      const updateData: Record<string, unknown> = {
+        name: name.trim(),
+        username: username.trim() || null,
+        bio: bio.trim() || null,
+        career: career.trim() || null,
+        is_public: isPublic,
+        seeking: seeking,
+        offerings: offerings,
+      };
+
+      // Include psych scores if they were edited
+      if (editingCalibration) {
+        updateData.psych_scores = tempPsychScores;
+        updateData.psych_completed_at = new Date().toISOString();
+      }
+
       const { error } = await supabase
         .from('profiles')
-        .update({
-          name: name.trim(),
-          username: username.trim() || null,
-          bio: bio.trim() || null,
-          career: career.trim() || null,
-          is_public: isPublic,
-          seeking: seeking,
-          offerings: offerings,
-        })
+        .update(updateData)
         .eq('id', profile.id);
 
       if (error) {
@@ -133,7 +157,21 @@ export default function SettingsClient() {
       } else {
         setMessage({ type: 'success', text: 'Настройки сохранены' });
         // Update local profile state
-        setProfile({ ...profile, name, username, bio, career, is_public: isPublic });
+        if (editingCalibration) {
+          setPsychScores(tempPsychScores);
+          setEditingCalibration(false);
+        }
+        setProfile({
+          ...profile,
+          name,
+          username,
+          bio,
+          career,
+          is_public: isPublic,
+          seeking,
+          offerings,
+          psych_scores: editingCalibration ? tempPsychScores : psychScores,
+        });
       }
     } catch (err) {
       setMessage({ type: 'error', text: 'Ошибка сохранения' });
@@ -153,6 +191,24 @@ export default function SettingsClient() {
       prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
     );
   };
+
+  const formatDate = (dateStr: string): string => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  };
+
+  const getLabel = (value: number, labels: [string, string, string]) => {
+    if (value <= 33) return labels[0];
+    if (value <= 66) return labels[1];
+    return labels[2];
+  };
+
+  const hasPsychResults = Object.keys(psychScores).length > 0 &&
+    Object.values(psychScores).some(v => v !== 50);
 
   if (loading) {
     return (
@@ -200,6 +256,32 @@ export default function SettingsClient() {
           </div>
         )}
 
+        {/* Birth Data Section (Read-only) */}
+        <div className="card mb-6">
+          <h2 className="text-lg font-medium text-gray-900 mb-4">Данные рождения</h2>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="text-gray-500">Дата:</span>
+              <p className="font-medium text-gray-900">{formatDate(profile.birth_date)}</p>
+            </div>
+            <div>
+              <span className="text-gray-500">Время:</span>
+              <p className="font-medium text-gray-900">{profile.birth_time || 'Не указано'}</p>
+            </div>
+            <div>
+              <span className="text-gray-500">Город:</span>
+              <p className="font-medium text-gray-900">{profile.birth_city || 'Не указан'}</p>
+            </div>
+            <div>
+              <span className="text-gray-500">Ayanamsa:</span>
+              <p className="font-medium text-gray-900">{profile.ayanamsa || 'Raman'}</p>
+            </div>
+          </div>
+          <p className="text-xs text-gray-400 mt-4">
+            Для изменения данных рождения пересоздайте профиль
+          </p>
+        </div>
+
         {/* Privacy Section */}
         <div className="card mb-6">
           <h2 className="text-lg font-medium text-gray-900 mb-4">Приватность</h2>
@@ -228,7 +310,7 @@ export default function SettingsClient() {
 
         {/* Profile Info Section */}
         <div className="card mb-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Информация</h2>
+          <h2 className="text-lg font-medium text-gray-900 mb-4">Информация о профиле</h2>
 
           <div className="space-y-4">
             <div>
@@ -291,6 +373,105 @@ export default function SettingsClient() {
           </div>
         </div>
 
+        {/* Psychological Calibration Section */}
+        <div className="card mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-medium text-gray-900">Калибровка совместимости</h2>
+            {!editingCalibration && (
+              <button
+                onClick={() => {
+                  setEditingCalibration(true);
+                  // Initialize with current values or defaults
+                  const defaults = Object.fromEntries(
+                    personalitySliders.map(s => [s.id, psychScores[s.id] ?? 50])
+                  );
+                  setTempPsychScores(defaults);
+                }}
+                className="text-sm text-brand-green hover:text-brand-green-hover"
+              >
+                {hasPsychResults ? 'Изменить' : 'Пройти тест'}
+              </button>
+            )}
+          </div>
+
+          {editingCalibration ? (
+            <div className="space-y-6">
+              {personalitySliders.map((slider) => (
+                <div key={slider.id} className="bg-gray-50 rounded-xl p-4">
+                  <h4 className="text-sm font-medium text-gray-900 mb-3">
+                    {slider.question}
+                  </h4>
+
+                  <div className="flex justify-between text-xs mb-2">
+                    <span className="flex items-center gap-1">
+                      <span>{slider.left.emoji}</span>
+                      <span className="text-gray-600">{slider.left.label}</span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <span className="text-gray-600">{slider.right.label}</span>
+                      <span>{slider.right.emoji}</span>
+                    </span>
+                  </div>
+
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={tempPsychScores[slider.id] ?? 50}
+                    onChange={(e) => setTempPsychScores(prev => ({
+                      ...prev,
+                      [slider.id]: Number(e.target.value)
+                    }))}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, #2f3538 0%, #2f3538 ${tempPsychScores[slider.id] ?? 50}%, #e5e7eb ${tempPsychScores[slider.id] ?? 50}%, #e5e7eb 100%)`
+                    }}
+                  />
+
+                  <div className="text-center mt-2">
+                    <span className="text-xs text-gray-600 bg-white px-2 py-1 rounded-full">
+                      {getLabel(tempPsychScores[slider.id] ?? 50, slider.labels)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+
+              <button
+                onClick={() => {
+                  setEditingCalibration(false);
+                  setTempPsychScores(psychScores);
+                }}
+                className="w-full py-2 text-gray-500 text-sm hover:text-gray-700"
+              >
+                Отмена
+              </button>
+            </div>
+          ) : hasPsychResults ? (
+            <div className="space-y-3">
+              {personalitySliders.map((slider) => {
+                const value = psychScores[slider.id] ?? 50;
+                return (
+                  <div key={slider.id} className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">{slider.question}</span>
+                    <span className="font-medium text-gray-900 bg-gray-100 px-2 py-1 rounded">
+                      {getLabel(value, slider.labels)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-gray-500 text-sm mb-2">
+                Тест не пройден
+              </p>
+              <p className="text-xs text-gray-400">
+                Пройдите калибровку для более точного подбора совместимости
+              </p>
+            </div>
+          )}
+        </div>
+
         {/* Seeking Section */}
         <div className="card mb-6">
           <h2 className="text-lg font-medium text-gray-900 mb-4">Я ищу</h2>
@@ -305,10 +486,15 @@ export default function SettingsClient() {
                     : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200'
                 }`}
               >
-                {option.label}
+                {option.icon} {option.label}
               </button>
             ))}
           </div>
+          {seeking.length === 0 && (
+            <p className="text-xs text-gray-400 mt-2">
+              Выберите, что вы ищете на платформе
+            </p>
+          )}
         </div>
 
         {/* Offerings Section */}
@@ -325,10 +511,15 @@ export default function SettingsClient() {
                     : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200'
                 }`}
               >
-                {option.label}
+                {option.icon} {option.label}
               </button>
             ))}
           </div>
+          {offerings.length === 0 && (
+            <p className="text-xs text-gray-400 mt-2">
+              Выберите, чем можете быть полезны
+            </p>
+          )}
         </div>
 
         {/* Save Button */}
