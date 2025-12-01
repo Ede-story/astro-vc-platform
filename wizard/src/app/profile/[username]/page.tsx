@@ -226,7 +226,7 @@ export default async function ProfilePage({ params }: PageProps) {
 
           {/* Vedic Astrology Calculator Link */}
           <Link
-            href="/"
+            href="/calculator"
             className="block w-full py-3 bg-brand-graphite text-white rounded-xl font-medium hover:bg-brand-graphite-hover transition-colors mt-4 text-center"
           >
             ⭐ Ведическая астрология
