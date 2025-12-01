@@ -200,6 +200,19 @@ export default function DashboardClient() {
           )}
         </div>
 
+        {/* Vedic Astrology Calculator Link */}
+        <div className="mt-4">
+          <Link
+            href="/join"
+            className="block w-full py-3 text-white rounded-xl font-medium transition-colors text-center"
+            style={{ backgroundColor: '#2f3538' }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#3d4448'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2f3538'}
+          >
+            ⭐ Ведическая астрология
+          </Link>
+        </div>
+
         {/* Stats */}
         <div className="mt-6 grid grid-cols-3 gap-4">
           <div className="card text-center">

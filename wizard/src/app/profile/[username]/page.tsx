@@ -223,6 +223,14 @@ export default async function ProfilePage({ params }: PageProps) {
               ✏️ Редактировать профиль
             </Link>
           )}
+
+          {/* Vedic Astrology Calculator Link */}
+          <Link
+            href="/join"
+            className="block w-full py-3 bg-brand-graphite text-white rounded-xl font-medium hover:bg-brand-graphite-hover transition-colors mt-4 text-center"
+          >
+            ⭐ Ведическая астрология
+          </Link>
         </div>
       </main>
     </div>
