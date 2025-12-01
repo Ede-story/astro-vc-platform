@@ -21,6 +21,10 @@ COPY . .
 ENV NEXT_PUBLIC_BASE_PATH=/join
 ENV NEXT_PUBLIC_API_URL=https://star-meet.com/star-api
 
+# Supabase Cloud Configuration (required at build time for NEXT_PUBLIC_ vars)
+ENV NEXT_PUBLIC_SUPABASE_URL=https://lhirxjxwdjlyyztmeceh.supabase.co
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoaXJ4anh3ZGpseXl6dG1lY2VoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzNDU2NzUsImV4cCI6MjA3OTkyMTY3NX0.RQXVSSlneqGwxA3Cta7mizmkKrI9qfZyr-v7JlULU08
+
 # Build Next.js
 RUN npm run build
 
