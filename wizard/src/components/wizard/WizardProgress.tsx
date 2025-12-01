@@ -8,6 +8,7 @@ interface WizardProgressProps {
 const STEP_LABELS = [
   'Данные рождения',
   'Ваш профиль',
+  'Калибровка',
   'Интересы',
 ];
 

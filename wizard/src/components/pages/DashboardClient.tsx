@@ -203,7 +203,7 @@ export default function DashboardClient() {
         {/* Vedic Astrology Calculator Link */}
         <div className="mt-4">
           <Link
-            href="/join"
+            href="/"
             className="block w-full py-3 text-white rounded-xl font-medium transition-colors text-center"
             style={{ backgroundColor: '#2f3538' }}
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#3d4448'}

@@ -122,7 +122,7 @@ export default function BirthDataPage() {
 
   return (
     <div className="py-8">
-      <WizardProgress currentStep={1} totalSteps={3} />
+      <WizardProgress currentStep={1} totalSteps={4} />
 
       <div className="text-center mb-8">
         <h1 className="text-2xl font-semibold text-gray-900 mb-2">
