@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, Fragment } from 'react';
+import { useSearchParams } from 'next/navigation';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { ru } from 'date-fns/locale';
 import Link from 'next/link';
@@ -62,6 +63,7 @@ if (typeof window !== 'undefined') {
 }
 
 export default function AstroCalculator() {
+  const searchParams = useSearchParams();
   const [input, setInput] = useState<InputData>(DEFAULT_INPUT);
   const [selectedVarga, setSelectedVarga] = useState('D1');
 
@@ -78,6 +80,9 @@ export default function AstroCalculator() {
   // Auth state
   const { user, isAuthenticated } = useAuth();
   const supabase = createClient();
+
+  // Load profile from URL parameter
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   // Collapsible form state
   const [isFormCollapsed, setIsFormCollapsed] = useState(false);
@@ -115,6 +120,52 @@ export default function AstroCalculator() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Load profile from URL parameter (?profile=UUID)
+  useEffect(() => {
+    const loadProfileFromUrl = async () => {
+      const profileId = searchParams.get('profile');
+      if (!profileId || profileLoaded) return;
+
+      try {
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', profileId)
+          .single();
+
+        if (error || !profile) {
+          console.error('Failed to load profile:', error);
+          return;
+        }
+
+        // Set input data from profile
+        setInput({
+          name: profile.name || '',
+          date: profile.birth_date || DEFAULT_INPUT.date,
+          time: profile.birth_time || DEFAULT_INPUT.time,
+          city: profile.birth_city || DEFAULT_INPUT.city,
+          lat: profile.birth_latitude || DEFAULT_INPUT.lat,
+          lon: profile.birth_longitude || DEFAULT_INPUT.lon,
+          timezone: profile.birth_timezone || 0,
+          ayanamsa: profile.ayanamsa || 'raman',
+        });
+
+        // Set digital twin if available
+        if (profile.digital_twin) {
+          setDigitalTwin(profile.digital_twin);
+          setIsFormCollapsed(true);
+        }
+
+        setActiveProfileId(profileId);
+        setProfileLoaded(true);
+      } catch (err) {
+        console.error('Error loading profile:', err);
+      }
+    };
+
+    loadProfileFromUrl();
+  }, [searchParams, profileLoaded, supabase]);
 
   // Search city coordinates using Nominatim API
   const searchCity = async (query: string) => {
@@ -287,12 +338,25 @@ export default function AstroCalculator() {
 
       const data = await response.json();
 
-      // Debug: Log API response to verify sub-periods
+      // Debug: Log FULL API response to verify sub-periods
+      console.log('[StarMeet] ==========================================');
+      console.log('[StarMeet] FULL API RESPONSE:', JSON.stringify(data.digital_twin?.dasha?.periods?.[0], null, 2));
+      console.log('[StarMeet] ==========================================');
       console.log('[StarMeet] API Response received');
+      console.log('[StarMeet] Has digital_twin:', !!data.digital_twin);
+      console.log('[StarMeet] Has dasha:', !!data.digital_twin?.dasha);
       console.log('[StarMeet] Dasha periods:', data.digital_twin?.dasha?.periods?.length);
-      console.log('[StarMeet] First period antardashas:', data.digital_twin?.dasha?.periods?.[0]?.antardashas?.length);
+      console.log('[StarMeet] First period:', data.digital_twin?.dasha?.periods?.[0]);
+      console.log('[StarMeet] First period antardashas count:', data.digital_twin?.dasha?.periods?.[0]?.antardashas?.length);
+      console.log('[StarMeet] First period antardashas:', data.digital_twin?.dasha?.periods?.[0]?.antardashas);
 
       if (data.success && data.digital_twin) {
+        // CRITICAL DEBUG: Alert the user about antardashas count
+        const antCount = data.digital_twin?.dasha?.periods?.[0]?.antardashas?.length || 0;
+        console.log('[StarMeet] SETTING STATE - antardashas count:', antCount);
+        if (antCount === 0) {
+          console.error('[StarMeet] WARNING: API returned 0 antardashas!');
+        }
         setDigitalTwin(data.digital_twin);
         // Save detected timezone info for display
         if (data.detected_timezone) {
@@ -898,6 +962,13 @@ export default function AstroCalculator() {
 
             {/* Dasha & Karakas Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+              {/* Debug: Show dasha status */}
+              {!digitalTwin.dasha && (
+                <div className="card bg-yellow-50 border border-yellow-200">
+                  <p className="text-yellow-800">Dasha data not available in response</p>
+                  <p className="text-xs text-yellow-600 mt-1">Check if backend returns dasha in digital_twin</p>
+                </div>
+              )}
               {/* Vimshottari Dasha with expandable sub-periods */}
               {digitalTwin.dasha && (
                 <div className="card">
@@ -946,6 +1017,7 @@ export default function AstroCalculator() {
                               <tr
                                 className={`cursor-pointer hover:bg-gray-50 ${period.lord === digitalTwin.dasha?.current_mahadasha ? 'bg-blue-50' : ''}`}
                                 onClick={() => {
+                                  console.log('[Dasha] Clicked period:', period.lord, 'antardashas:', period.antardashas?.length);
                                   if (expandedMahadasha === period.lord) {
                                     setExpandedMahadasha(null);
                                     setExpandedAntardasha(null);
@@ -956,10 +1028,12 @@ export default function AstroCalculator() {
                                 }}
                               >
                                 <td className="text-center">
-                                  {period.antardashas && period.antardashas.length > 0 && (
+                                  {period.antardashas && period.antardashas.length > 0 ? (
                                     <span className={`text-gray-400 transition-transform inline-block ${expandedMahadasha === period.lord ? 'rotate-90' : ''}`}>
                                       ▶
                                     </span>
+                                  ) : (
+                                    <span className="text-gray-300">○</span>
                                   )}
                                 </td>
                                 <td className={`font-medium ${period.lord === digitalTwin.dasha?.current_mahadasha ? 'text-blue-700' : 'text-gray-900'}`}>

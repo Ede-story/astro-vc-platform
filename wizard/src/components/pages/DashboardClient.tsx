@@ -102,7 +102,7 @@ export default function DashboardClient() {
           </div>
           <div className="flex items-center gap-4">
             <Link
-              href="/join"
+              href="/calculator"
               className="text-white font-medium py-2 px-4 rounded-md transition-colors duration-150 text-sm"
               style={{ backgroundColor: '#2f3538' }}
               onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#3d4448'}
@@ -161,14 +161,14 @@ export default function DashboardClient() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Link
-                      href={`/join?profile=${profile.id}`}
+                      href={`/calculator?profile=${profile.id}`}
                       className="text-sm text-brand-green hover:text-brand-green-hover"
                     >
                       Открыть
                     </Link>
                     <button
                       onClick={() => deleteProfile(profile.id)}
-                      className="text-sm text-red-500 hover:text-red-600"
+                      className="text-sm text-gray-400 hover:text-gray-600"
                     >
                       Удалить
                     </button>
@@ -198,18 +198,11 @@ export default function DashboardClient() {
               👤 Мой профиль
             </Link>
           )}
-        </div>
-
-        {/* Vedic Astrology Calculator Link */}
-        <div className="mt-4">
           <Link
-            href="/calculator"
-            className="block w-full py-3 text-white rounded-xl font-medium transition-colors text-center"
-            style={{ backgroundColor: '#2f3538' }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#3d4448'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2f3538'}
+            href="/dashboard/settings"
+            className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors text-center"
           >
-            ⭐ Ведическая астрология
+            ⚙️ Настройки
           </Link>
         </div>
 

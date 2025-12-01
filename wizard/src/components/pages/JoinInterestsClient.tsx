@@ -101,6 +101,7 @@ export default function JoinInterestsClient() {
           seeking: seeking,
           offerings: offerings,
           is_primary: true,
+          is_public: true,
           onboarding_completed: true,
         })
         .select()
