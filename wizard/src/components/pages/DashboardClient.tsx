@@ -19,7 +19,9 @@ interface Profile {
 
 export default function DashboardClient() {
   const [user, setUser] = useState<User | null>(null);
-  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [primaryProfile, setPrimaryProfile] = useState<Profile | null>(null);
+  const [friendProfiles, setFriendProfiles] = useState<Profile[]>([]);
+  const [showFriends, setShowFriends] = useState(true);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const supabase = createClient();
@@ -47,7 +49,10 @@ export default function DashboardClient() {
       .order('created_at', { ascending: false });
 
     if (data) {
-      setProfiles(data);
+      const primary = data.find(p => p.is_primary) || null;
+      const friends = data.filter(p => !p.is_primary);
+      setPrimaryProfile(primary);
+      setFriendProfiles(friends);
     }
   };
 
@@ -57,8 +62,11 @@ export default function DashboardClient() {
     router.refresh();
   };
 
-  const deleteProfile = async (profileId: string) => {
-    if (!confirm('Удалить этот профиль?')) return;
+  const deleteProfile = async (profileId: string, isPrimary: boolean) => {
+    const confirmMsg = isPrimary
+      ? 'Удалить ваш основной профиль? Это действие нельзя отменить.'
+      : 'Удалить этот профиль?';
+    if (!confirm(confirmMsg)) return;
 
     const { error } = await supabase
       .from('profiles')
@@ -66,6 +74,26 @@ export default function DashboardClient() {
       .eq('id', profileId);
 
     if (!error && user) {
+      await loadProfiles(user.id);
+    }
+  };
+
+  const setAsPrimary = async (profileId: string) => {
+    if (!user) return;
+
+    // First, unset all primary flags
+    await supabase
+      .from('profiles')
+      .update({ is_primary: false })
+      .eq('user_id', user.id);
+
+    // Then set the new primary
+    const { error } = await supabase
+      .from('profiles')
+      .update({ is_primary: true })
+      .eq('id', profileId);
+
+    if (!error) {
       await loadProfiles(user.id);
     }
   };
@@ -119,63 +147,139 @@ export default function DashboardClient() {
           </div>
         </header>
 
-        {/* Profiles */}
-        <div className="card">
+        {/* My Profile Section */}
+        <div className="card mb-4">
           <h2 className="text-lg font-medium text-gray-900 mb-4">
-            Мои профили
+            Мой профиль
           </h2>
 
-          {profiles.length === 0 ? (
-            <div className="text-center py-8">
+          {!primaryProfile ? (
+            <div className="text-center py-6">
               <p className="text-gray-500 mb-4">
-                У вас пока нет сохраненных профилей
+                У вас ещё нет основного профиля
               </p>
               <Link
                 href="/join"
-                className="text-brand-green hover:text-brand-green-hover"
+                className="inline-block px-6 py-2 bg-brand-green text-white rounded-lg hover:bg-brand-green-hover transition-colors"
               >
-                Создать первый профиль
+                Создать профиль
               </Link>
             </div>
           ) : (
-            <div className="space-y-3">
-              {profiles.map((profile) => (
-                <div
-                  key={profile.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                >
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-gray-900">
-                        {profile.name}
-                      </span>
-                      {profile.is_primary && (
-                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
-                          Основной
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-sm text-gray-500 mt-1">
-                      {formatDate(profile.birth_date)} | {profile.birth_city || 'Город не указан'} | {profile.ayanamsa}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Link
-                      href={`/calculator?profile=${profile.id}`}
-                      className="text-sm text-brand-green hover:text-brand-green-hover"
-                    >
-                      Открыть
-                    </Link>
-                    <button
-                      onClick={() => deleteProfile(profile.id)}
-                      className="text-sm text-gray-400 hover:text-gray-600"
-                    >
-                      Удалить
-                    </button>
-                  </div>
+            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-gray-900 text-lg">
+                    {primaryProfile.name}
+                  </span>
+                  {primaryProfile.username && (
+                    <span className="text-sm text-gray-500">
+                      @{primaryProfile.username}
+                    </span>
+                  )}
                 </div>
-              ))}
+                <div className="text-sm text-gray-500 mt-1">
+                  {formatDate(primaryProfile.birth_date)} | {primaryProfile.birth_city || 'Город не указан'} | {primaryProfile.ayanamsa}
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Link
+                  href={`/calculator?profile=${primaryProfile.id}`}
+                  className="text-sm px-3 py-1.5 bg-white text-brand-green border border-brand-green rounded-lg hover:bg-brand-green hover:text-white transition-colors"
+                >
+                  Гороскоп
+                </Link>
+                <Link
+                  href="/dashboard/settings"
+                  className="text-sm text-gray-500 hover:text-gray-700"
+                >
+                  Настройки
+                </Link>
+              </div>
             </div>
+          )}
+        </div>
+
+        {/* Friend Profiles Section */}
+        <div className="card">
+          <div
+            className="flex items-center justify-between cursor-pointer"
+            onClick={() => setShowFriends(!showFriends)}
+          >
+            <h2 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+              Сохранённые расчёты
+              <span className="text-sm font-normal text-gray-500">
+                ({friendProfiles.length})
+              </span>
+            </h2>
+            <button className="text-gray-400 hover:text-gray-600">
+              {showFriends ? '▼' : '▶'}
+            </button>
+          </div>
+
+          {showFriends && (
+            <>
+              {friendProfiles.length === 0 ? (
+                <div className="text-center py-6 mt-4">
+                  <p className="text-gray-400 text-sm">
+                    Здесь будут гороскопы друзей и знакомых
+                  </p>
+                  <Link
+                    href="/calculator"
+                    className="text-brand-green hover:text-brand-green-hover text-sm mt-2 inline-block"
+                  >
+                    + Добавить расчёт
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-3 mt-4">
+                  {friendProfiles.map((profile) => (
+                    <div
+                      key={profile.id}
+                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                    >
+                      <div>
+                        <span className="font-medium text-gray-900">
+                          {profile.name}
+                        </span>
+                        <div className="text-sm text-gray-500 mt-1">
+                          {formatDate(profile.birth_date)} | {profile.birth_city || 'Город не указан'} | {profile.ayanamsa}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {!primaryProfile && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setAsPrimary(profile.id);
+                            }}
+                            className="text-sm text-blue-500 hover:text-blue-700"
+                            title="Сделать основным профилем"
+                          >
+                            Мой профиль
+                          </button>
+                        )}
+                        <Link
+                          href={`/calculator?profile=${profile.id}`}
+                          className="text-sm text-brand-green hover:text-brand-green-hover"
+                        >
+                          Открыть
+                        </Link>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteProfile(profile.id, false);
+                          }}
+                          className="text-sm text-gray-400 hover:text-red-500"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -188,31 +292,25 @@ export default function DashboardClient() {
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#A4B85D'}
             onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#B5C76E'}
           >
-            🔍 Найти людей
+            Найти людей
           </Link>
-          {profiles.length > 0 && profiles[0].username && (
+          {primaryProfile?.username && (
             <Link
-              href={`/profile/${profiles[0].username}`}
+              href={`/profile/${primaryProfile.username}`}
               className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors text-center"
             >
-              👤 Мой профиль
+              Публичный профиль
             </Link>
           )}
-          <Link
-            href="/dashboard/settings"
-            className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors text-center"
-          >
-            ⚙️ Настройки
-          </Link>
         </div>
 
         {/* Stats */}
         <div className="mt-6 grid grid-cols-3 gap-4">
           <div className="card text-center">
             <div className="text-2xl font-semibold text-gray-900">
-              {profiles.length}
+              {friendProfiles.length}
             </div>
-            <div className="text-sm text-gray-500">Профилей</div>
+            <div className="text-sm text-gray-500">Расчётов</div>
           </div>
           <div className="card text-center">
             <div className="text-2xl font-semibold text-gray-900">

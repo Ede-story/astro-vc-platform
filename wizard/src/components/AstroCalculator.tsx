@@ -449,10 +449,21 @@ export default function AstroCalculator() {
         {/* Header */}
         <header className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">
-              StarMeet
-            </h1>
-            <p className="text-gray-500 text-sm mt-1">Ведический астрологический калькулятор</p>
+            {isAuthenticated ? (
+              <Link href="/dashboard" className="block hover:opacity-80 transition-opacity">
+                <h1 className="text-2xl font-semibold text-gray-900">
+                  StarMeet
+                </h1>
+                <p className="text-gray-500 text-sm mt-1">Ведический астрологический калькулятор</p>
+              </Link>
+            ) : (
+              <div>
+                <h1 className="text-2xl font-semibold text-gray-900">
+                  StarMeet
+                </h1>
+                <p className="text-gray-500 text-sm mt-1">Ведический астрологический калькулятор</p>
+              </div>
+            )}
           </div>
           <div>
             {isAuthenticated ? (
