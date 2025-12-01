@@ -1406,7 +1406,9 @@ def _generate_varga_chart(base_chart: ChartData, varga_code: str) -> Dict[str, A
 # CHARA KARAKA CALCULATION (Jaimini System)
 # =============================================================================
 
-# Chara Karaka names and meanings
+# Chara Karaka names and meanings (7-Karaka System - standard Jaimini)
+# Note: 7-Karaka system uses only 7 planets (excludes Rahu/Ketu)
+# This is the most widely used system in traditional Jaimini astrology
 CHARA_KARAKA_NAMES = [
     ('AK', 'Atmakaraka', 'Soul, Self'),
     ('AmK', 'Amatyakaraka', 'Career, Minister'),
@@ -1414,7 +1416,6 @@ CHARA_KARAKA_NAMES = [
     ('MK', 'Matrikaraka', 'Mother, Property'),
     ('PiK', 'Pitrikaraka', 'Father, Authority'),
     ('PuK', 'Putrakaraka', 'Children, Creativity'),
-    ('GK', 'Gnatikaraka', 'Enemies, Obstacles'),
     ('DK', 'Darakaraka', 'Spouse, Partner'),
 ]
 
@@ -1427,8 +1428,10 @@ def calculate_chara_karakas(planets_data: List[Dict]) -> Dict[str, Any]:
     The planet with the highest degree becomes Atmakaraka (AK),
     the next becomes Amatyakaraka (AmK), and so on.
 
-    Traditional 8-planet scheme includes: Sun, Moon, Mars, Mercury,
-    Jupiter, Venus, Saturn, and Rahu. Ketu is excluded.
+    Uses the standard 7-Karaka system (Saptakaraka):
+    - Only 7 planets: Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn
+    - Rahu and Ketu are excluded (they don't represent individual soul qualities)
+    - This is the most widely used system in traditional Jaimini astrology
 
     Args:
         planets_data: List of planet dicts from D1 chart, each with
@@ -1440,8 +1443,9 @@ def calculate_chara_karakas(planets_data: List[Dict]) -> Dict[str, Any]:
         - 'by_planet': Dict mapping planet name to karaka
         - 'by_karaka': Dict mapping karaka code to planet name
     """
-    # Planets used for Chara Karaka (8-planet scheme, excluding Ketu)
-    KARAKA_PLANETS = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu']
+    # Planets used for Chara Karaka (7-planet scheme - standard Jaimini)
+    # Excludes Rahu and Ketu as they don't represent individual soul qualities
+    KARAKA_PLANETS = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn']
 
     # Extract relevant planets with their degrees
     planet_degrees = []
