@@ -1,34 +1,44 @@
-# StarMeet Platform - Supabase Self-Hosted Stack
-# Version: 2.0 | Clean MVP without Mastodon
+# StarMeet Platform - Supabase Cloud Edition
+# Version: 3.0 | Using Supabase Cloud for auth/database
 
 services:
   # ========================================
-  # DATABASE LAYER
+  # STARMEET APPLICATION LAYER
   # ========================================
 
-  db:
-    image: postgres:15-alpine
-    container_name: starmeet-db
+  # FastAPI Backend - Astro Calculations API
+  starmeet-api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: starmeet/api:latest
+    container_name: starmeet-api
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: starmeet
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - SUPABASE_URL=https://lhirxjxwdjlyyztmeceh.supabase.co
+      - SUPABASE_KEY=${SUPABASE_SERVICE_KEY:-}
+      - REDIS_URL=redis://redis:6379/1
+      - DEBUG=false
+    ports:
+      - "127.0.0.1:8000:8000"
     networks:
       - starmeet-network
+    volumes:
+      - starmeet_profiles:/app/data/profiles
+    depends_on:
+      redis:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d starmeet"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      test: ['CMD', 'curl', '-f', 'http://localhost:8000/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
     deploy:
       resources:
         limits:
-          memory: 1G
+          memory: 512M
 
+  # Redis for caching
   redis:
     image: redis:7-alpine
     container_name: starmeet-redis
@@ -48,155 +58,7 @@ services:
         limits:
           memory: 256M
 
-  # ========================================
-  # SUPABASE STACK
-  # ========================================
-
-  kong:
-    image: kong:2.8-alpine
-    container_name: starmeet-kong
-    restart: unless-stopped
-    environment:
-      KONG_DATABASE: "off"
-      KONG_DECLARATIVE_CONFIG: /var/lib/kong/kong.yml
-      KONG_DNS_ORDER: LAST,A,CNAME
-      KONG_PLUGINS: request-transformer,cors,key-auth,acl
-    volumes:
-      - ./supabase/kong.yml:/var/lib/kong/kong.yml:ro
-    networks:
-      - starmeet-network
-    ports:
-      - "127.0.0.1:8001:8000"
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-
-  auth:
-    image: supabase/gotrue:v2.143.0
-    container_name: starmeet-auth
-    restart: unless-stopped
-    environment:
-      GOTRUE_API_HOST: 0.0.0.0
-      GOTRUE_API_PORT: 9999
-      API_EXTERNAL_URL: ${SITE_URL}
-      GOTRUE_DB_DRIVER: postgres
-      GOTRUE_DB_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/starmeet?sslmode=disable
-      GOTRUE_SITE_URL: ${SITE_URL}
-      GOTRUE_URI_ALLOW_LIST: ${SITE_URL}/*
-      GOTRUE_DISABLE_SIGNUP: "false"
-      GOTRUE_JWT_ADMIN_ROLES: service_role
-      GOTRUE_JWT_AUD: authenticated
-      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
-      GOTRUE_JWT_EXP: 3600
-      GOTRUE_JWT_SECRET: ${JWT_SECRET}
-      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
-      GOTRUE_MAILER_AUTOCONFIRM: "true"
-      GOTRUE_SMTP_ADMIN_EMAIL: admin@star-meet.com
-      GOTRUE_SMTP_HOST: ${SMTP_HOST:-localhost}
-      GOTRUE_SMTP_PORT: ${SMTP_PORT:-587}
-      GOTRUE_SMTP_USER: ${SMTP_USER:-}
-      GOTRUE_SMTP_PASS: ${SMTP_PASS:-}
-      GOTRUE_SMTP_SENDER_NAME: StarMeet
-    networks:
-      - starmeet-network
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-
-  rest:
-    image: postgrest/postgrest:v12.0.2
-    container_name: starmeet-rest
-    restart: unless-stopped
-    environment:
-      PGRST_DB_URI: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/starmeet
-      PGRST_DB_SCHEMAS: public,storage
-      PGRST_DB_ANON_ROLE: anon
-      PGRST_JWT_SECRET: ${JWT_SECRET}
-      PGRST_DB_USE_LEGACY_GUCS: "false"
-    networks:
-      - starmeet-network
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-
-  realtime:
-    image: supabase/realtime:v2.28.32
-    container_name: starmeet-realtime
-    restart: unless-stopped
-    environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
-      DB_NAME: starmeet
-      DB_AFTER_CONNECT_QUERY: 'SET search_path TO _realtime'
-      DB_ENC_KEY: supabaserealtime
-      API_JWT_SECRET: ${JWT_SECRET}
-      FLY_ALLOC_ID: fly123
-      FLY_APP_NAME: realtime
-      SECRET_KEY_BASE: ${JWT_SECRET}
-      ERL_AFLAGS: -proto_dist inet_tcp
-      ENABLE_TAILSCALE: "false"
-      DNS_NODES: "''"
-    networks:
-      - starmeet-network
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-
-  # ========================================
-  # STARMEET APPLICATION LAYER
-  # ========================================
-
-  # FastAPI Backend - Astro Calculations API
-  starmeet-api:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-    image: starmeet/api:latest
-    container_name: starmeet-api
-    restart: unless-stopped
-    environment:
-      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/starmeet
-      - REDIS_URL=redis://redis:6379/1
-      - DEBUG=false
-    ports:
-      - "127.0.0.1:8000:8000"
-    networks:
-      - starmeet-network
-    volumes:
-      - starmeet_profiles:/app/data/profiles
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:8000/health']
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-
+  # Next.js Frontend
   wizard:
     build:
       context: ./wizard
@@ -204,26 +66,21 @@ services:
     image: starmeet/wizard:latest
     container_name: starmeet-wizard
     restart: unless-stopped
-    environment:
-      NEXT_PUBLIC_SUPABASE_URL: ${SITE_URL}/supabase
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY}
-      NEXT_PUBLIC_API_URL: ${SITE_URL}/star-api
     networks:
       - starmeet-network
     ports:
       - "127.0.0.1:3001:3001"
     depends_on:
-      - kong
       - starmeet-api
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/"]
       interval: 30s
       timeout: 10s
       retries: 3
     deploy:
       resources:
         limits:
-          memory: 1G
+          memory: 512M
 
   # ========================================
   # NGINX GATEWAY
@@ -244,13 +101,11 @@ services:
       - starmeet-network
     depends_on:
       - wizard
-      - kong
 
 networks:
   starmeet-network:
     driver: bridge
 
 volumes:
-  postgres-data:
   redis-data:
   starmeet_profiles:
