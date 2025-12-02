@@ -1,70 +1,82 @@
 # STARMEET TECHNICAL BLUEPRINT
-# Version: 4.0 | Status: MVP DEPLOYED + EXPANSION
+# Version: 6.0 | Status: ASTRO BRAIN - STAGES 1-10 COMPLETE
+# Updated: 2025-12-02
+
+---
 
 ## PROJECT IDENTITY
 
 **Product:** AI-powered social network for compatibility matching
-**Core Tech:** Vedic astrology (16 vargas) + psychological profiling
+**Core Tech:** Vedic astrology (20 vargas) + Python calculator (12 stages) + LLM interpretation
 **Business Goal:** Build verified talent database for venture fund ($1B+ horizon)
-**MVP Target:** 6 weeks to production
+**Current Phase:** Astro Brain implementation (Stages 1-10 complete)
 
 ---
 
-## CURRENT STATE (as of 2025-12-01)
+## ARCHITECTURE OVERVIEW
 
-### What's DEPLOYED and WORKING
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                              STARMEET ASTRO BRAIN                               │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                 │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐      │
+│  │  User Birth │───►│ jyotishganit│───►│  DIGITAL    │───►│   PYTHON    │      │
+│  │    Data     │    │   library   │    │    TWIN     │    │ CALCULATOR  │      │
+│  └─────────────┘    └─────────────┘    └─────────────┘    │ (12 stages) │      │
+│                                                            └──────┬──────┘      │
+│                                                                   │             │
+│                                                                   ▼             │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────────────────────────┐     │
+│  │ personality │◄───│  Minimax M2 │◄───│       CalculatorOutput          │     │
+│  │   _report   │    │    (LLM)    │    │  (structured data for LLM)      │     │
+│  └──────┬──────┘    └─────────────┘    └─────────────────────────────────┘     │
+│         │                                                                       │
+│         ▼                                                                       │
+│  ┌─────────────────────────────────────────────────────────────────────┐       │
+│  │                         DUAL OUTPUT                                  │       │
+│  ├─────────────────────────────┬───────────────────────────────────────┤       │
+│  │       PUBLIC OUTPUT         │        PRIVATE OUTPUT                  │       │
+│  │  (inspiring user report)    │  (numeric scores for investment fund) │       │
+│  └─────────────────────────────┴───────────────────────────────────────┘       │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## IMPLEMENTATION STATUS
+
+### 12-Stage Calculator Progress
+
+| Stage | Name | Vargas | Status | Tests |
+|-------|------|--------|--------|-------|
+| 1 | Core Personality | D1 | ✅ Complete | ✅ Passing |
+| 2 | Soul Blueprint | D9 | ✅ Complete | ✅ Passing |
+| 3 | Yogas & Combinations | D1, D9 | ✅ Complete | ✅ Passing |
+| 4 | Wealth Potential | D1, D2, D11 | ✅ Complete | ✅ Passing |
+| 5 | Skills & Intelligence | D1, D24 | ✅ Complete | ✅ Passing |
+| 6 | Career & Ambition | D1, D10 | ✅ Complete | ✅ Passing |
+| 7 | Creativity & Expression | D1, D5 | ✅ Complete | ✅ Passing |
+| 8 | Gains & Networking | D1, D11 | ✅ Complete | ✅ Passing |
+| 9 | Karmic Depth | D30, D60 | ✅ Complete | ✅ Passing |
+| 10 | Timing Analysis | Dasha + Ashtakavarga | ✅ Complete | ✅ Passing |
+| 11 | Nakshatra Deep Dive | Nakshatras | ⏳ Pending | — |
+| 12 | Jaimini System | Chara Karakas | ⏳ Pending | — |
+
+### Component Status
 
 | Component | Status | Details |
 |-----------|--------|---------|
-| **GCP VM** | ✅ Running | e2-standard-4, 49GB disk, 8.6GB used |
-| **PostgreSQL 15** | ✅ Healthy | `starmeet-db` container |
-| **Redis 7** | ✅ Healthy | `starmeet-redis` container |
-| **FastAPI** | ✅ Healthy | `/star-api/v1/calculate` works |
-| **Next.js** | ✅ Running | `/join` route, calculator UI |
-| **Nginx** | ✅ Running | SSL, routing configured |
-| **Astro Engine** | ✅ Working | All 16 vargas, Raman/Lahiri |
-
-### What's NOT YET Implemented
-
-| Component | Status | Priority |
-|-----------|--------|----------|
-| **Supabase Auth** | ❌ Not deployed | Phase 3 |
-| **Profile CRUD** | ❌ No endpoints | Phase 3 |
-| **Social Features** | ❌ Not started | Phase 4-5 |
-
----
-
-## ARCHITECTURE OVERVIEW (CURRENT)
-
-```
-                         CLOUDFLARE (CDN + SSL + DDoS)
-                                    │
-┌───────────────────────────────────┴───────────────────────────────────┐
-│                        GCP VM (e2-standard-4)                          │
-│                        8GB RAM / 4 vCPU / 49GB SSD                     │
-│                                                                        │
-│  ┌──────────────────────────────────────────────────────────────────┐ │
-│  │                           NGINX                                   │ │
-│  │  /              → redirect to /join                               │ │
-│  │  /join          → Next.js (:3001)     [Calculator UI]             │ │
-│  │  /star-api/     → FastAPI (:8000)     [Astro Engine]              │ │
-│  └──────────────────────────────────────────────────────────────────┘ │
-│                                                                        │
-│  ┌────────────┐   ┌────────────┐   ┌────────────┐   ┌────────────┐   │
-│  │  NEXT.JS   │   │  FASTAPI   │   │ POSTGRESQL │   │   REDIS    │   │
-│  │   :3001    │   │   :8000    │   │   :5432    │   │   :6379    │   │
-│  │            │   │            │   │            │   │            │   │
-│  │ Calculator │   │ /v1/calc   │   │ starmeet   │   │ cache      │   │
-│  │ UI (works) │   │ (works)    │   │ db         │   │            │   │
-│  └────────────┘   └────────────┘   └────────────┘   └────────────┘   │
-│                                                                        │
-│  ┌────────────────────────────────────────────────────────────────┐   │
-│  │                    packages/astro_core/                         │   │
-│  │                    engine.py - Digital Twin Generator           │   │
-│  │                    (16 vargas, Raman/Lahiri, jyotishganit)      │   │
-│  └────────────────────────────────────────────────────────────────┘   │
-└────────────────────────────────────────────────────────────────────────┘
-```
+| **GCP VM** | ✅ Running | e2-standard-4, 49GB disk |
+| **PostgreSQL 15** | ✅ Healthy | Supabase Cloud |
+| **Redis 7** | ✅ Healthy | Docker container |
+| **FastAPI** | ✅ Healthy | `/star-api/v1/calculate` |
+| **Next.js 14** | ✅ Running | Full onboarding wizard |
+| **Supabase Auth** | ✅ Working | Registration/login |
+| **Astro Engine** | ✅ Working | 20 vargas, Dasha, Karakas |
+| **Astro Brain** | ✅ Stages 1-10 | All tests passing |
+| **LLM Integration** | ⏳ Pending | Minimax M2 |
 
 ---
 
@@ -78,198 +90,224 @@
 | **Cache** | Redis 7 | ✅ Running |
 | **Math** | jyotishganit + Swiss Ephemeris | ✅ Working |
 | **Auth** | Supabase GoTrue | ✅ Deployed |
-| **AI** | MiniMax M2 + pgvector | ⏳ Future |
+| **Calculator** | Python Astro Brain | ✅ Stages 1-10 |
+| **AI/LLM** | MiniMax M2 | ⏳ Phase 5 |
 
 ---
 
-## ASTRO ENGINE SPECIFICATION
-
-### Core Library: jyotishganit
-
-**Repository:** https://github.com/northtara/jyotishganit
-**Version:** Latest (pip install)
-**Backend:** Swiss Ephemeris (swisseph)
-
-### Library Architecture
+## FILE STRUCTURE (ACTUAL)
 
 ```
-jyotishganit/
-├── calculate_birth_chart()     # Main entry point
-├── components/
-│   ├── divisional_charts/      # ✅ ИСПОЛЬЗУЕМ (16 vargas)
-│   │   ├── hora_from_long()           # D2
-│   │   ├── drekkana_from_long()       # D3
-│   │   ├── chaturtamsa_from_long()    # D4
-│   │   ├── saptamsa_from_long()       # D7
-│   │   ├── navamsa_from_long()        # D9
-│   │   ├── dasamsa_from_long()        # D10
-│   │   ├── dwadasamsa_from_long()     # D12
-│   │   ├── shodasamsa_from_long()     # D16
-│   │   ├── vimsamsa_from_long()       # D20
-│   │   ├── chaturvimsamsa_from_long() # D24
-│   │   ├── sapta_vimsamsa_from_long() # D27
-│   │   ├── trimsamsa_from_long()      # D30
-│   │   ├── khavedamsa_from_long()     # D40
-│   │   ├── akshavedamsa_from_long()   # D45
-│   │   └── shashtiamsa_from_long()    # D60
-│   ├── dasha/                  # ⏳ TODO: Vimshottari Dasha
-│   │   └── vimshottari_dasha()
-│   ├── shadbala/               # ⏳ TODO: 6-fold strength
-│   │   └── calculate_shadbala()
-│   ├── ashtakavarga/           # ⏳ TODO: 8-point system
-│   │   └── calculate_ashtakavarga()
-│   └── panchanga/              # ⏳ TODO: Daily almanac
-│       └── calculate_panchanga()
+backend/app/astro/
+├── __init__.py
+├── calculator.py              # ✅ Main AstroBrain class
+├── models/
+│   ├── __init__.py
+│   ├── types.py               # ✅ Planet, Zodiac, Dignity enums
+│   └── output.py              # ✅ CalculatorOutput dataclass
+├── stages/
+│   ├── __init__.py
+│   ├── stage_01_core.py       # ✅ Core Personality (D1)
+│   ├── stage_02_soul.py       # ✅ Soul Blueprint (D9)
+│   ├── stage_03_yogas.py      # ✅ Yoga detection
+│   ├── stage_04_wealth.py     # ✅ Wealth analysis
+│   ├── stage_05_skills.py     # ✅ Skills & Intelligence
+│   ├── stage_06_career.py     # ✅ Career analysis
+│   ├── stage_07_creativity.py # ✅ Creativity
+│   ├── stage_08_gains.py      # ✅ Gains & Networking
+│   ├── stage_09_karmic.py     # ✅ Karmic Depth (D30, D60, Doshas)
+│   └── stage_10_timing.py     # ✅ Timing (Dasha, Ashtakavarga)
+├── strength/
+│   ├── __init__.py
+│   └── shadbala.py            # ✅ 6-fold strength
+├── formulas/
+│   ├── __init__.py
+│   └── dignities.py           # ✅ Dignity calculations
+├── reference/
+│   ├── __init__.py
+│   ├── dignities.py           # ✅ Exaltation, Moolatrikona tables
+│   ├── yogas.py               # ✅ Yoga definitions
+│   └── doshas.py              # ✅ Dosha catalog (8 types)
+├── llm/
+│   ├── __init__.py
+│   ├── prompts.py             # ⏳ System prompts
+│   └── client.py              # ⏳ Minimax M2 client
+└── tests/
+    ├── __init__.py
+    ├── fixtures/
+    │   └── digital_twin_fixture.json
+    ├── test_stages_1_2.py     # ✅ Passing
+    ├── test_stage_3.py        # ✅ Passing
+    ├── test_stages_4_8.py     # ✅ Passing
+    └── test_stages_9_10.py    # ✅ Passing
 ```
 
-### Currently Implemented (engine.py)
+---
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| **16 Varga Charts** | ✅ Working | D1, D2, D3, D4, D7, D9, D10, D12, D16, D20, D24, D27, D30, D40, D45, D60 |
-| **Ayanamsa Support** | ✅ Working | Lahiri (default), Raman (+1.43° delta) |
-| **Planet Positions** | ✅ Working | 9 planets (Sun-Ketu) with abs/rel longitude |
-| **House System** | ✅ Working | 12 houses with signs, lords |
-| **Nakshatra** | ✅ Working | 27 nakshatras with pada (1-4) |
-| **Dignity** | ✅ Working | Exalted/Moolatrikona/Own/Friend/Neutral/Enemy/Debilitated |
-| **Aspects (Drishti)** | ✅ Working | Full planetary aspects (7th, Mars 4/8, Jupiter 5/9, Saturn 3/10) |
-| **Conjunctions** | ✅ Working | Planets in same sign |
-| **Lordships** | ✅ Working | Houses owned by each planet |
+## STAGE 9: KARMIC DEPTH
 
-### Missing Features (TODO)
+### Dosha Catalog (8 types)
 
-| Feature | Priority | Source | Description |
-|---------|----------|--------|-------------|
-| **D5 Panchamsha** | 🔴 HIGH | Manual formula | Children, creativity |
-| **D6 Shashthamsha** | 🔴 HIGH | Manual formula | Health, enemies |
-| **D8 Ashtamsha** | 🔴 HIGH | Manual formula | Longevity, obstacles |
-| **D11 Rudramsha** | 🔴 HIGH | Manual formula | Wealth acquisition |
-| **Vimshottari Dasha** | 🔴 HIGH | jyotishganit.dasha | Time periods (120 years cycle) |
-| **Shadbala** | 🟡 MEDIUM | jyotishganit.shadbala | 6-fold planetary strength |
-| **Ashtakavarga** | 🟡 MEDIUM | jyotishganit.ashtakavarga | 8-point system for predictions |
-| **Panchanga** | 🟡 MEDIUM | jyotishganit.panchanga | Tithi, Yoga, Karana, Vaara |
-| **is_retrograde** | 🟡 MEDIUM | swisseph | Currently always returns false |
+| Dosha | Description | Severity |
+|-------|-------------|----------|
+| Mangal | Mars in 1,2,4,7,8,12 from Lagna/Moon/Venus | 7.0 |
+| Kala Sarpa | All planets between Rahu-Ketu | 8.0 |
+| Guru Chandal | Jupiter conjunct Rahu | 6.5 |
+| Pitru | Sun afflicted by Saturn/Rahu/Ketu | 6.0 |
+| Grahan | Sun/Moon conjunct Rahu/Ketu | 7.5 |
+| Shrapit | Saturn conjunct Rahu | 8.5 |
+| Kemadrum | No planets 2nd/12th from Moon | 5.0 |
+| Daridra | 11th lord in dusthana | 6.0 |
 
-### Missing Varga Formulas
+### Output Enums
 
-#### D5 - Panchamsha (1/5 = 6° per division)
-```
-For each 6° segment (0-6, 6-12, 12-18, 18-24, 24-30):
-- Odd signs (Aries, Gemini, Leo, etc.): Start from Aries
-- Even signs (Taurus, Cancer, Virgo, etc.): Start from Sagittarius
-Division 1: base_sign
-Division 2: base_sign + 1
-Division 3: base_sign + 2
-Division 4: base_sign + 3
-Division 5: base_sign + 4
+```python
+class KarmicCeilingTier(str, Enum):
+    UNLIMITED = "Unlimited"
+    VERY_HIGH = "VeryHigh"
+    HIGH = "High"
+    MODERATE = "Moderate"
+    LIMITED = "Limited"
+    CONSTRAINED = "Constrained"
+    BLOCKED = "Blocked"
+
+class RiskCategory(str, Enum):
+    VERY_LOW = "VeryLow"
+    LOW = "Low"
+    MODERATE = "Moderate"
+    HIGH = "High"
+    CRITICAL = "Critical"
 ```
 
-#### D6 - Shashthamsha (1/6 = 5° per division)
-```
-For each 5° segment:
-- Odd signs: Start from sign itself
-- Even signs: Start from 7th sign
-Division 1: base_sign
-Division 2: base_sign + 1
-... (cycle through 6 signs)
+---
+
+## STAGE 10: TIMING
+
+### Vimshottari Dasha Periods
+
+```python
+DASHA_PERIODS = {
+    Planet.KETU: 7,
+    Planet.VENUS: 20,
+    Planet.SUN: 6,
+    Planet.MOON: 10,
+    Planet.MARS: 7,
+    Planet.RAHU: 18,
+    Planet.JUPITER: 16,
+    Planet.SATURN: 19,
+    Planet.MERCURY: 17
+}  # Total: 120 years
+
+DASHA_SEQUENCE = [
+    Planet.KETU, Planet.VENUS, Planet.SUN, Planet.MOON,
+    Planet.MARS, Planet.RAHU, Planet.JUPITER, Planet.SATURN, Planet.MERCURY
+]
 ```
 
-#### D8 - Ashtamsha (1/8 = 3.75° per division)
-```
-For each 3.75° segment:
-- Movable signs (Aries, Cancer, Libra, Capricorn): Start from Aries
-- Fixed signs (Taurus, Leo, Scorpio, Aquarius): Start from Sagittarius
-- Dual signs (Gemini, Virgo, Sagittarius, Pisces): Start from Leo
+### Timing Recommendations
+
+```python
+class TimingRecommendation(str, Enum):
+    INVEST_NOW = "InvestNow"
+    FAVORABLE_TIMING = "FavorableTiming"
+    WAIT_FOR_BETTER = "WaitForBetter"
+    PROCEED_CAUTION = "ProceedCaution"
+    DELAY_INVESTMENT = "DelayInvestment"
 ```
 
-#### D11 - Rudramsha (1/11 = 2.727° per division)
-```
-For each 2.727° segment:
-- Odd signs: Start from Aries
-- Even signs: Start from Scorpio
-Cycle through 11 signs for each division
-```
+---
 
-### Digital Twin JSON Structure
+## DIGNITIES REFERENCE DATA
 
-```json
-{
-  "meta": {
-    "birth_datetime": "1977-10-25T06:28:00",
-    "latitude": 61.7,
-    "longitude": 30.7,
-    "timezone_offset": 3.0,
-    "ayanamsa": "Raman",
-    "ayanamsa_delta": 1.43,
-    "julian_day": 2443449.6444,
-    "generated_at": "2025-12-01T..."
-  },
-  "vargas": {
-    "D1": {
-      "ascendant": {
-        "sign_id": 7,
-        "sign_name": "Libra",
-        "degrees": 17.84
-      },
-      "planets": [
-        {
-          "name": "Sun",
-          "sign_id": 7,
-          "sign_name": "Libra",
-          "absolute_degree": 188.12,
-          "relative_degree": 8.12,
-          "house_occupied": 1,
-          "houses_owned": [11],
-          "nakshatra": "Swati",
-          "nakshatra_lord": "Rahu",
-          "nakshatra_pada": 2,
-          "sign_lord": "Venus",
-          "dignity_state": "Debilitated",
-          "aspects_giving_to": [7],
-          "aspects_receiving_from": ["Saturn"],
-          "conjunctions": ["Mercury"],
-          "is_retrograde": false
-        }
-        // ... 8 more planets
-      ],
-      "houses": [
-        {
-          "house_number": 1,
-          "sign_id": 7,
-          "sign_name": "Libra",
-          "lord": "Venus",
-          "occupants": ["Sun", "Mercury"],
-          "aspects_received": ["Saturn"]
-        }
-        // ... 11 more houses
-      ]
-    },
-    "D2": { ... },
-    "D9": { ... },
-    // ... all 16 vargas
-  },
-  // FUTURE ADDITIONS:
-  "dasha": {
-    "current_mahadasha": "Moon",
-    "current_antardasha": "Jupiter",
-    "periods": [...]
-  },
-  "shadbala": {
-    "Sun": { "total": 458.2, "sthana": 120, "dig": 45, ... },
-    // ...
-  },
-  "ashtakavarga": {
-    "Sun": { "D1": [4,5,3,2,...], "total": 48 },
-    // ...
-  },
-  "panchanga": {
-    "tithi": { "name": "Shukla Chaturthi", "lord": "Ganesh" },
-    "nakshatra": { "name": "Swati", "pada": 2 },
-    "yoga": { "name": "Siddhi", "meaning": "Success" },
-    "karana": { "name": "Balava" },
-    "vaara": { "name": "Tuesday", "lord": "Mars" }
-  }
+### Exaltation & Debilitation
+
+```python
+EXALTATION = {
+    Planet.SUN: Zodiac.ARIES,
+    Planet.MOON: Zodiac.TAURUS,
+    Planet.MARS: Zodiac.CAPRICORN,
+    Planet.MERCURY: Zodiac.VIRGO,
+    Planet.JUPITER: Zodiac.CANCER,
+    Planet.VENUS: Zodiac.PISCES,
+    Planet.SATURN: Zodiac.LIBRA,
 }
+
+DEBILITATION = {
+    Planet.SUN: Zodiac.LIBRA,
+    Planet.MOON: Zodiac.SCORPIO,
+    Planet.MARS: Zodiac.CANCER,
+    Planet.MERCURY: Zodiac.PISCES,
+    Planet.JUPITER: Zodiac.CAPRICORN,
+    Planet.VENUS: Zodiac.VIRGO,
+    Planet.SATURN: Zodiac.ARIES,
+}
+```
+
+### Natural Friendships
+
+```python
+NATURAL_FRIENDS = {
+    Planet.SUN: [Planet.MOON, Planet.MARS, Planet.JUPITER],
+    Planet.MOON: [Planet.SUN, Planet.MERCURY],
+    Planet.MARS: [Planet.SUN, Planet.MOON, Planet.JUPITER],
+    Planet.MERCURY: [Planet.SUN, Planet.VENUS],
+    Planet.JUPITER: [Planet.SUN, Planet.MOON, Planet.MARS],
+    Planet.VENUS: [Planet.MERCURY, Planet.SATURN],
+    Planet.SATURN: [Planet.MERCURY, Planet.VENUS]
+}
+```
+
+---
+
+## DATABASE SCHEMA
+
+### Existing Tables (Supabase Cloud)
+
+```sql
+CREATE TABLE public.profiles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    username TEXT UNIQUE,
+    birth_date DATE NOT NULL,
+    birth_time TIME,
+    birth_city TEXT,
+    birth_lat FLOAT,
+    birth_lon FLOAT,
+    birth_tz FLOAT,
+    ayanamsa TEXT DEFAULT 'raman',
+    is_primary BOOLEAN DEFAULT false,
+    digital_twin JSONB,
+    psych_scores JSONB,
+    interests JSONB,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+### Future Tables (Phase 5)
+
+```sql
+-- Calculator output storage
+CREATE TABLE public.calculator_outputs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    profile_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+    version TEXT NOT NULL,
+    output JSONB NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Internal talent assessments
+CREATE TABLE internal.talent_assessments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    profile_id UUID REFERENCES public.profiles(id),
+    talent_score FLOAT NOT NULL,
+    leadership_score FLOAT,
+    creativity_score FLOAT,
+    watchlist_tier TEXT,
+    calculator_output_id UUID REFERENCES public.calculator_outputs(id),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
 ```
 
 ---
@@ -280,260 +318,65 @@ Cycle through 11 signs for each division
 
 | Endpoint | Method | Purpose | Status |
 |----------|--------|---------|--------|
-| `/star-api/v1/calculate` | POST | Full D1-D60 calculation | ✅ Works |
-| `/star-api/health` | GET | Health check | ✅ Works |
-| `/star-api/docs` | GET | Swagger UI | ✅ Works |
+| `/star-api/v1/calculate` | POST | Full D1-D60 calculation | ✅ |
+| `/star-api/v1/save` | POST | Save profile with digital_twin | ✅ |
+| `/star-api/v1/profiles` | GET | Get user profiles | ✅ |
+| `/star-api/health` | GET | Health check | ✅ |
 
-### Request Format (calculate)
-```json
-{
-  "date": "1977-10-25",
-  "time": "06:28",
-  "lat": 61.70,
-  "lon": 30.69,
-  "timezone": 3.0,
-  "ayanamsa": "raman"  // or "lahiri"
-}
-```
-
-### Response Format
-```json
-{
-  "success": true,
-  "detected_timezone": { ... },
-  "digital_twin": {
-    "meta": {
-      "birth_datetime": "1977-10-25T06:28:00",
-      "ayanamsa": "Raman",
-      "ayanamsa_delta": 1.43,
-      ...
-    },
-    "vargas": {
-      "D1": { "ascendant": {...}, "planets": [...], "houses": [...] },
-      "D2": { ... },
-      ...
-      "D60": { ... }
-    }
-  }
-}
-```
-
-### TODO Endpoints
+### New Endpoints (Phase 5)
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
-| `/star-api/v1/profiles` | GET | List all profiles |
-| `/star-api/v1/profiles` | POST | Create new profile |
-| `/star-api/v1/profiles/:id` | GET | Get profile by ID |
-| `/star-api/v1/profiles/:id` | PUT | Update profile |
-| `/star-api/v1/profiles/:id` | DELETE | Delete profile |
+| `/star-api/v1/analyze` | POST | Run 12-stage calculator |
+| `/star-api/v1/report/{id}` | GET | Get personality report |
+| `/star-api/v1/report/{id}` | POST | Generate new report via LLM |
 
 ---
 
-## DATABASE SCHEMA
+## IMPLEMENTATION PHASES
 
-### profiles (TO CREATE)
-```sql
-CREATE TABLE public.profiles (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name TEXT NOT NULL,
+### Completed
 
-    -- Birth Data
-    birth_date DATE NOT NULL,
-    birth_time TIME,
-    birth_place TEXT,
-    birth_latitude FLOAT,
-    birth_longitude FLOAT,
-    birth_timezone FLOAT,
+| Phase | Content | Status |
+|-------|---------|--------|
+| 1 | Foundation (types, models, Stage 1-2) | ✅ Complete |
+| 2 | Core Stage 3 (Yogas) | ✅ Complete |
+| 3 | Varga Stages 4-8 | ✅ Complete |
+| 4 | Karmic Depth & Timing (Stages 9-10) | ✅ Complete |
 
-    -- Ayanamsa
-    ayanamsa TEXT DEFAULT 'raman',
+### Pending
 
-    -- Calculated Chart (JSONB)
-    digital_twin JSONB,
-
-    -- Metadata
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Index for faster queries
-CREATE INDEX idx_profiles_created_at ON profiles(created_at DESC);
-```
-
-### Future Tables
-- **compatibility_cache**: Pre-calculated compatibility scores
-- **users**: Supabase auth users (when auth is added)
+| Phase | Content | Priority |
+|-------|---------|----------|
+| 5 | LLM Integration (Minimax M2) | HIGH |
+| 6 | Admin Panel | MEDIUM |
+| 7 | Social Features | FUTURE |
 
 ---
 
-## PROJECT STRUCTURE
+## GOLDEN CODE (DO NOT REWRITE)
 
-```
-StarMeet-platform/
-├── docs/
-│   ├── CLAUDE.md          # Agent constitution
-│   ├── BLUEPRINT.md       # This file
-│   └── PROGRESS.md        # Status tracking
-├── backend/               # ✅ WORKING
-│   ├── app/
-│   │   ├── main.py        # FastAPI app
-│   │   ├── routers/
-│   │   │   └── astro.py   # /v1/calculate endpoint
-│   │   └── models/
-│   ├── requirements.txt
-│   └── Dockerfile
-├── wizard/                # ✅ WORKING
-│   ├── src/
-│   │   ├── app/
-│   │   │   └── page.tsx
-│   │   ├── components/
-│   │   │   └── AstroCalculator.tsx
-│   │   └── types/
-│   ├── package.json
-│   └── Dockerfile
-├── packages/
-│   └── astro_core/        # ✅ WORKING
-│       ├── __init__.py
-│       └── engine.py      # Digital Twin generator
-├── nginx/
-│   └── nginx.conf
-├── docker-compose.yml
-├── init-astro-db.sql
-└── .env
-```
-
----
-
-## DOCKER COMPOSE (Current MVP)
-
-```yaml
-services:
-  db:
-    image: postgres:15-alpine
-    container_name: starmeet-db
-    environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: starmeet
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d starmeet"]
-
-  redis:
-    image: redis:7-alpine
-    container_name: starmeet-redis
-    command: redis-server --appendonly yes --maxmemory 256mb
-
-  fastapi:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-    container_name: starmeet-api
-    environment:
-      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/starmeet
-      REDIS_URL: redis://redis:6379/0
-    ports:
-      - "127.0.0.1:8000:8000"
-    depends_on:
-      db: { condition: service_healthy }
-
-  nextjs:
-    build: ./wizard
-    container_name: starmeet-wizard
-    environment:
-      NEXT_PUBLIC_API_URL: ${SITE_URL}/star-api
-    ports:
-      - "127.0.0.1:3001:3001"
-
-  nginx:
-    image: nginx:alpine
-    container_name: starmeet-nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-
-volumes:
-  postgres-data:
-  redis-data:
-```
-
----
-
-## NGINX CONFIG (Current)
-
-```nginx
-upstream nextjs { server starmeet-wizard:3001; }
-upstream fastapi { server starmeet-api:8000; }
-
-server {
-    listen 443 ssl http2;
-    server_name star-meet.com;
-
-    ssl_certificate /etc/letsencrypt/live/star-meet.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/star-meet.com/privkey.pem;
-
-    # Root redirect to /join
-    location = / {
-        return 302 /join;
-    }
-
-    # FastAPI (Astro Engine)
-    location /star-api/ {
-        proxy_pass http://fastapi/;
-        proxy_read_timeout 120s;
-    }
-
-    # Next.js (Calculator UI)
-    location /join {
-        proxy_pass http://nextjs;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-    }
-}
-```
-
----
-
-## IMPLEMENTATION ROADMAP
-
-| Phase | Week | Deliverable | Status |
-|-------|------|-------------|--------|
-| **1. Infrastructure** | 1 | GCP + Docker + Nginx + SSL | ✅ Complete |
-| **2. Astro Engine** | 2 | FastAPI + 16 vargas calculation | ✅ Complete |
-| **3. Profiles** | 3 | DB schema + CRUD endpoints + UI | 🔄 In Progress |
-| **4. Auth** | 3 | Supabase GoTrue integration | ⏳ Pending |
-| **5. Social Core** | 4 | Matching algorithm | ⏳ Pending |
-| **6. Polish** | 5-6 | UI improvements, performance | ⏳ Pending |
+| File | Purpose | Status |
+|------|---------|--------|
+| `packages/astro_core/engine.py` | Digital Twin generator | ✅ WORKING |
+| `backend/app/routers/astro.py` | API endpoints | ✅ WORKING |
+| `wizard/src/components/AstroCalculator.tsx` | UI component | ✅ WORKING |
 
 ---
 
 ## COMMANDS REFERENCE
 
 ```bash
-# GCP SSH Access
-gcloud compute ssh mastodon-vm --zone=europe-southwest1-c --command="<cmd>"
+# Run tests
+cd backend
+PYTHONPATH=../packages .venv/bin/pytest app/astro/tests/ -v
 
-# Docker Operations (on server)
-docker compose up -d
-docker compose ps
-docker compose logs -f starmeet-api
-docker compose down
+# Local development
+PYTHONPATH=../packages uvicorn app.main:app --reload --port 8000
 
-# Rebuild single service
-docker compose up -d --build fastapi
-
-# Database shell
-docker exec -it starmeet-db psql -U postgres -d starmeet
-
-# API Test
-curl -X POST https://star-meet.com/star-api/v1/calculate \
-  -H "Content-Type: application/json" \
-  -d '{"date":"1977-10-25","time":"06:28","lat":61.70,"lon":30.69,"timezone":3.0,"ayanamsa":"raman"}'
+# Quick deploy
+gcloud compute ssh mastodon-vm --zone=europe-southwest1-c \
+  --command="cd ~/StarMeet-platform && git pull && docker compose build --no-cache starmeet-api && docker compose up -d"
 ```
 
 ---
@@ -542,11 +385,11 @@ curl -X POST https://star-meet.com/star-api/v1/calculate \
 
 | URL | Purpose |
 |-----|---------|
-| https://star-meet.com/join | Calculator UI |
+| https://star-meet.com/join | Onboarding wizard |
+| https://star-meet.com/dashboard | User dashboard |
 | https://star-meet.com/star-api/health | Health check |
 | https://star-meet.com/star-api/docs | Swagger UI |
-| https://star-meet.com/star-api/v1/calculate | Calculate endpoint |
 
 ---
 
-**END OF BLUEPRINT**
+**END OF BLUEPRINT v6.0**
