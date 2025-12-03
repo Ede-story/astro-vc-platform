@@ -32,6 +32,9 @@ from astro_core.engine import (
     calculate_chara_karakas
 )
 
+# Phase 9: Planet Scoring System
+from app.astro.scoring import calculate_planet_scores, get_planet_score_report
+
 router = APIRouter()
 
 
@@ -705,3 +708,495 @@ async def test_chara_karakas():
     except Exception as e:
         traceback.print_exc()
         return {"error": str(e)}
+
+
+# =============================================================================
+# FULL CALCULATOR ENDPOINT (Phase 7)
+# =============================================================================
+
+class FullCalculatorRequest(BaseModel):
+    """Request for full personality calculation."""
+    date: str = Field(..., description="Birth date YYYY-MM-DD")
+    time: str = Field(..., description="Birth time HH:MM")
+    lat: float = Field(..., description="Latitude")
+    lon: float = Field(..., description="Longitude")
+    ayanamsa: str = Field(default="lahiri", description="Ayanamsa: lahiri or raman")
+    generate_report: bool = Field(default=True, description="Generate LLM report")
+    include_admin_data: bool = Field(default=False, description="Include admin scores")
+
+
+class AdminScoresData(BaseModel):
+    """Structured admin data with scores for internal use."""
+    house_scores: Dict[str, Any] = {}
+    composite_indices: Dict[str, Any] = {}
+    yogas: Dict[str, Any] = {}
+    planets: Dict[str, Any] = {}
+    nakshatra_analysis: Dict[str, Any] = {}
+    jaimini_analysis: Dict[str, Any] = {}
+    karmic_depth: Dict[str, Any] = {}
+    timing_analysis: Dict[str, Any] = {}
+
+
+class FullCalculatorResponse(BaseModel):
+    """Response with personality report and optional admin data."""
+    success: bool
+    report_text: Optional[str] = None
+    admin_data: Optional[Dict[str, Any]] = None
+    generation_metrics: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
+
+
+def _format_house_scores_russian(house_scores: Dict[str, float]) -> Dict[str, Any]:
+    """Format house scores with Russian labels."""
+    HOUSE_NAMES_RU = {
+        1: "1-й дом (Личность, тело)",
+        2: "2-й дом (Богатство, речь)",
+        3: "3-й дом (Смелость, братья)",
+        4: "4-й дом (Мать, дом, счастье)",
+        5: "5-й дом (Дети, творчество)",
+        6: "6-й дом (Враги, болезни)",
+        7: "7-й дом (Партнёрство, брак)",
+        8: "8-й дом (Трансформация, тайны)",
+        9: "9-й дом (Удача, отец, дхарма)",
+        10: "10-й дом (Карьера, статус)",
+        11: "11-й дом (Прибыль, друзья)",
+        12: "12-й дом (Потери, мокша)",
+    }
+
+    formatted = {}
+    for house_num, score in house_scores.items():
+        # Handle both formats: "house_1" or "1" or 1
+        if isinstance(house_num, str):
+            if house_num.startswith("house_"):
+                house_int = int(house_num.replace("house_", ""))
+            else:
+                house_int = int(house_num)
+        else:
+            house_int = house_num
+        label = HOUSE_NAMES_RU.get(house_int, f"Дом {house_int}")
+        formatted[label] = round(score, 1)
+
+    return formatted
+
+
+def _format_indices_russian(indices: Dict[str, Any]) -> Dict[str, Any]:
+    """Format composite indices with Russian labels."""
+    INDEX_NAMES_RU = {
+        "career_success": "Карьерный успех",
+        "wealth_potential": "Потенциал богатства",
+        "relationship_harmony": "Гармония отношений",
+        "health_vitality": "Здоровье и жизненная сила",
+        "spiritual_growth": "Духовный рост",
+        "creativity_expression": "Творческое самовыражение",
+        "leadership_ability": "Лидерские способности",
+        "communication_skill": "Коммуникативные навыки",
+    }
+
+    formatted = {}
+    for key, value in indices.items():
+        if isinstance(value, dict):
+            label = INDEX_NAMES_RU.get(key, key)
+            score = value.get("score", value.get("value", 0))
+            formatted[label] = {
+                "score": round(score, 1) if isinstance(score, (int, float)) else score,
+                "level": value.get("level", "средний"),
+            }
+        elif isinstance(value, (int, float)):
+            label = INDEX_NAMES_RU.get(key, key)
+            formatted[label] = round(value, 1)
+
+    return formatted
+
+
+def _format_yogas_russian(yogas: Dict[str, Any]) -> Dict[str, Any]:
+    """Format yogas with Russian descriptions."""
+    formatted = {
+        "found_yogas": [],
+        "summary": {},
+    }
+
+    yogas_found = yogas.get("yogas_found", yogas.get("active_yogas", []))
+    for yoga in yogas_found[:15]:  # Limit to 15 yogas
+        formatted["found_yogas"].append({
+            "name": yoga.get("sanskrit_name", yoga.get("name", "Unknown")),
+            "category": yoga.get("category", "general"),
+            "strength": round(yoga.get("strength", 0) * 100, 0),
+            "planets": yoga.get("participating_planets", []),
+        })
+
+    summary = yogas.get("summary", {})
+    formatted["summary"] = {
+        "Всего йог": summary.get("total_count", len(yogas_found)),
+        "Раджа-йог": summary.get("raja_yoga_count", 0),
+        "Дхана-йог": summary.get("dhana_yoga_count", 0),
+        "Общий балл": round(summary.get("overall_yoga_score", 0), 1),
+    }
+
+    return formatted
+
+
+def _format_planets_russian(basic_chart: Dict[str, Any]) -> Dict[str, Any]:
+    """Format planet data with Russian labels."""
+    PLANET_NAMES_RU = {
+        "Sun": "Солнце",
+        "Moon": "Луна",
+        "Mars": "Марс",
+        "Mercury": "Меркурий",
+        "Jupiter": "Юпитер",
+        "Venus": "Венера",
+        "Saturn": "Сатурн",
+        "Rahu": "Раху",
+        "Ketu": "Кету",
+    }
+
+    DIGNITY_RU = {
+        "exalted": "экзальтация",
+        "own_sign": "свой знак",
+        "moolatrikona": "мулатрикона",
+        "friendly": "друж. знак",
+        "neutral": "нейтральный",
+        "enemy": "враж. знак",
+        "debilitated": "падение",
+    }
+
+    formatted = {}
+    planets = basic_chart.get("planets", [])
+
+    for p in planets:
+        name_en = p.get("planet", p.get("name", "Unknown"))
+        name_ru = PLANET_NAMES_RU.get(name_en, name_en)
+
+        dignity_en = p.get("dignity", "neutral")
+        dignity_ru = DIGNITY_RU.get(dignity_en, dignity_en)
+
+        formatted[name_ru] = {
+            "sign": p.get("sign", "Unknown"),
+            "degree": round(p.get("degree", p.get("degrees", 0)), 1),
+            "house": p.get("house", 0),
+            "dignity": dignity_ru,
+            "retrograde": p.get("is_retrograde", False),
+        }
+
+    return formatted
+
+
+def _format_nakshatra_russian(nakshatra_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Format nakshatra analysis with Russian labels."""
+    formatted = {}
+
+    moon_nak = nakshatra_data.get("moon_nakshatra", {})
+    if moon_nak:
+        formatted["Накшатра Луны"] = {
+            "name": moon_nak.get("name", "Unknown"),
+            "deity": moon_nak.get("deity", ""),
+            "symbol": moon_nak.get("symbol", ""),
+            "ruler": moon_nak.get("ruler", moon_nak.get("ruling_planet", "")),
+            "pada": moon_nak.get("pada", 0),
+        }
+
+    asc_nak = nakshatra_data.get("asc_nakshatra", {})
+    if asc_nak:
+        if isinstance(asc_nak, dict):
+            formatted["Накшатра Лагны"] = asc_nak.get("name", "Unknown")
+        else:
+            formatted["Накшатра Лагны"] = asc_nak
+
+    return formatted
+
+
+def _extract_nakshatra_from_digital_twin(digital_twin: Dict[str, Any]) -> Dict[str, Any]:
+    """Extract nakshatra data directly from digital_twin with deity/symbol from reference."""
+    # Nakshatra reference data (deity, symbol) - from nakshatras.py
+    NAKSHATRA_REFERENCE = {
+        "Ashwini": {"deity": "Ashwini Kumaras (Божественные Целители)", "symbol": "Голова коня"},
+        "Bharani": {"deity": "Yama (Бог Смерти)", "symbol": "Йони"},
+        "Krittika": {"deity": "Agni (Бог Огня)", "symbol": "Бритва/Пламя"},
+        "Rohini": {"deity": "Brahma (Творец)", "symbol": "Колесница"},
+        "Mrigashira": {"deity": "Soma (Бог Луны)", "symbol": "Голова оленя"},
+        "Ardra": {"deity": "Rudra (Бог Шторма)", "symbol": "Слеза/Алмаз"},
+        "Punarvasu": {"deity": "Aditi (Мать Богов)", "symbol": "Лук и колчан"},
+        "Pushya": {"deity": "Brihaspati (Юпитер/Гуру)", "symbol": "Цветок/Круг"},
+        "Ashlesha": {"deity": "Nagas (Боги-Змеи)", "symbol": "Свернувшаяся змея"},
+        "Magha": {"deity": "Pitris (Предки)", "symbol": "Трон"},
+        "Purva Phalguni": {"deity": "Bhaga (Бог Удачи)", "symbol": "Гамак/Ложе"},
+        "Uttara Phalguni": {"deity": "Aryaman (Бог Контрактов)", "symbol": "Задние ножки кровати"},
+        "Hasta": {"deity": "Savitar (Бог Солнца)", "symbol": "Рука/Кулак"},
+        "Chitra": {"deity": "Vishvakarma (Божественный Архитектор)", "symbol": "Жемчужина"},
+        "Swati": {"deity": "Vayu (Бог Ветра)", "symbol": "Молодое растение"},
+        "Vishakha": {"deity": "Indra-Agni (Царь и Огонь)", "symbol": "Триумфальная арка"},
+        "Anuradha": {"deity": "Mitra (Бог Дружбы)", "symbol": "Лотос"},
+        "Jyeshtha": {"deity": "Indra (Царь Богов)", "symbol": "Серьга/Зонт"},
+        "Mula": {"deity": "Nirriti (Богиня Разрушения)", "symbol": "Связка корней"},
+        "Purva Ashadha": {"deity": "Apas (Бог Воды)", "symbol": "Слоновий бивень"},
+        "Uttara Ashadha": {"deity": "Vishvadevas (Универсальные Боги)", "symbol": "Слоновий бивень"},
+        "Shravana": {"deity": "Vishnu (Хранитель)", "symbol": "Ухо/Три следа"},
+        "Dhanishta": {"deity": "Vasus (Восемь Богов)", "symbol": "Барабан/Флейта"},
+        "Shatabhisha": {"deity": "Varuna (Бог Космических Вод)", "symbol": "Пустой круг"},
+        "Purva Bhadrapada": {"deity": "Aja Ekapada (Одноногий Козёл)", "symbol": "Погребальный одр"},
+        "Uttara Bhadrapada": {"deity": "Ahir Budhnya (Змей Глубин)", "symbol": "Близнецы"},
+        "Revati": {"deity": "Pushan (Кормилец)", "symbol": "Рыба/Барабан"},
+    }
+
+    result = {}
+
+    # Get D1 planets
+    d1_planets = digital_twin.get("vargas", {}).get("D1", {}).get("planets", [])
+
+    # Find Moon nakshatra
+    for planet in d1_planets:
+        if planet.get("name") == "Moon":
+            nak_name = planet.get("nakshatra", "Unknown")
+            nak_ref = NAKSHATRA_REFERENCE.get(nak_name, {})
+            result["moon_nakshatra"] = {
+                "name": nak_name,
+                "ruler": planet.get("nakshatra_lord", ""),
+                "pada": planet.get("nakshatra_pada", 0),
+                "deity": nak_ref.get("deity", ""),
+                "symbol": nak_ref.get("symbol", ""),
+            }
+            break
+
+    # Get Ascendant nakshatra (calculate from asc degrees)
+    d1_asc = digital_twin.get("vargas", {}).get("D1", {}).get("ascendant", {})
+    if d1_asc:
+        asc_degree = d1_asc.get("degrees", 0)
+        sign_id = d1_asc.get("sign_id", 1)
+        abs_degree = (sign_id - 1) * 30 + asc_degree
+        nakshatra_idx = int(abs_degree / (360 / 27))
+        NAKSHATRAS = [
+            "Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", "Ardra",
+            "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni",
+            "Uttara Phalguni", "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha",
+            "Jyeshtha", "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana",
+            "Dhanishta", "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"
+        ]
+        result["asc_nakshatra"] = NAKSHATRAS[nakshatra_idx % 27]
+
+    return result
+
+
+def _format_jaimini_russian(jaimini_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Format Jaimini analysis with Russian labels."""
+    KARAKA_NAMES_RU = {
+        "AK": "Атмакарака (душа)",
+        "AmK": "Аматьякарака (карьера)",
+        "BK": "Бхратрикарака (братья)",
+        "MK": "Матрикарака (мать)",
+        "PiK": "Питрикарака (отец)",
+        "PK": "Питрикарака (отец)",
+        "PuK": "Путракарака (дети)",
+        "GK": "Гнатикарака (родственники)",
+        "DK": "Даракарака (супруг)",
+    }
+
+    formatted = {}
+
+    # Atmakaraka
+    atma = jaimini_data.get("atmakaraka", {})
+    if atma:
+        formatted["Атмакарака"] = {
+            "planet": atma.get("planet", "Unknown"),
+            "sign": atma.get("sign", ""),
+            "meaning": atma.get("meaning", ""),
+        }
+
+    # Karakamsha
+    karak = jaimini_data.get("karakamsha", {})
+    if karak:
+        formatted["Каракамша"] = {
+            "sign": karak.get("sign", "Unknown"),
+            "interpretation": karak.get("interpretation", ""),
+        }
+
+    # Chara Karakas - can be list directly or inside dict
+    charas = jaimini_data.get("chara_karakas", jaimini_data)
+    karakas_list = []
+
+    if isinstance(charas, dict):
+        karakas_list = charas.get("karakas", [])
+    elif isinstance(charas, list):
+        karakas_list = charas
+
+    if karakas_list:
+        formatted["Чара Караки"] = {}
+        for k in karakas_list[:8]:  # All 8 karakas
+            code = k.get("karaka_code", "")
+            planet = k.get("planet", "")
+            degrees = k.get("degrees_in_sign", 0)
+            label = KARAKA_NAMES_RU.get(code, code)
+            formatted["Чара Караки"][label] = f"{planet} ({degrees:.1f}°)"
+
+    return formatted
+
+
+def _extract_jaimini_from_digital_twin(digital_twin: Dict[str, Any]) -> Dict[str, Any]:
+    """Extract Jaimini data directly from digital_twin, including Karakamsha."""
+    result = {}
+
+    chara_karakas = digital_twin.get("chara_karakas", {})
+    ak_planet_name = None
+
+    if chara_karakas:
+        karakas_list = chara_karakas.get("karakas", [])
+
+        # Find Atmakaraka (AK)
+        for k in karakas_list:
+            if k.get("karaka_code") == "AK":
+                ak_planet_name = k.get("planet", "Unknown")
+                result["atmakaraka"] = {
+                    "planet": ak_planet_name,
+                    "sign": k.get("sign", ""),
+                    "meaning": k.get("karaka_meaning", ""),
+                }
+                break
+
+        # Store all karakas
+        result["chara_karakas"] = chara_karakas
+
+    # Calculate Karakamsha = sign in D9 (Navamsha) where AK is placed
+    if ak_planet_name:
+        d9_planets = digital_twin.get("vargas", {}).get("D9", {}).get("planets", [])
+        for planet in d9_planets:
+            if planet.get("name") == ak_planet_name:
+                # Use sign_name (not sign) as that's how D9 planets store it
+                karakamsha_sign = planet.get("sign_name", "") or planet.get("sign", "")
+                result["karakamsha"] = {
+                    "sign": karakamsha_sign,
+                    "planet": ak_planet_name,
+                    "description": f"Знак D9 (Навамша), где находится Атмакарака ({ak_planet_name})",
+                }
+                break
+
+    return result
+
+
+@router.post("/full-calculate", response_model=FullCalculatorResponse)
+async def full_calculate(request: FullCalculatorRequest):
+    """
+    Full personality calculation endpoint.
+
+    Combines:
+    1. Digital Twin generation (Swiss Ephemeris)
+    2. AstroBrain 12-stage analysis
+    3. LLM personality report generation (optional)
+
+    Returns:
+    - report_text: LLM-generated personality report (5 pages)
+    - admin_data: Structured scores for admin view (optional)
+    """
+    try:
+        # Parse birth datetime
+        try:
+            birth_date = datetime.strptime(request.date, "%Y-%m-%d")
+            time_parts = request.time.split(":")
+            birth_datetime = birth_date.replace(
+                hour=int(time_parts[0]),
+                minute=int(time_parts[1]) if len(time_parts) > 1 else 0,
+                second=0
+            )
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=f"Invalid date/time: {e}")
+
+        # Detect timezone
+        tz_name, tz_offset, is_dst = _detect_timezone(
+            request.lat, request.lon, request.date, request.time
+        )
+
+        # Map ayanamsa
+        ayanamsa_map = {
+            "lahiri": "Lahiri",
+            "raman": "Raman",
+        }
+        ayanamsa = ayanamsa_map.get(request.ayanamsa.lower(), "Lahiri")
+
+        # 1. Generate Digital Twin
+        digital_twin = generate_digital_twin_enhanced(
+            birth_datetime=birth_datetime,
+            latitude=request.lat,
+            longitude=request.lon,
+            tz_offset_hours=tz_offset,
+            ayanamsa=ayanamsa
+        )
+
+        # 2. Run AstroBrain analysis
+        from app.astro.calculator import AstroBrain
+        brain = AstroBrain(digital_twin)
+        calculator_output = brain.analyze()
+        calculator_dict = calculator_output.to_dict()
+
+        # Add digital_twin to output for LLM formatter
+        calculator_dict["digital_twin"] = digital_twin
+
+        # Prepare response
+        response_data = {
+            "success": True,
+            "report_text": None,
+            "admin_data": None,
+            "generation_metrics": None,
+            "error": None,
+        }
+
+        # 3. Generate LLM report (optional)
+        if request.generate_report:
+            try:
+                from app.astro.llm.generator import PersonalityReportGenerator
+
+                generator = PersonalityReportGenerator()
+                result = await generator.generate(calculator_dict)
+
+                if result.success and result.output:
+                    response_data["report_text"] = result.output.personality_report
+                    response_data["generation_metrics"] = result.metrics.to_dict()
+                else:
+                    response_data["error"] = result.error or "LLM generation failed"
+
+            except Exception as e:
+                # Continue without LLM report if it fails
+                response_data["error"] = f"LLM generation error: {str(e)}"
+
+        # 4. Prepare admin data (optional)
+        if request.include_admin_data:
+            basic_chart = calculator_dict.get("basic_chart", {})
+
+            # Extract nakshatra from digital_twin (not from calculator_dict)
+            nakshatra_data = _extract_nakshatra_from_digital_twin(digital_twin)
+
+            # Extract jaimini from digital_twin (not from calculator_dict)
+            jaimini_data = _extract_jaimini_from_digital_twin(digital_twin)
+
+            # Phase 9: Calculate planet scores
+            d1_data = digital_twin.get("vargas", {}).get("D1", {})
+            planet_scores = {}
+            try:
+                planet_scores = calculate_planet_scores(d1_data)
+            except Exception as e:
+                print(f"Planet scoring error: {e}")
+
+            response_data["admin_data"] = {
+                "house_scores": _format_house_scores_russian(
+                    basic_chart.get("house_scores", {})
+                ),
+                "composite_indices": _format_indices_russian(
+                    calculator_dict.get("composite_indices", {})
+                ),
+                "yogas": _format_yogas_russian(
+                    calculator_dict.get("yogas", {})
+                ),
+                "planets": _format_planets_russian(basic_chart),
+                "planet_scores": planet_scores,
+                "nakshatra_analysis": _format_nakshatra_russian(nakshatra_data),
+                "jaimini_analysis": _format_jaimini_russian(jaimini_data),
+                "karmic_depth": calculator_dict.get("karmic_depth", {}),
+                "timing_analysis": calculator_dict.get("timing_analysis", {}),
+            }
+
+        return FullCalculatorResponse(**response_data)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        traceback.print_exc()
+        return FullCalculatorResponse(
+            success=False,
+            error=f"Calculation error: {str(e)}"
+        )
