@@ -32,8 +32,12 @@ from astro_core.engine import (
     calculate_chara_karakas
 )
 
-# Phase 9: Planet Scoring System
-from app.astro.scoring import calculate_planet_scores, get_planet_score_report
+# Phase 8-9: House and Planet Scoring System
+from app.astro.scoring import (
+    calculate_planet_scores,
+    get_planet_score_report,
+    calculate_house_scores,
+)
 
 router = APIRouter()
 
@@ -1164,8 +1168,17 @@ async def full_calculate(request: FullCalculatorRequest):
             # Extract jaimini from digital_twin (not from calculator_dict)
             jaimini_data = _extract_jaimini_from_digital_twin(digital_twin)
 
-            # Phase 9: Calculate planet scores
+            # Phase 8-9: Calculate house and planet scores
             d1_data = digital_twin.get("vargas", {}).get("D1", {})
+
+            # Phase 8: House scores
+            house_scores = {}
+            try:
+                house_scores = calculate_house_scores(d1_data)
+            except Exception as e:
+                print(f"House scoring error: {e}")
+
+            # Phase 9: Planet scores
             planet_scores = {}
             try:
                 planet_scores = calculate_planet_scores(d1_data)
@@ -1173,9 +1186,7 @@ async def full_calculate(request: FullCalculatorRequest):
                 print(f"Planet scoring error: {e}")
 
             response_data["admin_data"] = {
-                "house_scores": _format_house_scores_russian(
-                    basic_chart.get("house_scores", {})
-                ),
+                "house_scores": _format_house_scores_russian(house_scores),
                 "composite_indices": _format_indices_russian(
                     calculator_dict.get("composite_indices", {})
                 ),
