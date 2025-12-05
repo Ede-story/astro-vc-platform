@@ -1171,17 +1171,17 @@ async def full_calculate(request: FullCalculatorRequest):
             # Phase 8-9: Calculate house and planet scores
             d1_data = digital_twin.get("vargas", {}).get("D1", {})
 
-            # Phase 8: House scores
+            # Phase 8: House scores (needs full digital_twin for multi-layer scoring)
             house_scores = {}
             try:
-                house_scores = calculate_house_scores(d1_data)
+                house_scores = calculate_house_scores(digital_twin)
             except Exception as e:
                 print(f"House scoring error: {e}")
 
-            # Phase 9: Planet scores
+            # Phase 9: Planet scores (needs full digital_twin for multi-layer scoring)
             planet_scores = {}
             try:
-                planet_scores = calculate_planet_scores(d1_data)
+                planet_scores = calculate_planet_scores(digital_twin)
             except Exception as e:
                 print(f"Planet scoring error: {e}")
 
