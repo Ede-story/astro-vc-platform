@@ -51,6 +51,9 @@ from .planet_layers import (
     VargaLayer as PlanetVargaLayer,
     YogaPlanetLayer,
     SpecialLayer,
+    # Phase 9.5 new layers
+    AshtakavargaLayer,
+    JaiminiPlanetLayer,
 )
 
 __all__ = [
@@ -75,7 +78,7 @@ __all__ = [
     "LayerScore",
     "calculate_planet_scores",
     "get_planet_score_report",
-    # Planet Layers
+    # Phase 9 Planet Layers
     "DignityLayer",
     "HouseLayer",
     "AspectLayer",
@@ -84,4 +87,7 @@ __all__ = [
     "PlanetVargaLayer",
     "YogaPlanetLayer",
     "SpecialLayer",
+    # Phase 9.5 New Planet Layers
+    "AshtakavargaLayer",
+    "JaiminiPlanetLayer",
 ]

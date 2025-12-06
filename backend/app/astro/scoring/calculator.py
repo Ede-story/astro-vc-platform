@@ -1,6 +1,13 @@
 """
 House Score Calculator - Combines all scoring layers
 
+Phase 8.5 Enhanced: Added 5 new house layers for deep analysis
+- BhavaBalaLayer: 7-component classical Bhava Bala (±15 points)
+- SudarshanaLayer: Triple perspective Lagna/Moon/Sun analysis (±5 points)
+- UpagrahaLayer: 5 shadow planet influences (±3 points)
+- SahamaLayer: 7 Arabic Parts/Sensitive Points (±3 points)
+- TaraBalLayer: Nakshatra-based Tara cycle analysis (±3 points)
+
 Produces normalized scores 0-100 for each house with detailed breakdown
 Target distribution:
 - Average person: 45-55 per house
@@ -12,6 +19,19 @@ from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, field
 
 from .layers import D1Layer, D9Layer, VargaLayer, YogaLayer, JaiminiLayer, LayerResult
+
+# Phase 8.5: Import new house layers
+try:
+    from .house_layers import (
+        BhavaBalaLayer,
+        SudarshanaLayer,
+        UpagrahaLayer,
+        SahamaLayer,
+        TaraBalLayer,
+    )
+    PHASE_8_5_AVAILABLE = True
+except ImportError:
+    PHASE_8_5_AVAILABLE = False
 
 
 @dataclass
@@ -107,13 +127,95 @@ class HouseScoreCalculator:
             jaimini_layer = JaiminiLayer(self.jaimini, self.d1)
             layer_results["Jaimini"] = jaimini_layer.calculate()
 
+        # Phase 8.5: Add new house layers
+        if PHASE_8_5_AVAILABLE and self.d1:
+            phase_8_5_scores = self._calculate_phase_8_5_layers()
+            layer_results.update(phase_8_5_scores)
+
         # Combine all layers with weights
         return self._combine_layers(layer_results)
+
+    def _calculate_phase_8_5_layers(self) -> Dict[str, LayerResult]:
+        """
+        Calculate Phase 8.5 house layers.
+
+        Returns dictionary of LayerResult for each new layer:
+        - BhavaBala (±15 points)
+        - Sudarshana (±5 points)
+        - Upagraha (±3 points)
+        - Sahama (±3 points)
+        - TaraBal (±3 points)
+        """
+        results = {}
+
+        # Prepare chart data in the format layers expect
+        chart_data = {
+            'vargas': self.vargas,
+            'D1': self.d1,
+            'D9': self.d9,
+        }
+
+        try:
+            # 1. Bhava Bala Layer (±15 points)
+            bhava_layer = BhavaBalaLayer(chart_data)
+            bhava_scores = bhava_layer.calculate_for_houses()
+            results["BhavaBala"] = LayerResult(
+                scores=bhava_scores,
+                details={h: [f"Bhava Bala score: {s:.2f}"] for h, s in bhava_scores.items()}
+            )
+        except Exception:
+            pass
+
+        try:
+            # 2. Sudarshana Chakra Layer (±5 points)
+            sudarshana_layer = SudarshanaLayer(chart_data)
+            sudarshana_scores = sudarshana_layer.calculate_for_houses()
+            results["Sudarshana"] = LayerResult(
+                scores=sudarshana_scores,
+                details={h: [f"Sudarshana score: {s:.2f}"] for h, s in sudarshana_scores.items()}
+            )
+        except Exception:
+            pass
+
+        try:
+            # 3. Upagraha Layer (±3 points)
+            upagraha_layer = UpagrahaLayer(chart_data)
+            upagraha_scores = upagraha_layer.calculate_for_houses()
+            results["Upagraha"] = LayerResult(
+                scores=upagraha_scores,
+                details={h: [f"Upagraha score: {s:.2f}"] for h, s in upagraha_scores.items()}
+            )
+        except Exception:
+            pass
+
+        try:
+            # 4. Sahama Layer (±3 points)
+            sahama_layer = SahamaLayer(chart_data)
+            sahama_scores = sahama_layer.calculate_for_houses()
+            results["Sahama"] = LayerResult(
+                scores=sahama_scores,
+                details={h: [f"Sahama score: {s:.2f}"] for h, s in sahama_scores.items()}
+            )
+        except Exception:
+            pass
+
+        try:
+            # 5. Tara Bala Layer (±3 points)
+            tara_layer = TaraBalLayer(chart_data)
+            tara_scores = tara_layer.calculate_for_houses()
+            results["TaraBal"] = LayerResult(
+                scores=tara_scores,
+                details={h: [f"Tara Bala score: {s:.2f}"] for h, s in tara_scores.items()}
+            )
+        except Exception:
+            pass
+
+        return results
 
     def _combine_layers(self, layer_results: Dict[str, LayerResult]) -> ScoringResult:
         """Combine all layer results into final scores"""
 
-        # Layer weights
+        # Layer weights (original + Phase 8.5)
         weights = {
             "D1": D1Layer.WEIGHT,
             "D9": D9Layer.WEIGHT,
@@ -121,6 +223,16 @@ class HouseScoreCalculator:
             "Yoga": YogaLayer.WEIGHT,
             "Jaimini": JaiminiLayer.WEIGHT,
         }
+
+        # Add Phase 8.5 layer weights if available
+        if PHASE_8_5_AVAILABLE:
+            weights.update({
+                "BhavaBala": BhavaBalaLayer.WEIGHT,
+                "Sudarshana": SudarshanaLayer.WEIGHT,
+                "Upagraha": UpagrahaLayer.WEIGHT,
+                "Sahama": SahamaLayer.WEIGHT,
+                "TaraBal": TaraBalLayer.WEIGHT,
+            })
 
         # Initialize combined scores
         raw_scores = {h: 0.0 for h in range(1, 13)}

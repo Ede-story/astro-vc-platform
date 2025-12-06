@@ -319,3 +319,179 @@ export interface EnhancedDigitalTwin extends DigitalTwin {
   dasha?: VimshottariDasha;
   chara_karakas?: CharaKarakas;
 }
+
+// =============================================================================
+// FULL CALCULATOR TYPES (Phase 7)
+// =============================================================================
+
+/**
+ * Request for full personality calculation with LLM report
+ */
+export interface FullCalculatorRequest {
+  date: string;       // "1982-05-30"
+  time: string;       // "09:45"
+  lat: number;        // 59.93
+  lon: number;        // 30.33
+  ayanamsa?: string;  // "lahiri" | "raman"
+  generate_report?: boolean;      // Generate LLM report
+  include_admin_data?: boolean;   // Include structured scores
+}
+
+/**
+ * Response from full personality calculation
+ */
+export interface FullCalculatorResponse {
+  success: boolean;
+  report_text: string | null;
+  admin_data: AdminData | null;
+  generation_metrics: GenerationMetrics | null;
+  error: string | null;
+}
+
+/**
+ * LLM generation metrics
+ */
+export interface GenerationMetrics {
+  latency_ms: number;
+  model?: string;
+  tokens_used?: number;
+  total_time_seconds?: number;
+  total_tokens?: number;
+  retry_count?: number;
+}
+
+/**
+ * Admin-only structured data with scores (Russian labels)
+ */
+export interface AdminData {
+  house_scores: Record<string, number>;  // "1-й дом (Личность, тело)": 72.5
+  planet_scores: Record<string, number>; // "Sun": 85.3, "Moon": 72.1, etc.
+  composite_indices: Record<string, IndexScore>;
+  yogas: YogaSummary;
+  planets: Record<string, PlanetAdminData>;
+  nakshatra_analysis: NakshatraAdminData;
+  jaimini_analysis: JaiminiAdminData;
+  karmic_depth: KarmicDepthData;
+  timing_analysis: TimingAnalysisData;
+}
+
+/**
+ * Score with level indicator
+ */
+export interface IndexScore {
+  score: number;
+  level: string;  // "высокий" | "средний" | "низкий"
+}
+
+/**
+ * Yoga summary for admin panel
+ */
+export interface YogaSummary {
+  found_yogas: YogaItem[];
+  summary: {
+    "Всего йог": number;
+    "Раджа-йог": number;
+    "Дхана-йог": number;
+    "Общий балл": number;
+  };
+}
+
+/**
+ * Individual yoga data
+ */
+export interface YogaItem {
+  name: string;
+  category: string;
+  strength: number;
+  planets: string[];
+}
+
+/**
+ * Planet data for admin view (Russian labels)
+ */
+export interface PlanetAdminData {
+  sign: string;
+  degree: number;
+  house: number;
+  dignity: string;      // "экзальтация" | "свой знак" | "падение" etc.
+  retrograde: boolean;
+}
+
+/**
+ * Nakshatra analysis for admin view
+ */
+export interface NakshatraAdminData {
+  "Накшатра Луны"?: {
+    name: string;
+    deity: string;
+    symbol: string;
+    ruler: string;
+  };
+  "Накшатра Лагны"?: string;
+}
+
+/**
+ * Jaimini analysis for admin view (Russian labels)
+ */
+export interface JaiminiAdminData {
+  "Атмакарака"?: {
+    planet: string;
+    sign: string;
+    meaning: string;
+  };
+  "Каракамша"?: {
+    sign: string;
+    interpretation: string;
+  };
+  "Чара Караки"?: Record<string, string>;  // "Атмакарака (душа)": "Moon"
+}
+
+/**
+ * Karmic depth analysis
+ */
+export interface KarmicDepthData {
+  doshas?: Array<{
+    name: string;
+    severity: string;
+    description?: string;
+  }>;
+  karmic_ceiling_tier?: string;
+  risk_severity_index?: number;
+}
+
+/**
+ * Timing analysis (Dasha periods)
+ */
+export interface TimingAnalysisData {
+  dasha_roadmap?: {
+    current?: {
+      maha_dasha: string;
+      antar_dasha: string;
+      end_date: string;
+    };
+  };
+  current_dasha_quality?: string;
+  is_golden_period?: boolean;
+  timing_recommendation?: string;
+}
+
+/**
+ * LLM Personality Report Output (from validator)
+ */
+export interface PersonalityReportOutput {
+  personality_report: string;
+  personality_summary: string;
+  archetype_name: string;
+  archetype_description: string;
+  soul_purpose_description: string;
+  life_mission_statement: string;
+  public_image_description: string;
+  current_period_advice: string;
+  top_talents: string[];
+  growth_areas: string[];
+  meta?: {
+    key_yoga?: string;
+    dominant_element?: string;
+    life_theme?: string;
+  };
+}

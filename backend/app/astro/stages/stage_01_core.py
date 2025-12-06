@@ -66,7 +66,8 @@ class BasicChartData:
             "planets": [p.to_dict() for p in self.planets],
             "strongest_planets": self.strongest_planets,
             "weakest_planets": self.weakest_planets,
-            "house_lords": self.house_lords
+            "house_lords": self.house_lords,
+            "house_scores": self.house_scores
         }
 
 

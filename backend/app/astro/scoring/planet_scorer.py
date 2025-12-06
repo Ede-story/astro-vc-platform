@@ -1,7 +1,7 @@
 """
-Planet Scorer - Phase 9: Deep Planet Scoring System
+Planet Scorer - Phase 9 & Phase 9.5: Deep Planet Scoring System
 
-Combines 8 analysis layers to generate comprehensive planet scores (0-100):
+Phase 9 Original (8 layers):
 1. Dignity (20%) - Sign placement, Neecha Bhanga
 2. House (10%) - Dig Bala, functional status
 3. Aspect (10%) - Graha Drishti, Kartari
@@ -10,6 +10,24 @@ Combines 8 analysis layers to generate comprehensive planet scores (0-100):
 6. Varga (10%) - Multi-divisional charts
 7. Yoga (15%) - Yoga participation
 8. Special (10%) - Combustion, Gandanta, etc.
+
+Phase 9.5 Enhanced (10 layers):
+- Shadbala: Enhanced with full 6-component calculation (±25)
+- Ashtakavarga: NEW - Bindu point system (±12)
+- Jaimini: NEW - Chara Karaka based strength (±10)
+- Yoga: Enhanced to 50+ yogas (±18)
+
+New weights (Phase 9.5):
+- Dignity: 0.18
+- House: 0.08
+- Aspect: 0.08
+- Shadbala: 0.14 (enhanced)
+- Navamsha: 0.08
+- Varga: 0.08
+- Yoga: 0.14 (enhanced)
+- Special: 0.08
+- Ashtakavarga: 0.08 (NEW)
+- Jaimini: 0.06 (NEW)
 
 Target calibration:
 - Trump's Sun: 85-90
@@ -30,6 +48,9 @@ from .planet_layers import (
     VargaLayer,
     YogaPlanetLayer,
     SpecialLayer,
+    # Phase 9.5 new layers
+    AshtakavargaLayer,
+    JaiminiPlanetLayer,
 )
 
 
@@ -77,28 +98,37 @@ class PlanetScorer:
     """
 
     # Layer weights (must sum to 1.0)
+    # Phase 9.5: Redistributed weights to accommodate new layers
     LAYER_WEIGHTS = {
-        "dignity": 0.20,
-        "house": 0.10,
-        "aspect": 0.10,
-        "shadbala": 0.15,
-        "navamsha": 0.10,
-        "varga": 0.10,
-        "yoga": 0.15,
-        "special": 0.10,
+        # Original Phase 9 layers (adjusted)
+        "dignity": 0.18,      # Reduced from 0.20
+        "house": 0.08,        # Reduced from 0.10
+        "aspect": 0.08,       # Reduced from 0.10
+        "shadbala": 0.14,     # Reduced from 0.15 (but enhanced calculation)
+        "navamsha": 0.08,     # Reduced from 0.10
+        "varga": 0.08,        # Reduced from 0.10
+        "yoga": 0.14,         # Reduced from 0.15 (but enhanced to 50+ yogas)
+        "special": 0.08,      # Reduced from 0.10
+        # Phase 9.5 new layers
+        "ashtakavarga": 0.08, # NEW - Bindu point system
+        "jaimini": 0.06,      # NEW - Chara Karaka based strength
     }
 
     # Raw score ranges for each layer (min, max) for normalization
     # These define the expected range of raw scores from each layer
     RAW_SCORE_RANGES = {
+        # Phase 9 original layers
         "dignity": (-20, 20),    # Debilitated deep to Exalted deep + NBRY
         "house": (-10, 15),      # Dusthana to Kendra + Dig Bala + Yogakaraka
         "aspect": (-10, 10),     # Papa Kartari to Shubha Kartari + benefic aspects
-        "shadbala": (0, 15),     # Minimal to strong across all components
+        "shadbala": (-25, 25),   # Phase 9.5: Enhanced range for 6-component calculation
         "navamsha": (-4, 14),    # Debilitated D9 to Vargottama + Pushkara + Exalted
         "varga": (-10, 10),      # Multiple debilitations to multiple exaltations
-        "yoga": (-5, 15),        # No yogas to multiple major yogas
+        "yoga": (-5, 18),        # Phase 9.5: Enhanced range for 50+ yogas
         "special": (-10, 10),    # Combust + Gandanta to Pushkara Bhaga + friendly nakshatra
+        # Phase 9.5 new layers
+        "ashtakavarga": (-12, 12),  # NEW - BAV/SAV/Kakshya analysis
+        "jaimini": (-10, 10),       # NEW - Chara Karaka + Argala
     }
 
     # Calibration parameters
@@ -143,6 +173,7 @@ class PlanetScorer:
 
     def _init_layers(self):
         """Initialize all scoring layers"""
+        # Phase 9 Original Layers
         # Dignity Layer (with Neecha Bhanga)
         self.dignity_layer = DignityLayer(self.d1, self.d9)
 
@@ -152,7 +183,7 @@ class PlanetScorer:
         # Aspect Layer (Graha Drishti, Kartari)
         self.aspect_layer = AspectLayer(self.d1)
 
-        # Shadbala Layer (simplified 6-strength)
+        # Shadbala Layer (Phase 9.5: enhanced 6-component calculation)
         self.shadbala_layer = ShadbalaLayer(self.d1, self.birth_time_data)
 
         # Navamsha Layer (D9 analysis)
@@ -161,11 +192,18 @@ class PlanetScorer:
         # Varga Layer (multi-divisional)
         self.varga_layer = VargaLayer(self.vargas)
 
-        # Yoga Layer (yoga participation)
+        # Yoga Layer (Phase 9.5: enhanced to 50+ yogas)
         self.yoga_layer = YogaPlanetLayer(self.d1, self.yogas)
 
         # Special Layer (combustion, gandanta, etc.)
         self.special_layer = SpecialLayer(self.d1)
+
+        # Phase 9.5 New Layers
+        # Ashtakavarga Layer (Bindu point system)
+        self.ashtakavarga_layer = AshtakavargaLayer(self.d1)
+
+        # Jaimini Layer (Chara Karaka based strength)
+        self.jaimini_layer = JaiminiPlanetLayer(self.d1, self.d9)
 
     def calculate_all(self) -> Dict[str, PlanetScoreResult]:
         """
@@ -178,6 +216,7 @@ class PlanetScorer:
         planets = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"]
 
         # Get all layer results once (efficiency)
+        # Phase 9 Original Layers
         dignity_results = self.dignity_layer.calculate()
         house_results = self.house_layer.calculate()
         aspect_results = self.aspect_layer.calculate()
@@ -186,10 +225,14 @@ class PlanetScorer:
         varga_results = self.varga_layer.calculate()
         yoga_results = self.yoga_layer.calculate()
         special_results = self.special_layer.calculate()
+        # Phase 9.5 New Layers
+        ashtakavarga_results = self.ashtakavarga_layer.calculate_all()
+        jaimini_results = self.jaimini_layer.calculate_all()
 
         for planet in planets:
             # Collect raw scores from each layer
             layer_raw_scores = {
+                # Phase 9 Original Layers
                 "dignity": dignity_results.get(planet),
                 "house": house_results.get(planet),
                 "aspect": aspect_results.get(planet),
@@ -198,6 +241,9 @@ class PlanetScorer:
                 "varga": varga_results.get(planet),
                 "yoga": yoga_results.get(planet),
                 "special": special_results.get(planet),
+                # Phase 9.5 New Layers
+                "ashtakavarga": ashtakavarga_results.get(planet),
+                "jaimini": jaimini_results.get(planet),
             }
 
             results[planet] = self._calculate_planet_score(planet, layer_raw_scores)
@@ -406,25 +452,29 @@ class PlanetScorer:
 
 
 def calculate_planet_scores(
-    d1_data: Dict[str, Any],
-    d9_data: Optional[Dict[str, Any]] = None,
-    vargas: Optional[Dict[str, Dict[str, Any]]] = None,
+    digital_twin: Dict[str, Any],
     yogas: Optional[List[Dict[str, Any]]] = None,
-    birth_time_data: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, float]:
     """
-    Convenience function to calculate planet scores.
+    Convenience function to calculate planet scores from digital_twin.
 
     Args:
-        d1_data: D1 chart data
-        d9_data: D9 chart data (optional)
-        vargas: All varga charts (optional)
-        yogas: Detected yogas (optional)
-        birth_time_data: Birth time info (optional)
+        digital_twin: Full digital twin data containing vargas, yogas, birth_time, etc.
+        yogas: Optional list of yogas (if not in digital_twin)
 
     Returns:
         Dict mapping planet name to score (0-100)
     """
+    # Extract data from digital_twin
+    vargas = digital_twin.get("vargas", {})
+    d1_data = vargas.get("D1", {})
+    d9_data = vargas.get("D9", {})
+    birth_time_data = digital_twin.get("birth_time", {})
+
+    # Get yogas from digital_twin if not provided
+    if yogas is None:
+        yogas = digital_twin.get("yogas", [])
+
     scorer = PlanetScorer(d1_data, d9_data, vargas, yogas, birth_time_data)
     return scorer.get_scores_dict()
 

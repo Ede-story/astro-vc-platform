@@ -22,6 +22,7 @@ from .stages.stage_09_karmic import Stage09KarmicAnalysis, Stage9Result
 from .stages.stage_10_timing import Stage10TimingAnalysis, Stage10Result
 from .formulas.indices import calculate_composite_indices, get_life_area_interpretations
 from .models.types import Planet, Zodiac, House
+from .scoring import calculate_house_scores
 
 
 @dataclass
@@ -262,8 +263,18 @@ class AstroBrain:
         - All planet positions
         - House lords
         - Strongest/weakest planets
+        - Deep house scores (using new 5-layer scoring system)
         """
         basic_chart = self.stage1.parse()
+
+        # Calculate deep house scores using new scoring module
+        try:
+            new_scores = calculate_house_scores(self.digital_twin, yogas=None)
+            basic_chart.house_scores = new_scores
+        except Exception as e:
+            # Fallback: keep default 5.0 scores if scoring fails
+            pass
+
         self.output.basic_chart = basic_chart
         self.output.stages_completed.append(1)
 

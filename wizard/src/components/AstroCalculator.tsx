@@ -20,8 +20,12 @@ import {
   VimshottariDasha,
   CharaKarakas,
   DashaPeriod,
-  AntardashaPeriod
+  AntardashaPeriod,
+  AdminData,
+  GenerationMetrics
 } from '@/types/astro';
+import AdminScoresPanel from './calculator/AdminScoresPanel';
+import PersonalityReport from './calculator/PersonalityReport';
 import TableColumnSelector, {
   ColumnConfig,
   DEFAULT_PLANET_COLUMNS,
@@ -109,6 +113,13 @@ export default function AstroCalculator() {
   // Dasha expansion state
   const [expandedMahadasha, setExpandedMahadasha] = useState<string | null>(null);
   const [expandedAntardasha, setExpandedAntardasha] = useState<string | null>(null);
+
+  // Personality report state (Phase 7)
+  const [reportLoading, setReportLoading] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
+  const [reportText, setReportText] = useState<string | null>(null);
+  const [adminData, setAdminData] = useState<AdminData | null>(null);
+  const [generationMetrics, setGenerationMetrics] = useState<GenerationMetrics | null>(null);
 
   // Close city suggestions when clicking outside
   useEffect(() => {
@@ -419,6 +430,52 @@ export default function AstroCalculator() {
       }
     } catch {
       setSaveStatus('error');
+    }
+  };
+
+  // Generate personality report and admin scores (Phase 7)
+  const handleGenerateReport = async (generateLLM: boolean = false) => {
+    setReportLoading(true);
+    setReportError(null);
+
+    try {
+      const response = await fetch(`${API_URL}/v1/full-calculate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          date: input.date,
+          time: input.time,
+          lat: input.lat,
+          lon: input.lon,
+          ayanamsa: input.ayanamsa,
+          generate_report: generateLLM,
+          include_admin_data: true,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        if (data.report_text) {
+          setReportText(data.report_text);
+        }
+        if (data.admin_data) {
+          setAdminData(data.admin_data);
+        }
+        if (data.generation_metrics) {
+          setGenerationMetrics(data.generation_metrics);
+        }
+      } else {
+        throw new Error(data.error || 'Failed to generate report');
+      }
+    } catch (err) {
+      setReportError(err instanceof Error ? err.message : 'Ошибка генерации');
+    } finally {
+      setReportLoading(false);
     }
   };
 
@@ -1190,6 +1247,89 @@ export default function AstroCalculator() {
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* Personality Analysis Section (Phase 7) */}
+            <div className="mt-6">
+              <div className="card">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-base font-medium text-gray-900">
+                    Анализ личности
+                  </h3>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleGenerateReport(false)}
+                      disabled={reportLoading}
+                      className="btn-secondary text-sm"
+                    >
+                      {reportLoading ? 'Загрузка...' : 'Показать оценки'}
+                    </button>
+                    <button
+                      onClick={() => handleGenerateReport(true)}
+                      disabled={reportLoading}
+                      className="bg-brand-graphite text-white font-medium py-2 px-4 rounded-md hover:bg-brand-graphite-hover transition-colors duration-150 text-sm disabled:opacity-50"
+                    >
+                      {reportLoading ? 'Генерация...' : 'Сгенерировать отчёт'}
+                    </button>
+                  </div>
+                </div>
+
+                {reportError && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
+                    {reportError}
+                  </div>
+                )}
+
+                {/* Generation Metrics */}
+                {generationMetrics && (
+                  <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                    <div className="grid grid-cols-4 gap-4 text-xs">
+                      <div>
+                        <span className="block text-gray-400">Время</span>
+                        <span className="font-mono">
+                          {typeof generationMetrics.total_time_seconds === 'number'
+                            ? `${generationMetrics.total_time_seconds.toFixed(1)}s`
+                            : `${generationMetrics.latency_ms}ms`}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="block text-gray-400">Токены</span>
+                        <span className="font-mono">
+                          {generationMetrics.total_tokens ?? generationMetrics.tokens_used ?? 'N/A'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="block text-gray-400">Модель</span>
+                        <span className="font-mono">
+                          {generationMetrics.model ?? 'N/A'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="block text-gray-400">Попыток</span>
+                        <span className="font-mono">
+                          {generationMetrics.retry_count ?? 0}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Admin Scores Panel */}
+                {adminData && <AdminScoresPanel data={adminData} />}
+
+                {/* Personality Report */}
+                {reportText && (
+                  <div className="mt-4">
+                    <PersonalityReport reportText={reportText} />
+                  </div>
+                )}
+
+                {!adminData && !reportText && !reportLoading && (
+                  <div className="text-center py-8 text-gray-400">
+                    <p>Нажмите кнопку выше для получения анализа</p>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Footer info */}

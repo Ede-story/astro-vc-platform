@@ -1,0 +1,1174 @@
+{
+  "version": "1.0.0",
+  "stages_completed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "basic_chart": {
+    "ascendant": {
+      "sign": "Virgo",
+      "degree": 23.48,
+      "nakshatra": null,
+      "nakshatra_pada": null,
+      "lord": "Mercury"
+    },
+    "sun_sign": "Libra",
+    "moon_sign": "Pisces",
+    "moon_nakshatra": {
+      "name": "Revati",
+      "pada": 1,
+      "lord": "Mercury"
+    },
+    "planets": [
+      {
+        "name": "Sun",
+        "sign": "Libra",
+        "house": 2,
+        "dignity": "Debilitated",
+        "nakshatra": "Swati",
+        "nakshatra_lord": "Rahu",
+        "is_retrograde": false,
+        "key_aspects": [
+          "Moon aspects Sun",
+          "Ketu aspects Sun"
+        ],
+        "key_conjunctions": [
+          "Conjunct Mercury"
+        ]
+      },
+      {
+        "name": "Moon",
+        "sign": "Pisces",
+        "house": 7,
+        "dignity": "Neutral",
+        "nakshatra": "Revati",
+        "nakshatra_lord": "Mercury",
+        "is_retrograde": false,
+        "key_aspects": [
+          "Mars aspects Moon",
+          "Jupiter aspects Moon",
+          "Saturn aspects Moon"
+        ],
+        "key_conjunctions": [
+          "Conjunct Ketu"
+        ]
+      },
+      {
+        "name": "Mars",
+        "sign": "Cancer",
+        "house": 11,
+        "dignity": "Debilitated",
+        "nakshatra": "Pushya",
+        "nakshatra_lord": "Saturn",
+        "is_retrograde": false,
+        "key_aspects": [],
+        "key_conjunctions": []
+      },
+      {
+        "name": "Mercury",
+        "sign": "Libra",
+        "house": 2,
+        "dignity": "Friend",
+        "nakshatra": "Swati",
+        "nakshatra_lord": "Rahu",
+        "is_retrograde": false,
+        "key_aspects": [
+          "Moon aspects Mercury",
+          "Ketu aspects Mercury"
+        ],
+        "key_conjunctions": [
+          "Conjunct Sun"
+        ]
+      },
+      {
+        "name": "Jupiter",
+        "sign": "Gemini",
+        "house": 10,
+        "dignity": "Enemy",
+        "nakshatra": "Ardra",
+        "nakshatra_lord": "Rahu",
+        "is_retrograde": true,
+        "key_aspects": [
+          "Saturn aspects Jupiter",
+          "Rahu aspects Jupiter"
+        ],
+        "key_conjunctions": []
+      },
+      {
+        "name": "Venus",
+        "sign": "Virgo",
+        "house": 1,
+        "dignity": "Debilitated",
+        "nakshatra": "Hasta",
+        "nakshatra_lord": "Moon",
+        "is_retrograde": false,
+        "key_aspects": [],
+        "key_conjunctions": [
+          "Conjunct Rahu"
+        ]
+      },
+      {
+        "name": "Saturn",
+        "sign": "Leo",
+        "house": 12,
+        "dignity": "Enemy",
+        "nakshatra": "Magha",
+        "nakshatra_lord": "Ketu",
+        "is_retrograde": false,
+        "key_aspects": [
+          "Ketu aspects Saturn"
+        ],
+        "key_conjunctions": []
+      },
+      {
+        "name": "Rahu",
+        "sign": "Virgo",
+        "house": 1,
+        "dignity": "Friend",
+        "nakshatra": "Hasta",
+        "nakshatra_lord": "Moon",
+        "is_retrograde": true,
+        "key_aspects": [],
+        "key_conjunctions": [
+          "Conjunct Venus"
+        ]
+      },
+      {
+        "name": "Ketu",
+        "sign": "Pisces",
+        "house": 7,
+        "dignity": "Neutral",
+        "nakshatra": "Revati",
+        "nakshatra_lord": "Mercury",
+        "is_retrograde": true,
+        "key_aspects": [
+          "Mars aspects Ketu",
+          "Jupiter aspects Ketu",
+          "Saturn aspects Ketu"
+        ],
+        "key_conjunctions": [
+          "Conjunct Moon"
+        ]
+      }
+    ],
+    "strongest_planets": [
+      "Mercury",
+      "Moon",
+      "Jupiter"
+    ],
+    "weakest_planets": [
+      "Sun",
+      "Mars",
+      "Venus"
+    ],
+    "house_lords": {
+      "1": {
+        "lord": "Mercury",
+        "in_house": 2,
+        "sign": "Virgo"
+      },
+      "2": {
+        "lord": "Venus",
+        "in_house": 1,
+        "sign": "Libra"
+      },
+      "3": {
+        "lord": "Mars",
+        "in_house": 11,
+        "sign": "Scorpio"
+      },
+      "4": {
+        "lord": "Jupiter",
+        "in_house": 10,
+        "sign": "Sagittarius"
+      },
+      "5": {
+        "lord": "Saturn",
+        "in_house": 12,
+        "sign": "Capricorn"
+      },
+      "6": {
+        "lord": "Saturn",
+        "in_house": 12,
+        "sign": "Aquarius"
+      },
+      "7": {
+        "lord": "Jupiter",
+        "in_house": 10,
+        "sign": "Pisces"
+      },
+      "8": {
+        "lord": "Mars",
+        "in_house": 11,
+        "sign": "Aries"
+      },
+      "9": {
+        "lord": "Venus",
+        "in_house": 1,
+        "sign": "Taurus"
+      },
+      "10": {
+        "lord": "Mercury",
+        "in_house": 2,
+        "sign": "Gemini"
+      },
+      "11": {
+        "lord": "Moon",
+        "in_house": 7,
+        "sign": "Cancer"
+      },
+      "12": {
+        "lord": "Sun",
+        "in_house": 2,
+        "sign": "Leo"
+      }
+    }
+  },
+  "soul_blueprint": {
+    "d9_ascendant": "LEO",
+    "d9_ascendant_degree": 0.14,
+    "vargottama_planets": [],
+    "synergy_score": 5.1,
+    "synergy_level": "Moderate",
+    "house_scores_adjusted": {
+      "house_1": 4.9,
+      "house_2": 4.7,
+      "house_3": 4.9,
+      "house_4": 4.9,
+      "house_5": 5.1,
+      "house_6": 4.7,
+      "house_7": 5.5,
+      "house_8": 4.9,
+      "house_9": 4.9,
+      "house_10": 4.7,
+      "house_11": 5.2,
+      "house_12": 4.7
+    },
+    "confirmations": [
+      "Sun gains strength in D9 (Debilitated -> Neutral)",
+      "Mars gains strength in D9 (Debilitated -> Neutral)",
+      "Venus gains strength in D9 (Debilitated -> Neutral)"
+    ],
+    "contradictions": [],
+    "atmakaraka": "Moon",
+    "atmakaraka_d9_sign": "SAGITTARIUS"
+  },
+  "yogas": {
+    "yogas_found": [
+      {
+        "name": "Gaja Kesari Yoga",
+        "sanskrit_name": "गजकेसरी योग",
+        "category": "Raja",
+        "strength": 8.0,
+        "participating_planets": [
+          "Jupiter",
+          "Moon"
+        ],
+        "interpretation_key": "gaja_kesari",
+        "timing_activation": "Jupiter or Moon dasha"
+      },
+      {
+        "name": "Budhaditya Yoga",
+        "sanskrit_name": "बुधादित्य योग",
+        "category": "Surya",
+        "strength": 7.5,
+        "participating_planets": [
+          "Sun",
+          "Mercury"
+        ],
+        "interpretation_key": "budhaditya",
+        "timing_activation": "Sun or Mercury dasha"
+      },
+      {
+        "name": "Kemadruma Yoga",
+        "sanskrit_name": "केमद्रुम योग",
+        "category": "Negative",
+        "strength": -1.0,
+        "participating_planets": [
+          "Moon"
+        ],
+        "interpretation_key": "kemadruma",
+        "timing_activation": "Moon dasha"
+      },
+      {
+        "name": "Grahan Yoga",
+        "sanskrit_name": "ग्रहण योग",
+        "category": "Negative",
+        "strength": -4.0,
+        "participating_planets": [
+          "Moon",
+          "Rahu",
+          "Ketu"
+        ],
+        "interpretation_key": "grahan",
+        "timing_activation": "Rahu/Ketu dasha"
+      }
+    ],
+    "neecha_bhanga": {
+      "Sun": {
+        "debilitation_sign": "LIBRA",
+        "cancellation_level": "Weak",
+        "rules_satisfied": [
+          1
+        ],
+        "effective_dignity": "Weak-Neutral"
+      },
+      "Mars": {
+        "debilitation_sign": "CANCER",
+        "cancellation_level": "Moderate",
+        "rules_satisfied": [
+          1,
+          3
+        ],
+        "effective_dignity": "Neutral"
+      },
+      "Venus": {
+        "debilitation_sign": "VIRGO",
+        "cancellation_level": "Moderate",
+        "rules_satisfied": [
+          2,
+          4
+        ],
+        "effective_dignity": "Neutral"
+      }
+    },
+    "summary": {
+      "total_count": 4,
+      "positive_count": 2,
+      "negative_count": 2,
+      "raja_yoga_count": 1,
+      "dhana_yoga_count": 0,
+      "mahapurusha_yogas": [],
+      "key_yogas": [
+        "Gaja Kesari Yoga",
+        "Budhaditya Yoga",
+        "Grahan Yoga",
+        "Kemadruma Yoga"
+      ],
+      "overall_yoga_score": 7.625
+    },
+    "house_yoga_bonuses": {
+      "house_1": 2.15,
+      "house_2": 0.4,
+      "house_3": 0.0,
+      "house_4": 0.4,
+      "house_5": 0.35,
+      "house_6": 0.0,
+      "house_7": 0.8,
+      "house_8": 0.0,
+      "house_9": -0.4,
+      "house_10": 1.55,
+      "house_11": 1.0,
+      "house_12": -0.1
+    }
+  },
+  "wealth_assets": {
+    "hora": {
+      "ascendant": "LEO",
+      "sun_hora": "Sun",
+      "moon_hora": "Sun",
+      "benefics_sun_hora": [
+        "Moon",
+        "Mercury",
+        "Jupiter",
+        "Venus"
+      ],
+      "benefics_moon_hora": [],
+      "wealth_planet_strength": {
+        "Jupiter": 70,
+        "Venus": 70
+      },
+      "accumulation_potential": 55.0
+    },
+    "chaturthamsha": {
+      "ascendant": "GEMINI",
+      "fourth_lord": {
+        "planet": "Moon",
+        "sign": "VIRGO",
+        "house": 1
+      },
+      "venus": {
+        "sign": "PISCES",
+        "house": 1,
+        "dignity": "neutral"
+      },
+      "property_indicators": [
+        "4th lord in kendra - strong property potential"
+      ],
+      "vehicle_indicators": [
+        "Venus well-placed - quality vehicles",
+        "Mars in kendra - powerful/sporty vehicles"
+      ],
+      "asset_potential": 75.0,
+      "recommended_assets": [
+        "real_estate",
+        "vehicles"
+      ]
+    },
+    "indices": {
+      "wealth_accumulation": 68.0,
+      "fixed_assets": 86.0,
+      "financial_stability": 55.0
+    },
+    "wealth_types": [
+      "earned"
+    ],
+    "house_adjustments": {
+      "house_2": 0.5,
+      "house_4": 2.5,
+      "house_11": 1.0
+    },
+    "strengths": [
+      "Excellent fixed asset potential in D4",
+      "Property potential: 4th lord in kendra - strong property potential",
+      "Vehicle potential: Venus well-placed - quality vehicles"
+    ],
+    "challenges": []
+  },
+  "skills_initiative": {
+    "drekkana": {
+      "ascendant": "TAURUS",
+      "ascendant_element": "earth",
+      "mars": {
+        "sign": "CANCER",
+        "house": 1,
+        "dignity": "Debilitated",
+        "is_retrograde": false
+      },
+      "mercury": {
+        "sign": "AQUARIUS",
+        "house": 1,
+        "dignity": "Neutral",
+        "is_retrograde": false
+      },
+      "third_lord": {
+        "planet": "Mercury",
+        "sign": "AQUARIUS",
+        "house": 1
+      },
+      "planets_in_third": [],
+      "courage_indicators": [
+        "Mars in kendra - strong initiative"
+      ],
+      "skill_indicators": [
+        "Mercury well-placed - strong intellectual skills",
+        "Venus well-placed - artistic abilities",
+        "Jupiter well-placed - teaching ability"
+      ],
+      "sibling_indicators": [
+        "3rd lord well-placed - supportive siblings"
+      ]
+    },
+    "indices": {
+      "initiative": 75.0,
+      "communication": 73.0,
+      "skill_diversity": 74.0
+    },
+    "primary_skills": [
+      "artistic",
+      "analytical",
+      "teaching"
+    ],
+    "initiative_style": "strategic",
+    "risk_tolerance": "high",
+    "house_adjustments": {
+      "house_3": 2.4,
+      "house_6": 1.67
+    },
+    "strengths": [
+      "Strong initiative and courage in D3",
+      "Excellent communication abilities",
+      "Mars in kendra - strong initiative",
+      "Mercury well-placed - strong intellectual skills"
+    ],
+    "challenges": [],
+    "skill_development": [
+      "Explore creative arts, design, or music"
+    ]
+  },
+  "career_status": {
+    "dashamsha": {
+      "ascendant": "SAGITTARIUS",
+      "ascendant_element": "fire",
+      "ascendant_modality": "mutable",
+      "tenth_lord_d10": {
+        "planet": "Saturn",
+        "sign": "LIBRA",
+        "house": 1,
+        "dignity": "Exalted"
+      },
+      "tenth_lord_d1": {
+        "planet": "Mercury",
+        "in_house": 2
+      },
+      "sun": {
+        "sign": "CAPRICORN",
+        "house": 1,
+        "dignity": "Neutral"
+      },
+      "saturn": {
+        "sign": "LIBRA",
+        "house": 1,
+        "dignity": "Exalted"
+      },
+      "mercury": {
+        "sign": "AQUARIUS",
+        "house": 1,
+        "dignity": "Neutral"
+      },
+      "planets_in_tenth": [],
+      "strong_planets": [
+        "Moon",
+        "Venus",
+        "Saturn"
+      ],
+      "weak_planets": []
+    },
+    "indices": {
+      "career_strength": 69.0,
+      "professional_success": 60.0,
+      "public_recognition": 78.0,
+      "authority": 70.0
+    },
+    "archetypes": [
+      "artist",
+      "nurturer",
+      "innovator"
+    ],
+    "work_style": "flexible",
+    "career_sectors": [
+      "Entertainment",
+      "Design",
+      "Luxury Goods",
+      "Beauty",
+      "Healthcare",
+      "Hospitality",
+      "Human Resources",
+      "Technology"
+    ],
+    "house_adjustments": {
+      "house_10": 1.9,
+      "house_6": 0.67,
+      "house_1": 0.95
+    },
+    "strengths": [
+      "Multiple strong planets: Moon, Venus, Saturn"
+    ],
+    "challenges": [],
+    "timing_hints": [
+      "Career activates during Saturn dasha/antardasha periods",
+      "Strong planets (Moon, Venus) periods are favorable"
+    ]
+  },
+  "creativity_legacy": {
+    "panchamsha": {
+      "ascendant": "PISCES",
+      "element": "water",
+      "fifth_lord": {
+        "planet": "Sun",
+        "sign": "TAURUS",
+        "house": 1,
+        "dignity": "Neutral"
+      },
+      "jupiter": {
+        "sign": "GEMINI",
+        "house": 1,
+        "dignity": "Neutral"
+      },
+      "sun": {
+        "sign": "TAURUS",
+        "house": 1,
+        "dignity": "Neutral"
+      },
+      "mercury": {
+        "sign": "GEMINI",
+        "house": 1,
+        "dignity": "Own Sign"
+      },
+      "creative_indicators": [
+        "Jupiter in kendra - expansive creativity",
+        "Sun in kendra - strong creative self-expression",
+        "Venus well-placed - artistic talent"
+      ],
+      "spiritual_indicators": [
+        "Ketu in trikona - spiritual inclination",
+        "Water ascendant - intuitive creative flow"
+      ]
+    },
+    "saptamsha": {
+      "ascendant": "LEO",
+      "element": "fire",
+      "fifth_lord": {
+        "planet": "Sun",
+        "sign": "SAGITTARIUS",
+        "house": 1,
+        "dignity": "Neutral"
+      },
+      "jupiter": {
+        "sign": "VIRGO",
+        "house": 1,
+        "dignity": "Neutral"
+      },
+      "planets_in_fifth": [],
+      "progeny_indicators": [
+        "Jupiter well-placed - favorable for children",
+        "5th lord in kendra - good for children"
+      ],
+      "legacy_indicators": [
+        "9th lord well-placed - dharmic legacy",
+        "Sun in kendra - recognized legacy"
+      ]
+    },
+    "indices": {
+      "creativity": 76.0,
+      "intellectual": 60.0,
+      "progeny": 78.0,
+      "spiritual_creativity": 76.0
+    },
+    "creative_types": [
+      "entrepreneurial",
+      "spiritual"
+    ],
+    "legacy_types": [
+      "children",
+      "institutions",
+      "wealth"
+    ],
+    "peak_periods": [
+      "Sun periods activate creativity"
+    ],
+    "house_adjustments": {
+      "house_5": 2.7,
+      "house_9": 1.73
+    },
+    "strengths": [
+      "Strong creative potential in D5/D7",
+      "Jupiter in kendra - expansive creativity",
+      "Jupiter well-placed - favorable for children",
+      "9th lord well-placed - dharmic legacy"
+    ],
+    "challenges": [],
+    "recommendations": [
+      "Meditation, spiritual practices enhance creativity",
+      "Intuitive, emotionally-driven creativity flows best"
+    ]
+  },
+  "profit_expansion": {
+    "rudramsha": {
+      "ascendant": "CANCER",
+      "element": "water",
+      "eleventh_lord": {
+        "planet": "Saturn",
+        "sign": "GEMINI",
+        "house": 1,
+        "dignity": "Neutral"
+      },
+      "jupiter": {
+        "sign": "VIRGO",
+        "house": 1,
+        "dignity": "Neutral"
+      },
+      "moon": {
+        "sign": "TAURUS",
+        "house": 1,
+        "dignity": "Exalted"
+      },
+      "planets_in_eleventh": [],
+      "gain_indicators": [
+        "Jupiter well-placed - abundant gains potential",
+        "11th lord in kendra - strong gain realization"
+      ],
+      "network_indicators": [
+        "Mercury in kendra - strong networking ability",
+        "Venus well-placed - harmonious relationships"
+      ]
+    },
+    "dwadasamsha": {
+      "ascendant": "GEMINI",
+      "element": "air",
+      "ninth_lord": {
+        "planet": "Jupiter",
+        "sign": "SCORPIO",
+        "house": 1,
+        "dignity": "Neutral"
+      },
+      "fourth_lord": {
+        "planet": "Moon",
+        "sign": "LIBRA",
+        "house": 1,
+        "dignity": "Neutral"
+      },
+      "sun": {
+        "sign": "CAPRICORN",
+        "house": 1,
+        "dignity": "Neutral"
+      },
+      "moon": {
+        "sign": "LIBRA",
+        "house": 1,
+        "dignity": "Neutral"
+      },
+      "karmic_indicators": [
+        "Ketu in trikona - strong past life connection",
+        "Ketu in 1st - past life identity carried forward",
+        "Saturn in kendra - structured karmic work"
+      ],
+      "ancestral_indicators": []
+    },
+    "indices": {
+      "gains": 76.0,
+      "network": 66.0,
+      "desire_fulfillment": 60.0,
+      "karmic_balance": 74.0
+    },
+    "gain_types": [
+      "social",
+      "recognition",
+      "spiritual"
+    ],
+    "karmic_patterns": [
+      "healing"
+    ],
+    "ancestral_strengths": [],
+    "house_adjustments": {
+      "house_11": 2.6,
+      "house_12": 2.0,
+      "house_9": 1.6
+    },
+    "strengths": [
+      "Strong D11 indicates excellent gains potential",
+      "Jupiter well-placed - abundant gains potential",
+      "Ketu in trikona - strong past life connection"
+    ],
+    "challenges": [],
+    "karmic_recommendations": [
+      "Healing work aligns with soul purpose"
+    ]
+  },
+  "karmic_depth": {
+    "d30_analysis": {
+      "malefics_strength": {
+        "Sun": 5.0,
+        "Mars": 5.0,
+        "Saturn": 5.0,
+        "Rahu": 5.0,
+        "Ketu": 5.0
+      },
+      "afflicted_houses": [
+        1
+      ],
+      "risk_areas": [
+        "health"
+      ],
+      "challenge_score": 5.0
+    },
+    "d60_analysis": {
+      "benefic_count": 0,
+      "malefic_count": 0,
+      "auspicious_divisions": 9,
+      "karmic_clarity": 7.7
+    },
+    "doshas": [
+      {
+        "type": "MangalDosha",
+        "is_present": false,
+        "severity": 0,
+        "severity_level": "Cancelled",
+        "cancellation_score": 1.0,
+        "effective_severity": 0,
+        "affected_areas": [],
+        "cancellation_factors": [
+          "Mars not in dosha houses"
+        ],
+        "description": "No Mangal Dosha"
+      },
+      {
+        "type": "KalaSarpaDosha",
+        "is_present": false,
+        "severity": 0,
+        "severity_level": "Cancelled",
+        "cancellation_score": 1.0,
+        "effective_severity": 0,
+        "affected_areas": [],
+        "cancellation_factors": [
+          "Planets on both sides of axis"
+        ],
+        "description": "No Kala Sarpa Dosha"
+      },
+      {
+        "type": "GuruChandalDosha",
+        "is_present": false,
+        "severity": 0,
+        "severity_level": "Cancelled",
+        "cancellation_score": 1.0,
+        "effective_severity": 0,
+        "affected_areas": [],
+        "cancellation_factors": [
+          "Jupiter not conjunct Rahu"
+        ],
+        "description": "No Guru Chandal Dosha"
+      },
+      {
+        "type": "PitruDosha",
+        "is_present": true,
+        "severity": 6.5,
+        "severity_level": "Low",
+        "cancellation_score": 0.4,
+        "effective_severity": 3.9,
+        "affected_areas": [
+          "father",
+          "authority",
+          "government",
+          "recognition",
+          "career_blocks",
+          "leadership"
+        ],
+        "cancellation_factors": [
+          "Jupiter aspects Sun"
+        ],
+        "description": "Saturn aspects Sun"
+      },
+      {
+        "type": "GrahanDosha",
+        "is_present": true,
+        "severity": 7.5,
+        "severity_level": "Critical",
+        "cancellation_score": 0.0,
+        "effective_severity": 7.5,
+        "affected_areas": [
+          "identity",
+          "health",
+          "mental_clarity",
+          "mother_father",
+          "confidence"
+        ],
+        "cancellation_factors": [
+          "No cancellations"
+        ],
+        "description": "Moon-Ketu conjunction"
+      },
+      {
+        "type": "ShrapitDosha",
+        "is_present": false,
+        "severity": 0,
+        "severity_level": "Cancelled",
+        "cancellation_score": 1.0,
+        "effective_severity": 0,
+        "affected_areas": [],
+        "cancellation_factors": [
+          "Saturn not conjunct Rahu"
+        ],
+        "description": "No Shrapit Dosha"
+      }
+    ],
+    "total_dosha_count": 2,
+    "active_dosha_count": 2,
+    "dosha_summary": {
+      "mangal_present": false,
+      "kala_sarpa_present": false,
+      "guru_chandal_present": false,
+      "pitru_present": true,
+      "grahan_present": true,
+      "shrapit_present": false,
+      "total_active": 2,
+      "average_severity": 6.7
+    },
+    "risk_severity_index": 6.7,
+    "risk_category": "High",
+    "red_flags": [
+      "GrahanDosha: Moon-Ketu conjunction"
+    ],
+    "yellow_flags": [],
+    "green_flags": [
+      "MangalDosha largely cancelled",
+      "KalaSarpaDosha largely cancelled",
+      "GuruChandalDosha largely cancelled",
+      "ShrapitDosha largely cancelled",
+      "High karmic clarity in D60"
+    ],
+    "karmic_ceiling_score": 8,
+    "karmic_ceiling_tier": "Constrained",
+    "potential_tier": "<$1M",
+    "indices": {
+      "risk_severity": 6.7,
+      "karmic_clarity": 7.7,
+      "challenge_score": 5.0,
+      "karmic_ceiling": 8
+    },
+    "house_adjustments": {
+      "house_1": -0.15
+    }
+  },
+  "timing_analysis": {
+    "dasha_roadmap": {
+      "current_mahadasha": {
+        "planet": "Mars",
+        "start_date": "2020-10-23",
+        "end_date": "2027-10-23",
+        "duration_years": 7,
+        "is_current": true,
+        "quality_score": 1.0,
+        "quality": "Difficult",
+        "key_themes": [
+          "energy",
+          "competition",
+          "property",
+          "surgery",
+          "action"
+        ]
+      },
+      "current_antardasha": null,
+      "upcoming_periods": [
+        {
+          "planet": "Rahu",
+          "start_date": "2027-10-23",
+          "end_date": "2045-10-22",
+          "duration_years": 18,
+          "is_current": false,
+          "quality_score": 1.0,
+          "quality": "Difficult",
+          "key_themes": [
+            "foreign",
+            "innovation",
+            "obsession",
+            "unconventional",
+            "sudden_gains"
+          ]
+        },
+        {
+          "planet": "Jupiter",
+          "start_date": "2045-10-22",
+          "end_date": "2061-10-22",
+          "duration_years": 16,
+          "is_current": false,
+          "quality_score": 2.5,
+          "quality": "Challenging",
+          "key_themes": [
+            "expansion",
+            "wisdom",
+            "growth",
+            "children",
+            "education",
+            "investments"
+          ]
+        },
+        {
+          "planet": "Saturn",
+          "start_date": "2061-10-22",
+          "end_date": "2080-10-21",
+          "duration_years": 19,
+          "is_current": false,
+          "quality_score": 1.0,
+          "quality": "Difficult",
+          "key_themes": [
+            "discipline",
+            "delays",
+            "structure",
+            "karma",
+            "hard_work"
+          ]
+        },
+        {
+          "planet": "Mercury",
+          "start_date": "2080-10-21",
+          "end_date": "2097-10-21",
+          "duration_years": 17,
+          "is_current": false,
+          "quality_score": 1.0,
+          "quality": "Difficult",
+          "key_themes": [
+            "communication",
+            "business",
+            "learning",
+            "travel",
+            "networking"
+          ]
+        }
+      ],
+      "golden_periods": [],
+      "challenging_periods": [
+        {
+          "start": "2027-10-23",
+          "end": "2045-10-22",
+          "planet": "Rahu",
+          "quality": "Difficult"
+        },
+        {
+          "start": "2045-10-22",
+          "end": "2061-10-22",
+          "planet": "Jupiter",
+          "quality": "Challenging"
+        },
+        {
+          "start": "2061-10-22",
+          "end": "2080-10-21",
+          "planet": "Saturn",
+          "quality": "Difficult"
+        },
+        {
+          "start": "2080-10-21",
+          "end": "2097-10-21",
+          "planet": "Mercury",
+          "quality": "Difficult"
+        }
+      ]
+    },
+    "current_dasha_quality": "Difficult",
+    "ashtakavarga": {
+      "house_bindus": {
+        "1": 31,
+        "2": 31,
+        "3": 28,
+        "4": 28,
+        "5": 28,
+        "6": 28,
+        "7": 31,
+        "8": 28,
+        "9": 28,
+        "10": 31,
+        "11": 28,
+        "12": 27
+      },
+      "total_bindus": 347,
+      "strongest_houses": [
+        1,
+        2,
+        7
+      ],
+      "weakest_houses": [
+        9,
+        11,
+        12
+      ],
+      "above_average_houses": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ]
+    },
+    "is_golden_period": false,
+    "years_until_golden": 0.0,
+    "timing_recommendation": "DelayInvestment",
+    "best_years": [],
+    "caution_years": [
+      2025,
+      2026,
+      2027,
+      2028,
+      2029
+    ],
+    "career_activation_years": [
+      2025,
+      2026,
+      2027
+    ],
+    "wealth_activation_years": [],
+    "timing_summary": "Currently in Mars Mahadasha - Challenging period. Focus on consolidation.",
+    "indices": {
+      "current_dasha_score": 1.0,
+      "ashtakavarga_total": 347,
+      "timing_favorability": 10.0
+    }
+  },
+  "composite_indices": {
+    "wealth": 69.8,
+    "material_security": 70.3,
+    "initiative": 75.0,
+    "communication": 73.0,
+    "career": 63.6,
+    "authority": 70.0,
+    "creativity": 72.5,
+    "legacy": 78.0,
+    "gains": 68.2,
+    "karmic": 74.0,
+    "master_indices": {
+      "prosperity": 67.6,
+      "life_success": 71.5,
+      "spiritual_evolution": 61.4
+    }
+  },
+  "life_areas": {
+    "wealth": {
+      "name": "Wealth & Finances",
+      "score": 69.8,
+      "confidence": 0.85,
+      "factors": [
+        "D2 Hora",
+        "D4 Chaturthamsha",
+        "2nd House"
+      ],
+      "interpretation": "Good potential in wealth and finances. Favorable conditions with some effort required."
+    },
+    "career": {
+      "name": "Career & Status",
+      "score": 63.6,
+      "confidence": 0.9,
+      "factors": [
+        "D10 Dashamsha",
+        "10th House",
+        "Saturn"
+      ],
+      "interpretation": "Good potential in career and public status. Favorable conditions with some effort required."
+    },
+    "creativity": {
+      "name": "Creativity & Legacy",
+      "score": 72.5,
+      "confidence": 0.8,
+      "factors": [
+        "D5 Panchamsha",
+        "D7 Saptamsha",
+        "5th House"
+      ],
+      "interpretation": "Good potential in creative expression. Favorable conditions with some effort required."
+    },
+    "initiative": {
+      "name": "Initiative & Skills",
+      "score": 75.0,
+      "confidence": 0.85,
+      "factors": [
+        "D3 Drekkana",
+        "Mars",
+        "3rd House"
+      ],
+      "interpretation": "Excellent potential in initiative and action. Natural strengths support success."
+    },
+    "gains": {
+      "name": "Gains & Expansion",
+      "score": 68.2,
+      "confidence": 0.8,
+      "factors": [
+        "D11 Rudramsha",
+        "Jupiter",
+        "11th House"
+      ],
+      "interpretation": "Good potential in gains and networking. Favorable conditions with some effort required."
+    },
+    "spiritual": {
+      "name": "Spiritual Evolution",
+      "score": 61.4,
+      "confidence": 0.75,
+      "factors": [
+        "D12 Dwadashamsha",
+        "D9 Navamsha",
+        "12th House"
+      ],
+      "interpretation": "Good potential in spiritual growth. Favorable conditions with some effort required."
+    }
+  }
+}

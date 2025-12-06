@@ -211,25 +211,81 @@ postgresql://postgres.lhirxjxwdjlyyztmeceh:0J7QYRgAfoL82vdS@aws-1-eu-central-1.p
 
 ---
 
-## 9. DEPLOYMENT
+## 9. INFRASTRUCTURE & DEPLOYMENT
 
-### GCP Access
+### 9.1 GCP Projects
+
+| Project | Purpose |
+|---------|---------|
+| `rosy-stronghold-467817-k6` | VM, Compute, Static IP |
+| `edestory-platform` | Cloud DNS (star-meet.com zone) |
+
+### 9.2 Production VM
+
+| Parameter | Value |
+|-----------|-------|
+| **Name** | `mastodon-vm` |
+| **Zone** | `europe-southwest1-c` (Madrid) |
+| **Machine Type** | `e2-highmem-2` (2 vCPU, 16 GB RAM) |
+| **OS** | Ubuntu 22.04 LTS |
+| **Disk** | 50 GB SSD (persistent-disk-0) |
+| **Internal IP** | `10.204.0.3` |
+| **Project** | `rosy-stronghold-467817-k6` |
+
+### 9.3 Static IP
+
+| Parameter | Value |
+|-----------|-------|
+| **Name** | `starmeet-static-ip` |
+| **Address** | `34.175.113.16` |
+| **Region** | `europe-southwest1` |
+| **Network Tier** | PREMIUM |
+
+### 9.4 DNS Configuration
+
+**Domain:** `star-meet.com` (registered in Squarespace)
+
+**Cloud DNS Zone:**
+- **Project:** `edestory-platform` (NOT rosy-stronghold!)
+- **Zone Name:** `star-meet-com`
+- **Nameservers:** `ns-cloud-b1/b2/b3/b4.googledomains.com`
+
+**DNS Records:**
+| Name | Type | TTL | Data |
+|------|------|-----|------|
+| `star-meet.com.` | A | 300 | `34.175.113.16` |
+| `www.star-meet.com.` | A | 300 | `34.175.113.16` |
+
+**Update DNS (gcloud):**
+```bash
+# Важно: zone находится в проекте edestory-platform!
+gcloud dns record-sets update star-meet.com. \
+  --zone=star-meet-com \
+  --project=edestory-platform \
+  --type=A --ttl=300 --rrdatas=<NEW_IP>
+```
+
+### 9.5 SSH Access
 ```bash
 gcloud compute ssh mastodon-vm --zone=europe-southwest1-c --command="<cmd>"
 ```
 
-### Quick Deploy
+### 9.6 Quick Deploy
 ```bash
 gcloud compute ssh mastodon-vm --zone=europe-southwest1-c --command="cd ~/StarMeet-platform && git pull origin main && docker compose build --no-cache starmeet-api wizard && docker compose up -d && docker compose ps"
 ```
 
-### Key URLs (Production)
+### 9.7 Production URLs
 ```
 https://star-meet.com/join       — Onboarding
 https://star-meet.com/dashboard  — Dashboard
 https://star-meet.com/star-api/  — FastAPI
 https://star-meet.com/star-api/docs — Swagger UI
 ```
+
+### 9.8 SSL Certificates
+- Let's Encrypt (auto-renewed via certbot)
+- Mounted in nginx: `/etc/letsencrypt/live/star-meet.com/`
 
 ---
 
